@@ -158,7 +158,7 @@ func reconcileServicePlanKey(t *testing.T, testController *controller, servicePl
 	clone := servicePlan.DeepCopy()
 	key, err := cache.MetaNamespaceKeyFunc(servicePlan)
 	if err != nil {
-		t.Fatalf("unexpected error while buidling service plan key: %v", err)
+		t.Fatalf("unexpected error while building service plan key: %v", err)
 	}
 
 	err = testController.reconcileServicePlanKey(key)

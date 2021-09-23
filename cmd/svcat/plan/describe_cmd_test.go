@@ -22,7 +22,7 @@ import (
 
 	"github.com/kubernetes-sigs/service-catalog/cmd/svcat/command"
 	. "github.com/kubernetes-sigs/service-catalog/cmd/svcat/plan"
-	"github.com/kubernetes-sigs/service-catalog/cmd/svcat/test"
+	svcattest "github.com/kubernetes-sigs/service-catalog/cmd/svcat/test"
 	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	"github.com/kubernetes-sigs/service-catalog/pkg/svcat"
 	servicecatalog "github.com/kubernetes-sigs/service-catalog/pkg/svcat/service-catalog"
