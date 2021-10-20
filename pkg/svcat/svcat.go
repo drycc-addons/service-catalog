@@ -18,7 +18,7 @@ package svcat
 
 import (
 	"github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset"
-	"github.com/kubernetes-sigs/service-catalog/pkg/svcat/service-catalog"
+	servicecatalog "github.com/kubernetes-sigs/service-catalog/pkg/svcat/service-catalog"
 	k8sclient "k8s.io/client-go/kubernetes"
 )
 
@@ -30,7 +30,7 @@ type App struct {
 	CurrentNamespace string
 }
 
-// NewApp creates an svcat application.
+// NewApp creates a svcat application.
 func NewApp(k8sClient k8sclient.Interface, serviceCatalogClient clientset.Interface, ns string) (*App, error) {
 	app := &App{
 		SvcatClient: &servicecatalog.SDK{

@@ -2603,7 +2603,7 @@ func TestReconcileServiceBindingWithSecretParameters(t *testing.T) {
 func TestReconcileBindingWithSetOrphanMitigation(t *testing.T) {
 	// Anonymous struct fields:
 	// bindReactionError: the error to return from the bind attempt
-	// setOrphanMitigation: flag for whether or not orphan migitation
+	// setOrphanMitigation: flag for whether or not orphan mitigation
 	//                      should be performed
 	cases := []struct {
 		name                string

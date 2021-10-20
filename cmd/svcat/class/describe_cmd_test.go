@@ -20,11 +20,9 @@ import (
 	"bytes"
 	"fmt"
 
-	"k8s.io/apimachinery/pkg/apis/meta/v1"
-
 	. "github.com/kubernetes-sigs/service-catalog/cmd/svcat/class"
 	"github.com/kubernetes-sigs/service-catalog/cmd/svcat/command"
-	"github.com/kubernetes-sigs/service-catalog/cmd/svcat/test"
+	svcattest "github.com/kubernetes-sigs/service-catalog/cmd/svcat/test"
 	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	"github.com/kubernetes-sigs/service-catalog/pkg/svcat"
 	servicecatalog "github.com/kubernetes-sigs/service-catalog/pkg/svcat/service-catalog"
@@ -32,6 +30,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/spf13/pflag"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 var _ = Describe("Describe Command", func() {

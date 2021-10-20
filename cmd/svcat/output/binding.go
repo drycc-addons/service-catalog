@@ -23,7 +23,7 @@ import (
 
 	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	svcatsdk "github.com/kubernetes-sigs/service-catalog/pkg/svcat/service-catalog"
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 )
 
 func getBindingStatusShort(status v1beta1.ServiceBindingStatus) string {

@@ -17,11 +17,10 @@ limitations under the License.
 package command
 
 import (
+	"errors"
 	"fmt"
 
-	"errors"
-
-	"github.com/kubernetes-sigs/service-catalog/pkg/svcat/service-catalog"
+	servicecatalog "github.com/kubernetes-sigs/service-catalog/pkg/svcat/service-catalog"
 	"github.com/spf13/pflag"
 )
 

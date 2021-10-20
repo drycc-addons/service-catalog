@@ -17,15 +17,14 @@ limitations under the License.
 package command
 
 import (
+	"fmt"
 	"strings"
 	"unicode"
-
-	"fmt"
 
 	"github.com/spf13/cobra"
 )
 
-// Command represents an svcat command.
+// Command represents a svcat command.
 type Command interface {
 	// Validate and load the arguments passed to the svcat command.
 	Validate(args []string) error
@@ -98,7 +97,7 @@ func RunE(cmd Command) func(*cobra.Command, []string) error {
 // so that all examples across all commands are indented consistently.
 func NormalizeExamples(examples string) string {
 	// TODO: this code copied from a pending PR: https://github.com/kubernetes/kubernetes/pull/64017; replace this with a call to that method when PR is merged
-	indentedLines := []string{}
+	var indentedLines []string
 	var baseIndentation *string
 	for _, line := range strings.Split(examples, "\n") {
 		if baseIndentation == nil {

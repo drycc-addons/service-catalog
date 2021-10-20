@@ -22,7 +22,7 @@ import (
 	"strings"
 
 	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"k8s.io/apimachinery/pkg/apis/meta/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 const (
@@ -34,7 +34,7 @@ const (
 	// FormatJSON is the --output flag value for json output.
 	FormatJSON = "json"
 
-	// FormatTable is the --output flag value for tablular output.
+	// FormatTable is the --output flag value for tabular output.
 	FormatTable = "table"
 
 	// FormatYAML is the --output flag value for yaml output.
