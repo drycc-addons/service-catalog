@@ -146,8 +146,8 @@ spec:
           claimName: {{ template "fullname" . }}-migration-storage
       containers:
         - name: job
-          image: {{ .Values.image }}
-          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          image: {{.Values.imageRegistry}}/{{.Values.imageOrg}}/service-catalog:{{.Values.imageTag}}
+          imagePullPolicy: {{.Values.imagePullPolicy}}
           args:
           - migration
           - --action

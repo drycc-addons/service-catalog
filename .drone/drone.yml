@@ -1,0 +1,227 @@
+kind: pipeline
+type: docker
+name: linux-amd64-test
+
+platform:
+  arch: amd64
+  os: linux
+
+steps:
+- name: test
+  image: docker.io/drycc/go-dev
+  pull: always
+  privileged: true
+  commands:
+  - contrib/hack/ci/test.sh
+  environment:
+    VERSION: ${DRONE_TAG:-latest}-linux-amd64
+    DRONE_TAG: ${DRONE_TAG:-none}
+    DEV_REGISTRY: ${DEV_REGISTRY:-docker.io}
+    DRYCC_REGISTRY: ${DRYCC_REGISTRY:-docker.io}
+    GITHUB_TOKEN:
+      from_secret: github_token
+    CODECOV_TOKEN:
+      from_secret: codecov_token
+  when:
+    event:
+    - push
+    - tag
+    - pull_request
+  volumes:
+  - name: image_registries
+    path: /etc/containers/registries.conf
+
+trigger:
+  event:
+  - push
+  - tag
+  - pull_request
+
+volumes:
+- name: image_registries
+  host:
+    path: /etc/containers/registries.conf
+
+---
+kind: pipeline
+type: docker
+name: linux-amd64
+
+steps:
+- name: publish image
+  image: docker.io/drycc/go-dev
+  pull: always
+  privileged: true
+  commands:
+  - echo $DOCKER_PASSWORD | docker login $DRYCC_REGISTRY --username $DOCKER_USERNAME --password-stdin
+  - make service-catalog-push
+  environment:
+    ARCH: amd64
+    VERSION: ${DRONE_TAG:-latest}-linux-amd64
+    DEV_REGISTRY:
+      from_secret: dev_registry
+    DRYCC_REGISTRY:
+      from_secret: drycc_registry
+    DOCKER_USERNAME:
+      from_secret: docker_username
+    DOCKER_PASSWORD:
+      from_secret: docker_password
+  when:
+    event:
+    - push
+    - tag
+  volumes:
+  - name: image_registries
+    path: /etc/containers/registries.conf
+
+trigger:
+  event:
+  - push
+  - tag
+  - pull_request
+
+depends_on:
+  - linux-amd64-test
+
+volumes:
+- name: image_registries
+  host:
+    path: /etc/containers/registries.conf
+
+---
+kind: pipeline
+type: docker
+name: linux-arm64
+
+platform:
+  arch: arm64
+  os: linux
+
+steps:
+- name: publish image
+  image: docker.io/drycc/go-dev
+  pull: always
+  privileged: true
+  commands:
+  - echo $DOCKER_PASSWORD | docker login $DRYCC_REGISTRY --username $DOCKER_USERNAME --password-stdin
+  - make service-catalog-push
+  environment:
+    ARCH: arm64
+    VERSION: ${DRONE_TAG:-latest}-linux-arm64
+    DEV_REGISTRY:
+      from_secret: dev_registry
+    DRYCC_REGISTRY:
+      from_secret: drycc_registry
+    DOCKER_USERNAME:
+      from_secret: docker_username
+    DOCKER_PASSWORD:
+      from_secret: docker_password
+  volumes:
+  - name: image_registries
+    path: /etc/containers/registries.conf
+
+trigger:
+  event:
+  - push
+  - tag
+
+depends_on:
+- linux-amd64-test
+
+volumes:
+- name: image_registries
+  host:
+    path: /etc/containers/registries.conf
+
+---
+kind: pipeline
+type: docker
+name: manifest
+
+steps:
+- name: generate manifest
+  image: docker.io/library/alpine
+  pull: always
+  commands:
+  - sed -i "s/docker.io/$${DRYCC_REGISTRY}/g" .drone/manifest.tmpl
+  environment:
+    DRYCC_REGISTRY:
+      from_secret: drycc_registry
+
+- name: publish
+  image: plugins/manifest
+  settings:
+    spec: .drone/manifest.tmpl
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+  environment:
+    DEV_REGISTRY:
+      from_secret: dev_registry
+    DRYCC_REGISTRY:
+      from_secret: drycc_registry
+
+trigger:
+  event:
+  - push
+  - tag
+
+depends_on:
+- linux-amd64
+- linux-arm64
+
+---
+kind: pipeline
+type: docker
+name: output
+
+steps:
+- name: generate chart catalog
+  image: docker.io/drycc/python-dev
+  commands:
+  - IMAGE_TAG=$([ ! -z $DRONE_TAG ] && echo \"${DRONE_TAG:1}\" || echo \"canary\")
+  - sed -i "s/image_tag:\ \"canary\"/image_tag:\ $IMAGE_TAG/g" charts/catalog/values.yaml
+  - helm package charts/catalog --version ${DRONE_TAG:-v1.0.0}
+  - curl -u $CHARTMUSEUM_USERNAME:$CHARTMUSEUM_PASSWORD -F chart=@catalog-${DRONE_TAG:-v1.0.0}.tgz "$CHARTMUSEUM_API/api/$([ -z $DRONE_TAG ] && echo testing || echo stable)/charts"
+  environment:
+    CHARTMUSEUM_USERNAME:
+      from_secret: chartmuseum_username
+    CHARTMUSEUM_PASSWORD:
+      from_secret: chartmuseum_password
+    CHARTMUSEUM_API:
+      from_secret: chartmuseum_api
+
+- name: publish svcat
+  image: docker.io/drycc/go-dev
+  pull: always
+  privileged: true
+  commands:
+  - make svcat-all
+  environment:
+    DEV_REGISTRY:
+      from_secret: dev_registry
+    DRYCC_REGISTRY:
+      from_secret: drycc_registry
+  volumes:
+    - name: image_registries
+      path: /etc/containers/registries.conf
+  when:
+    event: tag
+
+- name: release svcat
+  image: plugins/github-release
+  settings:
+    api_key:
+      from_secret: github_token
+    files: bin/svcat/*
+  when:
+    event: tag
+
+depends_on:
+  - linux-amd64-test
+
+trigger:
+  event:
+  - push
+  - tag

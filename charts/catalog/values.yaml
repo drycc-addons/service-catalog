@@ -1,11 +1,10 @@
 # Default values for Service Catalog
-# service-catalog image to use
-image: quay.io/kubernetes-service-catalog/service-catalog:v0.3.1
+imageOrg: "drycc"
+imagePullPolicy: "Always"
+imageTag: "canary"
+imageRegistry: "docker.io"
 # imagePullSecrets pre-existing secrets to use to pull images from a private registry
 imagePullSecrets: []
-# imagePullPolicy for the service-catalog; valid values are "IfNotPresent",
-# "Never", and "Always"
-imagePullPolicy: Always
 ## If true, create & use RBAC resources
 ##
 rbacEnable: true
