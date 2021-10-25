@@ -42,7 +42,7 @@ GIT_BRANCH    ?= $(shell git rev-parse --abbrev-ref HEAD)
 # Only skip the verification of external href's if we're not on 'master'
 SKIP_HTTP=-x
 SKIP_COMMENT=" (Skipping external hrefs)"
-ifeq ($(GIT_BRANCH),master)
+ifeq ($(GIT_BRANCH),main)
 SKIP_HTTP=
 SKIP_COMMENT=" (Checking external hrefs)"
 endif
@@ -95,8 +95,14 @@ BASE_PATH      = $(ROOT:/src/github.com/kubernetes-sigs/service-catalog/=)
 ORIG_GOPATH   ?= $(shell go env GOPATH)
 export GOPATH  = $(BASE_PATH):$(ROOT)/vendor
 
+DRYCC_REGISTRY ?= $(DEV_REGISTRY)
+IMAGE_PREFIX ?= drycc
+COMPONENT ?= service-catalog
+PLATFORM ?= linux/amd64,linux/arm64
+REGISTRY ?= ${DRYCC_REGISTRY}/${IMAGE_PREFIX}/
+
 MUTABLE_TAG                      ?= canary
-SERVICE_CATALOG_IMAGE             = $(REGISTRY)service-catalog-$(ARCH):$(VERSION)
+SERVICE_CATALOG_IMAGE             = $(REGISTRY)service-catalog:$(VERSION)
 SERVICE_CATALOG_MUTABLE_IMAGE     = $(REGISTRY)service-catalog-$(ARCH):$(MUTABLE_TAG)
 USER_BROKER_IMAGE                 = $(REGISTRY)user-broker-$(ARCH):$(VERSION)
 USER_BROKER_MUTABLE_IMAGE         = $(REGISTRY)user-broker-$(ARCH):$(MUTABLE_TAG)
@@ -123,7 +129,7 @@ ifdef NO_DOCKER
 	scBuildImageTarget =
 else
 	# Mount .pkg as pkg so that we save our cached "go build" output files
-	DOCKER_CMD = docker run --security-opt label:disable --rm \
+	DOCKER_CMD = docker run --security-opt label=disable --rm \
 	  -v $(CURDIR):/go/src/$(SC_PKG):delegated \
 	  -v $(CURDIR)/.cache:/root/.cache/:cached \
 	  -v $(CURDIR)/.pkg:/go/pkg:cached --env AZURE_STORAGE_CONNECTION_STRING scbuildimage
@@ -355,7 +361,6 @@ define build-and-tag # (service, image, mutable_image, prefix)
 	# -i.bak is required for cross-platform compat: https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux
 	sed -i.bak "s|BASEIMAGE|$(BASEIMAGE)|g" $(tmp_build_path)/Dockerfile
 	rm $(tmp_build_path)/Dockerfile.bak
-	docker run --rm --privileged multiarch/qemu-user-static:register --reset
 	docker build -t $(2) $(tmp_build_path)
 	docker tag $(2) $(3)
 	rm -rf $(tmp_build_path)
@@ -444,8 +449,8 @@ svcat-for-%:
 		$(foreach CLIENT_ARCH,$(ALL_CLIENT_ARCHS), $(MAKE) PLATFORM=$* VERSION=$(TAG_VERSION) ARCH=$(CLIENT_ARCH) svcat-xbuild;) \
 	fi
 
-svcat-xbuild: $(BINDIR)/svcat/$(TAG_VERSION)/$(PLATFORM)/$(ARCH)/svcat$(FILE_EXT)
-$(BINDIR)/svcat/$(TAG_VERSION)/$(PLATFORM)/$(ARCH)/svcat$(FILE_EXT): .init .generate_files
+svcat-xbuild: $(BINDIR)/svcat/svcat-$(PLATFORM)-$(ARCH)$(FILE_EXT)
+$(BINDIR)/svcat/svcat-$(PLATFORM)-$(ARCH)$(FILE_EXT): .init .generate_files
 	mkdir -p $(dir $@)
 	$(DOCKER_CMD) $(GO_BUILD) -o $@ $(SC_PKG)/cmd/svcat
 

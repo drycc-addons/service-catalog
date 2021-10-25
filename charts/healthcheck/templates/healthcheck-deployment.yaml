@@ -25,8 +25,8 @@ spec:
 {{ toYaml .Values.imagePullSecrets | indent 8 }}
       containers:
       - name: healthcheck
-        image: {{ .Values.image }}
-        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        image: {{.Values.imageRegistry}}/{{.Values.imageOrg}}/service-catalog:{{.Values.imageTag}}
+        imagePullPolicy: {{.Values.imagePullPolicy}}
         args:
         - -v4
         - "--healthcheck-interval=19s"
