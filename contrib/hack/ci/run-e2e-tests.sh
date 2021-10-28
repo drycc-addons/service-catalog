@@ -88,7 +88,8 @@ test::prepare_data() {
 test::execute() {
     shout "- Executing e2e test..."
     pushd "${REPO_ROOT_DIR}/test/e2e/"
-    env SERVICECATALOGCONFIG="${KUBECONFIG}" go test -v ./... -broker-image="user-broker:canary"
+    unset GOPATH
+    env SERVICECATALOGCONFIG="${KUBECONFIG}" PATH="${PATH}:/usr/local/go/bin" go test -v ./... -broker-image="user-broker:canary"
     popd
 }
 

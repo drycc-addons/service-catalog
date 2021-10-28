@@ -112,8 +112,8 @@ spec:
 {{ toYaml .Values.imagePullSecrets | indent 8 }}
       containers:
         - name: service-catalog
-          image: {{ .Values.image }}
-          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          image: {{ template "image" . }}
+          imagePullPolicy: {{.Values.imagePullPolicy}}
           args:
           - cleaner
           - --cleaner-command

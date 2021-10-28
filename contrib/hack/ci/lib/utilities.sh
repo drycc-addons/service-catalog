@@ -181,15 +181,15 @@ readonly KIND_CLUSTER_NAME="kind-ci"
 
 kind::create_cluster() {
     shout "- Create k8s cluster..."
-    kind create cluster --name=${KIND_CLUSTER_NAME} --image="kindest/node:${KUBERNETES_VERSION}" --wait=5m
+    kind create cluster --name=${KIND_CLUSTER_NAME}-${DRONE_COMMIT:-"latest"} --image="kindest/node:${KUBERNETES_VERSION}" --wait=5m
 }
 
 kind::delete_cluster() {
-    kind delete cluster --name=${KIND_CLUSTER_NAME}
+    kind delete cluster --name=${KIND_CLUSTER_NAME}-${DRONE_COMMIT:-"latest"}
 }
 
 # Arguments:
 #   $1 - image name to copy into cluster nodes
 kind::load_image() {
-    kind load docker-image $1 --name=${KIND_CLUSTER_NAME}
+    kind load docker-image $1 --name=${KIND_CLUSTER_NAME}-${DRONE_COMMIT:-"latest"}
 }

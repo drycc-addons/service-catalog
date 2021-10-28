@@ -7,6 +7,7 @@ kubeconfig
 log/**
 pid/**
 bin/**
+coverage.txt
 coverage.html
 .idea/
 .DS_Store
