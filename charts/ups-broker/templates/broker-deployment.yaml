@@ -24,8 +24,8 @@ spec:
 {{ toYaml .Values.imagePullSecrets | indent 8 }}
       containers:
       - name: ups-broker
-        image: {{ .Values.image }}
-        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        image: {{ template "image" . }}
+        imagePullPolicy: {{.Values.imagePullPolicy}}
         args:
         - --port
         - "8080"

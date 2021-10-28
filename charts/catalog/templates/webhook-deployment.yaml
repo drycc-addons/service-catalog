@@ -42,8 +42,8 @@ spec:
 {{ toYaml .Values.imagePullSecrets | indent 8 }}
       containers:
       - name: svr
-        image: {{ .Values.image }}
-        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        image: {{ template "image" . }}
+        imagePullPolicy: {{.Values.imagePullPolicy}}
         resources:
 {{ toYaml .Values.webhook.resources | indent 10 }}
         args:

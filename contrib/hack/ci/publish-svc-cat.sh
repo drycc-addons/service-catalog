@@ -25,9 +25,9 @@ readonly REPO_ROOT_DIR=${CURRENT_DIR}/../../../
 
 source "${CURRENT_DIR}/lib/utilities.sh" || { echo 'Cannot load CI utilities.'; exit 1; }
 
-export REGISTRY=${REGISTRY:-quay.io/kubernetes-service-catalog/}
+export REGISTRY=${REGISTRY:-docker.io/drycc/}
 
-docker login -u "${QUAY_USERNAME}" -p "${QUAY_PASSWORD}" quay.io
+echo "${DOCKER_PASSWORD}" | docker login "${DRYCC_REGISTRY}" --username "${DOCKER_USERNAME}" --password-stdin
 
 usage() {
   echo "${0} [-a arch] [-h]"
@@ -66,7 +66,7 @@ echo ${RELEASE_ARCH}
 if [[ "${DEPLOY_TYPE}" == "release" ]]; then
     shout "Pushing Service Catalog ${RELEASE_ARCH} images with tags '${TRAVIS_TAG}' and 'latest'."
     TAG_VERSION="${TRAVIS_TAG}" VERSION="${TRAVIS_TAG}" MUTABLE_TAG="latest" make release-push${RELEASE_ARCH}
-elif [[ "${DEPLOY_TYPE}" == "master" ]]; then
+elif [[ "${DEPLOY_TYPE}" == "main" ]]; then
     shout "Pushing Service Catalog ${RELEASE_ARCH} images with default tags (git sha and 'canary')."
     make push
 else

@@ -1,6 +1,6 @@
 ## `service-catalog`
 
-[![Build Status](https://travis-ci.org/kubernetes-sigs/service-catalog.svg?branch=master)](https://travis-ci.org/kubernetes-sigs/service-catalog "Travis")
+[![Build Status](https://drone.drycc.cc/api/badges/drycc/service-catalog/status.svg)](https://drone.drycc.cc/drycc/service-catalog)
 [![Go Report Card](https://goreportcard.com/badge/github.com/kubernetes-sigs/service-catalog)](https://goreportcard.com/report/github.com/kubernetes-sigs/service-catalog)
 
 <p align="center">
@@ -67,19 +67,6 @@ and notes, see [Kubernetes SIG Service Catalog Agenda](https://docs.google.com/d
 
 Previous meeting notes are also available:
 [2016-08-29 through 2017-09-17](https://docs.google.com/document/d/10VsJjstYfnqeQKCgXGgI43kQWnWFSx8JTH7wFh8CmPA/edit).
-
-### Kubernetes Incubator
-
-This is a [Kubernetes Incubator project](https://github.com/kubernetes/community/blob/master/incubator.md).
-The project was established 2016-Sept-12. The incubator team for the project is:
-
-- Sponsor: Brian Grant ([@bgrant0607](https://github.com/bgrant0607))
-- Champion: Paul Morie ([@pmorie](https://github.com/pmorie))
-- SIG: [sig-service-catalog](https://github.com/kubernetes/community/tree/master/sig-service-catalog)
-- Our [SIG Charter](https://github.com/kubernetes/community/blob/master/sig-service-catalog/charter.md)
-
-For more information about sig-service-catalog, such as meeting times and agenda,
-check out the [community site](https://github.com/kubernetes/community/tree/master/sig-service-catalog).
 
 ### Code of Conduct
 

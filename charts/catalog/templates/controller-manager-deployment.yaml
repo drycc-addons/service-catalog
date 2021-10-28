@@ -45,8 +45,8 @@ spec:
           emptyDir: {}
       containers:
       - name: controller-manager
-        image: {{ .Values.image }}
-        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        image: {{ template "image" . }}
+        imagePullPolicy: {{.Values.imagePullPolicy}}
         resources:
 {{ toYaml .Values.controllerManager.resources | indent 10 }}
         env:
