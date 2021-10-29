@@ -95,8 +95,16 @@ This chart is located in a
 [chart repository](https://github.com/kubernetes/helm/blob/master/docs/chart_repository.md)
 just for Service Catalog. Add this repository to your local machine:
 
+For stable charts:
+
 ```console
-helm repo add svc-cat https://kubernetes-sigs.github.io/service-catalog
+helm repo add svc-cat https://charts.drycc.cc/stable/catalog
+```
+
+For testing charts:
+
+```console
+helm repo add svc-cat https://charts.drycc.cc/testing/catalog
 ```
 
 Then, ensure that the repository was successfully added:
@@ -200,19 +208,7 @@ helm install svc-cat/catalog-v0.2 --name catalog --namespace catalog
 
 Follow the appropriate instructions for your operating system to install svcat. The binary can be used by itself, or as a kubectl plugin.
 
-The snippets below install the latest version of svcat. We also publish binaries for our canary builds, and tags using the following prefixes:
-* Latest release:
-  * [master](https://github.com/kubernetes-sigs/service-catalog/tree/master) branch: https://download.svcat.sh/cli/latest
-  * [v0.2](https://github.com/kubernetes-sigs/service-catalog/tree/v0.2) branch: https://download.svcat.sh/cli/latest-v0.2
-* Canary builds:
-  * [master](https://github.com/kubernetes-sigs/service-catalog/tree/master) branch: https://download.svcat.sh/cli/canary
-  * [v0.2](https://github.com/kubernetes-sigs/service-catalog/tree/v0.2) branch: https://download.svcat.sh/cli/canary-v0.2
-
-* Tagged releases: https://download.svcat.sh/cli/VERSION
-  where `VERSION` is the release, for example `v0.3.1`, `v0.2.1`, etc.
-
-* Previous canary builds: https://download.svcat.sh/cli/VERSION-GITDESCRIBE
-  where `GITDESCRIBE` is the result of calling `git describe --tags`,  for example `v0.3.0-1-g84216bdf`, `v0.2.1-1-g203c8ad` etc.
+The snippets below install the latest version of svcat. We publish binaries for our release builds.
 
 ## MacOS with Homebrew
 

@@ -40,6 +40,53 @@ volumes:
 
 ---
 kind: pipeline
+type: docker
+name: linux-amd64-docs
+
+platform:
+  arch: amd64
+  os: linux
+
+steps:
+- name: build-docs
+  image: docker.io/drycc/go-dev
+  privileged: true
+  commands:
+  - mkdir -p docsite/.bundler
+  - make docs
+  - cd docsite/_site && echo "service-catalog.drycc.cc" >> CNAME && git init
+  environment:
+    SSH_DEPLOY_KEY:
+      from_secret: ssh_deploy_key
+  when:
+    event:
+    - push
+    - tag
+  volumes:
+  - name: image_registries
+    path: /etc/containers/registries.conf
+
+- name: publish-docs
+  image: docker.io/appleboy/drone-git-push
+  pull: always
+  settings:
+    branch: main
+    remote: git@github.com:drycc/service-catalog.drycc.cc.git
+    path: docsite/_site
+    force: true
+    commit: true
+    commit_message: init repo
+    ssh_key:
+      from_secret: ssh_deploy_key
+  when:
+    event:
+    - push
+    - tag
+depends_on:
+- linux-amd64-test
+
+---
+kind: pipeline
 type: exec
 name: linux-amd64-test-e2e
 

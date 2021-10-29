@@ -5,7 +5,7 @@
 [![codecov](https://codecov.io/gh/drycc/service-catalog/branch/main/graph/badge.svg)](https://codecov.io/gh/drycc/service-catalog)
 
 <p align="center">
-    <a href="https://svc-cat.io">
+    <a href="https://service-catalog.drycc.cc">
         <img src="/docsite/images/homepage-logo.png">
     </a>
 </p>
@@ -14,12 +14,29 @@ Service Catalog lets you provision cloud services directly from the comfort of n
 This project is in incubation to bring integration with service
 brokers to the Kubernetes ecosystem via the [Open Service Broker API](https://github.com/openservicebrokerapi/servicebroker).
 
+### About
+
+It seems that the original [kubernetes-sigs/service-catalog](https://github.com/kubernetes-sigs/service-catalog) is no longer active.
+
+However, we use a lot of service-catalog related components in drycc, so we decided to establish a branch.
+
+If the service-catalog is reactivated at some point in the future, we expect that the changes of this branch can be finally merged into [kubernetes-sigs/service-catalog](https://github.com/kubernetes-sigs/service-catalog).
+
+Now our main goal is to upgrade some outdated APIs, including charts and source code. Then consider adding some new features.
+
+If you are also using service-catalog, you can help us together.
+
+* Github: https://github.com/drycc/service-catalog
+* Stable Charts: https://charts.drycc.cc/stable/catalog
+* Testing Charts: https://charts.drycc.cc/testing/catalog
+* Helmbroker: https://github.com/drycc/helmbroker
+
 ### Documentation
 
 Our goal is to have extensive use-case and functional documentation.
 
 See the [Service Catalog documentation](https://kubernetes.io/docs/concepts/service-catalog/)
-on the main Kubernetes site, and [svc-cat.io](https://svc-cat.io/docs).
+on the main Kubernetes site, and [service-catalog.drycc.cc](https://service-catalog.drycc.cc/docs).
 
 For details on broker servers that are compatible with this software, see the
 Open Service Broker API project's [Getting Started guide](https://github.com/openservicebrokerapi/servicebroker/blob/master/gettingStarted.md).

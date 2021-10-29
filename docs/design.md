@@ -107,9 +107,9 @@ to manage custom resources. Admission Webhook is a feature available in the Kube
 that allows you to implement arbitrary control decisions, such as validation or mutation.
 
 For every resource managed by Service Catalog (the ones listed in the previous section), there is a separate handler defined. You can see the structure at 
-[`pkg/webhook/servicecatalog`](https://github.com/kubernetes-sigs/service-catalog/blob/master/pkg/webhook/servicecatalog).
+[`pkg/webhook/servicecatalog`](https://github.com/drycc/service-catalog/blob/master/pkg/webhook/servicecatalog).
 The current version of all Service Catalog API resources is `v1beta1`. The resources are defined here:
-[`pkg/apis/servicecatalog/v1beta1/types.go`](https://github.com/kubernetes-sigs/service-catalog/blob/master/pkg/apis/servicecatalog/v1beta1/types.go).
+[`pkg/apis/servicecatalog/v1beta1/types.go`](https://github.com/drycc/service-catalog/blob/master/pkg/apis/servicecatalog/v1beta1/types.go).
 
 If you want to learn more about Admission Webhooks, read [this](https://kubernetes.io/blog/2019/03/21/a-guide-to-kubernetes-admission-controllers/) document.
 

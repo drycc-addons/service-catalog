@@ -17,7 +17,7 @@ title: Service Catalog - Kubernetes
 description: >- # this means to ignore newlines until "baseurl:"
   Kubernetes SIG Service Catalog
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://svc-cat.io" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://service-catalog.drycc.cc" # the base hostname & protocol for your site, e.g. http://example.com
 
 # Build settings
 markdown: kramdown

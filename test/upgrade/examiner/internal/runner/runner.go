@@ -31,7 +31,7 @@ import (
 )
 
 const (
-	createdByLabelName = "svc-cat.io/created-by"
+	createdByLabelName = "service-catalog.drycc.cc/created-by"
 	// negative value for regex used for name validation in k8s:
 	// https://github.com/kubernetes/apimachinery/blob/98853ca904e81a25e2000cae7f077dc30f81b85f/pkg/util/validation/validation.go#L110
 	regexSanitize = "[^a-z0-9]([^-a-z0-9]*[^a-z0-9])?"
