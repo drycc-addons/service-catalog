@@ -22,13 +22,9 @@ if [[ -z "$COMMIT_RANGE" ]]; then
     # Builds triggered by initial commit of a new branch.
     export DOCS_ONLY=0
 else
+    DOCS_ONLY=0
     DOCS_REGEX='(OWNERS|LICENSE)|(\.md$)|(^docs/)|(^docsite/)'
-    only_docs="$(git diff --name-only $COMMIT_RANGE | grep -vE $DOCS_REGEX)"
-    if [[ $only_docs ]]; then
-      export DOCS_ONLY=1
-    else
-      export DOCS_ONLY=0
-    fi
+    if [[ -n "$(git diff --name-only $COMMIT_RANGE | grep -vE $DOCS_REGEX)" ]]; then DOCS_ONLY=1; fi
 fi
 if [[ $DRONE_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+[a-z]*((-beta.[0-9]+)|(-(r|R)(c|C)[0-9]+))?$ ]]; then
     export DEPLOY_TYPE=release
