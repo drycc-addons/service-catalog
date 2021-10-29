@@ -1,7 +1,8 @@
 ## `service-catalog`
 
 [![Build Status](https://drone.drycc.cc/api/badges/drycc/service-catalog/status.svg)](https://drone.drycc.cc/drycc/service-catalog)
-[![Go Report Card](https://goreportcard.com/badge/github.com/kubernetes-sigs/service-catalog)](https://goreportcard.com/report/github.com/kubernetes-sigs/service-catalog)
+[![Go Report Card](https://goreportcard.com/badge/github.com/drycc/service-catalog)](https://goreportcard.com/report/github.com/drycc/service-catalog)
+[![codecov](https://codecov.io/gh/drycc/service-catalog/branch/main/graph/badge.svg)](https://codecov.io/gh/drycc/service-catalog)
 
 <p align="center">
     <a href="https://svc-cat.io">
