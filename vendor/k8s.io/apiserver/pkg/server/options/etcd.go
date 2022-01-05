@@ -35,6 +35,8 @@ import (
 	serverstorage "k8s.io/apiserver/pkg/server/storage"
 	"k8s.io/apiserver/pkg/storage/storagebackend"
 	storagefactory "k8s.io/apiserver/pkg/storage/storagebackend/factory"
+	"k8s.io/apiserver/pkg/storage/value"
+	"k8s.io/klog/v2"
 )
 
 type EtcdOptions struct {
@@ -116,7 +118,8 @@ func (s *EtcdOptions) AddFlags(fs *pflag.FlagSet) {
 
 	fs.StringSliceVar(&s.EtcdServersOverrides, "etcd-servers-overrides", s.EtcdServersOverrides, ""+
 		"Per-resource etcd servers overrides, comma separated. The individual override "+
-		"format: group/resource#servers, where servers are URLs, semicolon separated.")
+		"format: group/resource#servers, where servers are URLs, semicolon separated. "+
+		"Note that this applies only to resources compiled into this server binary. ")
 
 	fs.StringVar(&s.DefaultStorageMediaType, "storage-media-type", s.DefaultStorageMediaType, ""+
 		"The media type to use to store objects in storage. "+
@@ -176,6 +179,15 @@ func (s *EtcdOptions) AddFlags(fs *pflag.FlagSet) {
 
 	fs.DurationVar(&s.StorageConfig.CountMetricPollPeriod, "etcd-count-metric-poll-period", s.StorageConfig.CountMetricPollPeriod, ""+
 		"Frequency of polling etcd for number of resources per type. 0 disables the metric collection.")
+
+	fs.DurationVar(&s.StorageConfig.DBMetricPollInterval, "etcd-db-metric-poll-interval", s.StorageConfig.DBMetricPollInterval,
+		"The interval of requests to poll etcd and update metric. 0 disables the metric collection")
+
+	fs.DurationVar(&s.StorageConfig.HealthcheckTimeout, "etcd-healthcheck-timeout", s.StorageConfig.HealthcheckTimeout,
+		"The timeout to use when checking etcd health.")
+
+	fs.Int64Var(&s.StorageConfig.LeaseManagerConfig.ReuseDurationSeconds, "lease-reuse-duration-seconds", s.StorageConfig.LeaseManagerConfig.ReuseDurationSeconds,
+		"The time in seconds that each lease is reused. A lower value could avoid large number of objects reusing the same lease. Notice that a too small value may cause performance problems at storage layer.")
 }
 
 func (s *EtcdOptions) ApplyTo(c *server.Config) error {
@@ -185,7 +197,22 @@ func (s *EtcdOptions) ApplyTo(c *server.Config) error {
 	if err := s.addEtcdHealthEndpoint(c); err != nil {
 		return err
 	}
-	c.RESTOptionsGetter = &SimpleRestOptionsFactory{Options: *s}
+	transformerOverrides := make(map[schema.GroupResource]value.Transformer)
+	if len(s.EncryptionProviderConfigFilepath) > 0 {
+		var err error
+		transformerOverrides, err = encryptionconfig.GetTransformerOverrides(s.EncryptionProviderConfigFilepath)
+		if err != nil {
+			return err
+		}
+	}
+
+	// use the StorageObjectCountTracker interface instance from server.Config
+	s.StorageConfig.StorageObjectCountTracker = c.StorageObjectCountTracker
+
+	c.RESTOptionsGetter = &SimpleRestOptionsFactory{
+		Options:              *s,
+		TransformerOverrides: transformerOverrides,
+	}
 	return nil
 }
 
@@ -193,6 +220,10 @@ func (s *EtcdOptions) ApplyWithStorageFactoryTo(factory serverstorage.StorageFac
 	if err := s.addEtcdHealthEndpoint(c); err != nil {
 		return err
 	}
+
+	// use the StorageObjectCountTracker interface instance from server.Config
+	s.StorageConfig.StorageObjectCountTracker = c.StorageObjectCountTracker
+
 	c.RESTOptionsGetter = &StorageFactoryRestOptionsFactory{Options: *s, StorageFactory: factory}
 	return nil
 }
@@ -218,29 +249,39 @@ func (s *EtcdOptions) addEtcdHealthEndpoint(c *server.Config) error {
 }
 
 type SimpleRestOptionsFactory struct {
-	Options EtcdOptions
+	Options              EtcdOptions
+	TransformerOverrides map[schema.GroupResource]value.Transformer
 }
 
 func (f *SimpleRestOptionsFactory) GetRESTOptions(resource schema.GroupResource) (generic.RESTOptions, error) {
 	ret := generic.RESTOptions{
-		StorageConfig:           &f.Options.StorageConfig,
-		Decorator:               generic.UndecoratedStorage,
-		EnableGarbageCollection: f.Options.EnableGarbageCollection,
-		DeleteCollectionWorkers: f.Options.DeleteCollectionWorkers,
-		ResourcePrefix:          resource.Group + "/" + resource.Resource,
-		CountMetricPollPeriod:   f.Options.StorageConfig.CountMetricPollPeriod,
+		StorageConfig:             f.Options.StorageConfig.ForResource(resource),
+		Decorator:                 generic.UndecoratedStorage,
+		EnableGarbageCollection:   f.Options.EnableGarbageCollection,
+		DeleteCollectionWorkers:   f.Options.DeleteCollectionWorkers,
+		ResourcePrefix:            resource.Group + "/" + resource.Resource,
+		CountMetricPollPeriod:     f.Options.StorageConfig.CountMetricPollPeriod,
+		StorageObjectCountTracker: f.Options.StorageConfig.StorageObjectCountTracker,
+	}
+	if f.TransformerOverrides != nil {
+		if transformer, ok := f.TransformerOverrides[resource]; ok {
+			ret.StorageConfig.Transformer = transformer
+		}
 	}
 	if f.Options.EnableWatchCache {
 		sizes, err := ParseWatchCacheSizes(f.Options.WatchCacheSizes)
 		if err != nil {
 			return generic.RESTOptions{}, err
 		}
-		cacheSize, ok := sizes[resource]
-		if !ok {
-			cacheSize = f.Options.DefaultWatchCacheSize
+		size, ok := sizes[resource]
+		if ok && size > 0 {
+			klog.Warningf("Dropping watch-cache-size for %v - watchCache size is now dynamic", resource)
 		}
-		// depending on cache size this might return an undecorated storage
-		ret.Decorator = genericregistry.StorageWithCacher(cacheSize)
+		if ok && size <= 0 {
+			ret.Decorator = generic.UndecoratedStorage
+		} else {
+			ret.Decorator = genericregistry.StorageWithCacher()
+		}
 	}
 	return ret, nil
 }
@@ -257,24 +298,28 @@ func (f *StorageFactoryRestOptionsFactory) GetRESTOptions(resource schema.GroupR
 	}
 
 	ret := generic.RESTOptions{
-		StorageConfig:           storageConfig,
-		Decorator:               generic.UndecoratedStorage,
-		DeleteCollectionWorkers: f.Options.DeleteCollectionWorkers,
-		EnableGarbageCollection: f.Options.EnableGarbageCollection,
-		ResourcePrefix:          f.StorageFactory.ResourcePrefix(resource),
-		CountMetricPollPeriod:   f.Options.StorageConfig.CountMetricPollPeriod,
+		StorageConfig:             storageConfig,
+		Decorator:                 generic.UndecoratedStorage,
+		DeleteCollectionWorkers:   f.Options.DeleteCollectionWorkers,
+		EnableGarbageCollection:   f.Options.EnableGarbageCollection,
+		ResourcePrefix:            f.StorageFactory.ResourcePrefix(resource),
+		CountMetricPollPeriod:     f.Options.StorageConfig.CountMetricPollPeriod,
+		StorageObjectCountTracker: f.Options.StorageConfig.StorageObjectCountTracker,
 	}
 	if f.Options.EnableWatchCache {
 		sizes, err := ParseWatchCacheSizes(f.Options.WatchCacheSizes)
 		if err != nil {
 			return generic.RESTOptions{}, err
 		}
-		cacheSize, ok := sizes[resource]
-		if !ok {
-			cacheSize = f.Options.DefaultWatchCacheSize
+		size, ok := sizes[resource]
+		if ok && size > 0 {
+			klog.Warningf("Dropping watch-cache-size for %v - watchCache size is now dynamic", resource)
 		}
-		// depending on cache size this might return an undecorated storage
-		ret.Decorator = genericregistry.StorageWithCacher(cacheSize)
+		if ok && size <= 0 {
+			ret.Decorator = generic.UndecoratedStorage
+		} else {
+			ret.Decorator = genericregistry.StorageWithCacher()
+		}
 	}
 
 	return ret, nil

@@ -22,8 +22,6 @@ import (
 	"net/http"
 	"testing"
 
-	osb "github.com/kubernetes-sigs/go-open-service-broker-client/v2"
-	fakeosb "github.com/kubernetes-sigs/go-open-service-broker-client/v2/fake"
 	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	v1beta1informers "github.com/kubernetes-sigs/service-catalog/pkg/client/informers_generated/externalversions/servicecatalog/v1beta1"
 	scfeatures "github.com/kubernetes-sigs/service-catalog/pkg/features"
@@ -33,6 +31,8 @@ import (
 	utilfeature "k8s.io/apiserver/pkg/util/feature"
 	clientgofake "k8s.io/client-go/kubernetes/fake"
 	clientgotesting "k8s.io/client-go/testing"
+	osb "sigs.k8s.io/go-open-service-broker-client/v2"
+	fakeosb "sigs.k8s.io/go-open-service-broker-client/v2/fake"
 )
 
 // TestReconcileBindingWithParametersNamespacedRefs tests reconcileBinding to ensure a

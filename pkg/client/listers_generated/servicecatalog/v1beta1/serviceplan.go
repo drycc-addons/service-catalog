@@ -1,5 +1,5 @@
 /*
-Copyright 2021 The Kubernetes Authors.
+Copyright 2022 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -26,8 +26,10 @@ import (
 )
 
 // ServicePlanLister helps list ServicePlans.
+// All objects returned here must be treated as read-only.
 type ServicePlanLister interface {
 	// List lists all ServicePlans in the indexer.
+	// Objects returned here must be treated as read-only.
 	List(selector labels.Selector) (ret []*v1beta1.ServicePlan, err error)
 	// ServicePlans returns an object that can list and get ServicePlans.
 	ServicePlans(namespace string) ServicePlanNamespaceLister
@@ -58,10 +60,13 @@ func (s *servicePlanLister) ServicePlans(namespace string) ServicePlanNamespaceL
 }
 
 // ServicePlanNamespaceLister helps list and get ServicePlans.
+// All objects returned here must be treated as read-only.
 type ServicePlanNamespaceLister interface {
 	// List lists all ServicePlans in the indexer for a given namespace.
+	// Objects returned here must be treated as read-only.
 	List(selector labels.Selector) (ret []*v1beta1.ServicePlan, err error)
 	// Get retrieves the ServicePlan from the indexer for a given namespace and name.
+	// Objects returned here must be treated as read-only.
 	Get(name string) (*v1beta1.ServicePlan, error)
 	ServicePlanNamespaceListerExpansion
 }

@@ -14,5 +14,5 @@ Default Provision Parameters:
 
 Instances:
       NAME       NAMESPACE   STATUS  
-+--------------+-----------+--------+
+---------------+-----------+---------
   ups-instance   test-ns     Ready   

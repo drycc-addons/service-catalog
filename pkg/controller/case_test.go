@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 /*
@@ -30,8 +31,6 @@ import (
 
 	"sync"
 
-	osb "github.com/kubernetes-sigs/go-open-service-broker-client/v2"
-	fakeosb "github.com/kubernetes-sigs/go-open-service-broker-client/v2/fake"
 	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	fakesc "github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset/fake"
 	scinterface "github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset/typed/servicecatalog/v1beta1"
@@ -50,6 +49,8 @@ import (
 	utilfeature "k8s.io/apiserver/pkg/util/feature"
 	fakek8s "k8s.io/client-go/kubernetes/fake"
 	"k8s.io/client-go/tools/record"
+	osb "sigs.k8s.io/go-open-service-broker-client/v2"
+	fakeosb "sigs.k8s.io/go-open-service-broker-client/v2/fake"
 )
 
 const (
@@ -854,9 +855,7 @@ func (ct *controllerTest) waitForInstanceCondition(condition v1beta1.ServiceInst
 
 		for _, cond := range instance.Status.Conditions {
 			if condition.Type == cond.Type && condition.Status == cond.Status {
-				if condition.Reason == "" || condition.Reason == cond.Reason {
-					return true, nil
-				}
+				return true, nil
 			}
 		}
 		return false, nil

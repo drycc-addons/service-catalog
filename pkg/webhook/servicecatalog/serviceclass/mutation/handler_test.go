@@ -27,7 +27,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gomodules.xyz/jsonpatch/v2"
-	admissionv1beta1 "k8s.io/api/admission/v1beta1"
+	admissionv1 "k8s.io/api/admission/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/kubernetes/scheme"
@@ -74,8 +74,8 @@ func TestCreateUpdateHandlerHandleCreateSuccess(t *testing.T) {
 			require.NoError(t, err)
 
 			fixReq := admission.Request{
-				AdmissionRequest: admissionv1beta1.AdmissionRequest{
-					Operation: admissionv1beta1.Create,
+				AdmissionRequest: admissionv1.AdmissionRequest{
+					Operation: admissionv1.Create,
 					Name:      "test-service-class",
 					Namespace: "system",
 					Kind: metav1.GroupVersionKind{
@@ -95,7 +95,7 @@ func TestCreateUpdateHandlerHandleCreateSuccess(t *testing.T) {
 			// then
 			assert.True(t, resp.Allowed)
 			require.NotNil(t, resp.PatchType)
-			assert.Equal(t, admissionv1beta1.PatchTypeJSONPatch, *resp.PatchType)
+			assert.Equal(t, admissionv1.PatchTypeJSONPatch, *resp.PatchType)
 
 			for _, expPatch := range tc.expPatches {
 				assert.Contains(t, resp.Patches, expPatch)
@@ -174,8 +174,8 @@ func TestCreateUpdateHandlerHandleUpdateSuccess(t *testing.T) {
 			require.NoError(t, err)
 
 			fixReq := admission.Request{
-				AdmissionRequest: admissionv1beta1.AdmissionRequest{
-					Operation: admissionv1beta1.Update,
+				AdmissionRequest: admissionv1.AdmissionRequest{
+					Operation: admissionv1.Update,
 					Name:      "test-class",
 					Namespace: "system",
 					Kind: metav1.GroupVersionKind{
@@ -197,7 +197,7 @@ func TestCreateUpdateHandlerHandleUpdateSuccess(t *testing.T) {
 			// then
 			assert.True(t, resp.Allowed)
 			require.NotNil(t, resp.PatchType)
-			assert.Equal(t, admissionv1beta1.PatchTypeJSONPatch, *resp.PatchType)
+			assert.Equal(t, admissionv1.PatchTypeJSONPatch, *resp.PatchType)
 
 			// filtering out status cause k8s api-server will discard this too
 			patches := tester.FilterOutStatusPatch(resp.Patches)

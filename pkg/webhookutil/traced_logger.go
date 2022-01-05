@@ -18,8 +18,9 @@ package webhookutil
 
 import (
 	"fmt"
+
 	"k8s.io/apimachinery/pkg/types"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 // TracedLogger is a helper wrapper around the klog to ensure that

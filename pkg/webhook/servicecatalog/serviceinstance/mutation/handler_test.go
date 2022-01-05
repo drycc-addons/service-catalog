@@ -28,7 +28,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gomodules.xyz/jsonpatch/v2"
-	admissionv1beta1 "k8s.io/api/admission/v1beta1"
+	admissionv1 "k8s.io/api/admission/v1"
 	authenticationv1 "k8s.io/api/authentication/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -113,8 +113,8 @@ func TestCreateUpdateHandlerHandleCreateSuccess(t *testing.T) {
 			defer utilfeature.DefaultMutableFeatureGate.Set(fmt.Sprintf("%v=true", scfeatures.OriginatingIdentity))
 
 			fixReq := admission.Request{
-				AdmissionRequest: admissionv1beta1.AdmissionRequest{
-					Operation: admissionv1beta1.Create,
+				AdmissionRequest: admissionv1.AdmissionRequest{
+					Operation: admissionv1.Create,
 					Name:      "test-instance",
 					Namespace: "system",
 					Kind: metav1.GroupVersionKind{
@@ -137,7 +137,7 @@ func TestCreateUpdateHandlerHandleCreateSuccess(t *testing.T) {
 			// then
 			assert.True(t, resp.Allowed)
 			require.NotNil(t, resp.PatchType)
-			assert.Equal(t, admissionv1beta1.PatchTypeJSONPatch, *resp.PatchType)
+			assert.Equal(t, admissionv1.PatchTypeJSONPatch, *resp.PatchType)
 
 			// filtering out status cause k8s api-server will discard this too
 			patches := tester.FilterOutStatusPatch(resp.Patches)
@@ -212,8 +212,8 @@ func TestCreateUpdateHandlerHandleUpdateSuccess(t *testing.T) {
 			defer utilfeature.DefaultMutableFeatureGate.Set(fmt.Sprintf("%v=true", scfeatures.OriginatingIdentity))
 
 			fixReq := admission.Request{
-				AdmissionRequest: admissionv1beta1.AdmissionRequest{
-					Operation: admissionv1beta1.Update,
+				AdmissionRequest: admissionv1.AdmissionRequest{
+					Operation: admissionv1.Update,
 					Name:      "test-instance",
 					Namespace: "system",
 					Kind: metav1.GroupVersionKind{
@@ -237,7 +237,7 @@ func TestCreateUpdateHandlerHandleUpdateSuccess(t *testing.T) {
 			// then
 			assert.True(t, resp.Allowed)
 			require.NotNil(t, resp.PatchType)
-			assert.Equal(t, admissionv1beta1.PatchTypeJSONPatch, *resp.PatchType)
+			assert.Equal(t, admissionv1.PatchTypeJSONPatch, *resp.PatchType)
 
 			// filtering out status cause k8s api-server will discard this too
 			patches := tester.FilterOutStatusPatch(resp.Patches)
@@ -268,8 +268,8 @@ func TestCreateUpdateHandlerHandleSetUserInfoIfOriginatingIdentityIsEnabled(t *t
 	}
 
 	fixReq := admission.Request{
-		AdmissionRequest: admissionv1beta1.AdmissionRequest{
-			Operation: admissionv1beta1.Create,
+		AdmissionRequest: admissionv1.AdmissionRequest{
+			Operation: admissionv1.Create,
 			Name:      "test-instance",
 			Namespace: "system",
 			Kind: metav1.GroupVersionKind{
@@ -324,7 +324,7 @@ func TestCreateUpdateHandlerHandleSetUserInfoIfOriginatingIdentityIsEnabled(t *t
 	// then
 	assert.True(t, resp.Allowed)
 	require.NotNil(t, resp.PatchType)
-	assert.Equal(t, admissionv1beta1.PatchTypeJSONPatch, *resp.PatchType)
+	assert.Equal(t, admissionv1.PatchTypeJSONPatch, *resp.PatchType)
 
 	// filtering out status cause k8s api-server will discard this too
 	patches := tester.FilterOutStatusPatch(resp.Patches)

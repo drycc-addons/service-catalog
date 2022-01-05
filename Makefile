@@ -57,7 +57,7 @@ STAT           = stat -c '%Y %n'
 endif
 
 TYPES_FILES    = $(shell find pkg/apis -name types.go)
-GO_VERSION    ?= 1.13
+GO_VERSION    ?= 1.17
 
 # Preserve also user values
 ifeq ($(GOFLAGS),)

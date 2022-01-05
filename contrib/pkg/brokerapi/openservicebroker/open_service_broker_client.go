@@ -29,7 +29,7 @@ import (
 
 	"github.com/kubernetes-sigs/service-catalog/contrib/pkg/brokerapi"
 	"github.com/kubernetes-sigs/service-catalog/pkg/util"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 
 	"github.com/kubernetes-sigs/service-catalog/contrib/pkg/brokerapi/openservicebroker/constants"
 )

@@ -24,8 +24,8 @@ import (
 	"testing"
 	"time"
 
-	osb "github.com/kubernetes-sigs/go-open-service-broker-client/v2"
-	fakeosb "github.com/kubernetes-sigs/go-open-service-broker-client/v2/fake"
+	osb "sigs.k8s.io/go-open-service-broker-client/v2"
+	fakeosb "sigs.k8s.io/go-open-service-broker-client/v2/fake"
 	"sigs.k8s.io/yaml"
 
 	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"

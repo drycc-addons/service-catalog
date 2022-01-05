@@ -17,6 +17,7 @@ limitations under the License.
 package e2e
 
 import (
+	"strings"
 	"testing"
 
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
@@ -27,7 +28,7 @@ import (
 	"github.com/onsi/ginkgo"
 	"github.com/onsi/ginkgo/config"
 	"github.com/onsi/gomega"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 // RunE2ETests checks configuration parameters (specified through flags) and then runs
@@ -37,11 +38,15 @@ func RunE2ETests(t *testing.T) {
 	defer logs.FlushLogs()
 
 	gomega.RegisterFailHandler(ginkgo.Fail)
+
 	// Disable skipped tests unless they are explicitly requested.
-	if config.GinkgoConfig.FocusString == "" && config.GinkgoConfig.SkipString == "" {
-		config.GinkgoConfig.SkipString = `\[Flaky\]|\[Feature:.+\]`
+	focusString := strings.Join(config.GinkgoConfig.FocusStrings, "|")
+	skipString := strings.Join(config.GinkgoConfig.SkipStrings, "|")
+	if focusString == "" && skipString == "" {
+		config.GinkgoConfig.SkipStrings = []string{`\[Flaky\]`, `\[Feature:.+\]`}
 	}
 
 	klog.Infof("Starting e2e run %q on Ginkgo node %d", framework.RunId, config.GinkgoConfig.ParallelNode)
 	ginkgo.RunSpecs(t, "Service Catalog e2e suite")
 }
+

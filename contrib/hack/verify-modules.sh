@@ -63,7 +63,7 @@ fi
 
 unused=$(comm -23 \
   <(go mod edit -json | jq -r '.Replace[] | select(.New.Version != null) | .Old.Path' | sort) \
-  <(go list -m -json all | jq -r .Path | sort))
+  <(go list -mod=mod -m -json all | jq -r .Path | sort))
 if [[ -n "${unused}" ]]; then
   echo ""
   echo "Use the given commands to remove pinned module versions that aren't actually used:"

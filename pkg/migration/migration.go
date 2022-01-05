@@ -29,17 +29,17 @@ import (
 	"github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset/typed/servicecatalog/v1beta1"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
-	"k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	apiErrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/wait"
 	k8sClientSet "k8s.io/client-go/kubernetes"
-	admissionregistrationv1beta1 "k8s.io/client-go/kubernetes/typed/admissionregistration/v1beta1"
+	admissionregistrationv1 "k8s.io/client-go/kubernetes/typed/admissionregistration/v1"
 	appsv1 "k8s.io/client-go/kubernetes/typed/apps/v1"
 	corev1 "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/client-go/util/retry"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 	"sigs.k8s.io/yaml"
 )
 
@@ -51,7 +51,7 @@ type Service struct {
 	webhookServiceName string
 	webhookServicePort string
 
-	admInterface  admissionregistrationv1beta1.AdmissionregistrationV1beta1Interface
+	admInterface  admissionregistrationv1.AdmissionregistrationV1Interface
 	appInterface  appsv1.AppsV1Interface
 	coreInterface corev1.CoreV1Interface
 	scInterface   v1beta1.ServicecatalogV1beta1Interface
@@ -69,7 +69,7 @@ func NewMigrationService(scInterface v1beta1.ServicecatalogV1beta1Interface, sto
 		webhookServiceName: webhookServiceName,
 		webhookServicePort: webhookServerPort,
 
-		admInterface:  k8sclient.AdmissionregistrationV1beta1(),
+		admInterface:  k8sclient.AdmissionregistrationV1(),
 		appInterface:  k8sclient.AppsV1(),
 		coreInterface: k8sclient.CoreV1(),
 		scInterface:   scInterface,

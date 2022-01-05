@@ -90,11 +90,18 @@ Optional values
 ```go
 var conf struct {
     Name string `envconfig:"optional"`
-    Age int     `envconfig:"-"`
 }
 ```
 
-The two syntax are equivalent.
+Skipping fields
+---------------
+
+*envconfig* supports skipping struct fields:
+```go
+var conf struct {
+    Internal string `envconfig:"-"`
+}
+```
 
 Combining multiple options in one tag
 -------------------------------------
@@ -144,8 +151,34 @@ This will check for the key __SHARDS__. Example variable content: `{foobar,9000}
 
 This will result in two struct defined in the *Shards* slice.
 
-Future work
------------
+If you want to set default value for slice or array, you have to use `;` as separator, instead of `,`:
 
-  * support for time.Time values with a layout defined via a field tag
-  * support for complex types
+```go
+var conf struct {
+    Ports []int `envconfig:"default=9000;100"`
+}
+```
+
+Same for slices of structs:
+
+```go
+var conf struct {
+    Shards []struct {
+        Name string
+        Port int
+    } `envconfig:"default={foobar;localhost:2929};{barbaz;localhost:2828}"`
+}
+```
+
+Development state
+-----------------
+
+I consider _envconfig_ to be pretty much done.
+
+It has been used extensively at [Batch](https://batch.com) for more than 5 years now without much problems,
+with no need for new features either.
+
+So, while I will keep maintaining this library (fixing bugs, making it compatible with new versions of Go and so on) for
+the foreseeable future, I don't plan on adding new features.
+
+But I'm open to discussion so if you have a need for a particular feature we can discuss it.

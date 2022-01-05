@@ -8,6 +8,6 @@
 
 Plans:
    NAME           DESCRIPTION        
-+---------+-------------------------+
+----------+--------------------------
   default   Sample plan description  
   premium   Premium plan             

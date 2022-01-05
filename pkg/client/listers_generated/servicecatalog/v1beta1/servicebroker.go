@@ -1,5 +1,5 @@
 /*
-Copyright 2021 The Kubernetes Authors.
+Copyright 2022 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -26,8 +26,10 @@ import (
 )
 
 // ServiceBrokerLister helps list ServiceBrokers.
+// All objects returned here must be treated as read-only.
 type ServiceBrokerLister interface {
 	// List lists all ServiceBrokers in the indexer.
+	// Objects returned here must be treated as read-only.
 	List(selector labels.Selector) (ret []*v1beta1.ServiceBroker, err error)
 	// ServiceBrokers returns an object that can list and get ServiceBrokers.
 	ServiceBrokers(namespace string) ServiceBrokerNamespaceLister
@@ -58,10 +60,13 @@ func (s *serviceBrokerLister) ServiceBrokers(namespace string) ServiceBrokerName
 }
 
 // ServiceBrokerNamespaceLister helps list and get ServiceBrokers.
+// All objects returned here must be treated as read-only.
 type ServiceBrokerNamespaceLister interface {
 	// List lists all ServiceBrokers in the indexer for a given namespace.
+	// Objects returned here must be treated as read-only.
 	List(selector labels.Selector) (ret []*v1beta1.ServiceBroker, err error)
 	// Get retrieves the ServiceBroker from the indexer for a given namespace and name.
+	// Objects returned here must be treated as read-only.
 	Get(name string) (*v1beta1.ServiceBroker, error)
 	ServiceBrokerNamespaceListerExpansion
 }

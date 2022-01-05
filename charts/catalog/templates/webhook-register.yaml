@@ -10,7 +10,7 @@ metadata:
 webhooks:
 - name: mutating.clusterservicebrokers.servicecatalog.k8s.io
   sideEffects: None
-  admissionReviewVersions: ["v1beta1"]
+  admissionReviewVersions: ["v1", "v1beta1"]
   clientConfig:
     caBundle: {{ b64enc $ca.Cert }}
     service:
@@ -25,7 +25,7 @@ webhooks:
     resources: ["clusterservicebrokers"]
 - name: mutating.clusterserviceclasses.servicecatalog.k8s.io
   sideEffects: None
-  admissionReviewVersions: ["v1beta1"]
+  admissionReviewVersions: ["v1", "v1beta1"]
   clientConfig:
     caBundle: {{ b64enc $ca.Cert }}
     service:
@@ -40,7 +40,7 @@ webhooks:
     resources: ["clusterserviceclasses"]
 - name: mutating.serviceclasses.servicecatalog.k8s.io
   sideEffects: None
-  admissionReviewVersions: ["v1beta1"]
+  admissionReviewVersions: ["v1", "v1beta1"]
   clientConfig:
     caBundle: {{ b64enc $ca.Cert }}
     service:
@@ -55,7 +55,7 @@ webhooks:
     resources: ["serviceclasses"]
 - name: mutating.clusterserviceplans.servicecatalog.k8s.io
   sideEffects: None
-  admissionReviewVersions: ["v1beta1"]
+  admissionReviewVersions: ["v1", "v1beta1"]
   clientConfig:
     caBundle: {{ b64enc $ca.Cert }}
     service:
@@ -70,7 +70,7 @@ webhooks:
     resources: ["clusterserviceplans"]
 - name: mutating.serviceplans.servicecatalog.k8s.io
   sideEffects: None
-  admissionReviewVersions: ["v1beta1"]
+  admissionReviewVersions: ["v1", "v1beta1"]
   clientConfig:
     caBundle: {{ b64enc $ca.Cert }}
     service:
@@ -85,7 +85,7 @@ webhooks:
     resources: ["serviceplans"]
 - name: mutating.servicebindings.servicecatalog.k8s.io
   sideEffects: None
-  admissionReviewVersions: ["v1beta1"]
+  admissionReviewVersions: ["v1", "v1beta1"]
   clientConfig:
     caBundle: {{ b64enc $ca.Cert }}
     service:
@@ -100,7 +100,7 @@ webhooks:
     resources: ["servicebindings"]
 - name: mutating.servicebrokers.servicecatalog.k8s.io
   sideEffects: None
-  admissionReviewVersions: ["v1beta1"]
+  admissionReviewVersions: ["v1", "v1beta1"]
   clientConfig:
     caBundle: {{ b64enc $ca.Cert }}
     service:
@@ -115,7 +115,7 @@ webhooks:
     resources: ["servicebrokers"]
 - name: mutating.serviceinstances.servicecatalog.k8s.io
   sideEffects: None
-  admissionReviewVersions: ["v1beta1"]
+  admissionReviewVersions: ["v1", "v1beta1"]
   clientConfig:
     caBundle: {{ b64enc $ca.Cert }}
     service:
@@ -136,7 +136,7 @@ metadata:
 webhooks:
 - name: validating.status.servicebindings.servicecatalog.k8s.io
   sideEffects: None
-  admissionReviewVersions: ["v1beta1"]
+  admissionReviewVersions: ["v1", "v1beta1"]
   clientConfig:
     caBundle: {{ b64enc $ca.Cert }}
     service:
@@ -151,7 +151,7 @@ webhooks:
     resources: ["servicebindings/status"]
 - name: validating.status.servicbrokers.servicecatalog.k8s.io
   sideEffects: None
-  admissionReviewVersions: ["v1beta1"]
+  admissionReviewVersions: ["v1", "v1beta1"]
   clientConfig:
     caBundle: {{ b64enc $ca.Cert }}
     service:
@@ -166,7 +166,7 @@ webhooks:
     resources: ["servicebrokers/status"]
 - name: validating.status.clusterservicbrokers.servicecatalog.k8s.io
   sideEffects: None
-  admissionReviewVersions: ["v1beta1"]
+  admissionReviewVersions: ["v1", "v1beta1"]
   clientConfig:
     caBundle: {{ b64enc $ca.Cert }}
     service:
@@ -181,7 +181,7 @@ webhooks:
     resources: ["clusterservicebrokers/status"]
 - name: validating.serviceinstances.servicecatalog.k8s.io
   sideEffects: None
-  admissionReviewVersions: ["v1beta1"]
+  admissionReviewVersions: ["v1", "v1beta1"]
   clientConfig:
     caBundle: {{ b64enc $ca.Cert }}
     service:
@@ -196,7 +196,7 @@ webhooks:
     resources: ["serviceinstances"]
 - name: validating.clusterservicebrokers.servicecatalog.k8s.io
   sideEffects: None
-  admissionReviewVersions: ["v1beta1"]
+  admissionReviewVersions: ["v1", "v1beta1"]
   clientConfig:
     caBundle: {{ b64enc $ca.Cert }}
     service:
@@ -211,7 +211,7 @@ webhooks:
       resources: ["clusterservicebrokers"]
 - name: validating.servicebindings.servicecatalog.k8s.io
   sideEffects: None
-  admissionReviewVersions: ["v1beta1"]
+  admissionReviewVersions: ["v1", "v1beta1"]
   clientConfig:
     caBundle: {{ b64enc $ca.Cert }}
     service:
@@ -226,7 +226,7 @@ webhooks:
     resources: ["servicebindings"]
 - name: validating.servicebrokers.servicecatalog.k8s.io
   sideEffects: None
-  admissionReviewVersions: ["v1beta1"]
+  admissionReviewVersions: ["v1", "v1beta1"]
   clientConfig:
     caBundle: {{ b64enc $ca.Cert }}
     service:
@@ -241,7 +241,7 @@ webhooks:
       resources: ["servicebrokers"]
 - name: validating.serviceclasses.servicecatalog.k8s.io
   sideEffects: None
-  admissionReviewVersions: ["v1beta1"]
+  admissionReviewVersions: ["v1", "v1beta1"]
   clientConfig:
     caBundle: {{ b64enc $ca.Cert }}
     service:
@@ -256,7 +256,7 @@ webhooks:
       resources: ["serviceclasses"]
 - name: validating.clusterserviceclasses.servicecatalog.k8s.io
   sideEffects: None
-  admissionReviewVersions: ["v1beta1"]
+  admissionReviewVersions: ["v1", "v1beta1"]
   clientConfig:
     caBundle: {{ b64enc $ca.Cert }}
     service:
@@ -271,7 +271,7 @@ webhooks:
       resources: ["clusterserviceclasses"]
 - name: validating.serviceplans.servicecatalog.k8s.io
   sideEffects: None
-  admissionReviewVersions: ["v1beta1"]
+  admissionReviewVersions: ["v1", "v1beta1"]
   clientConfig:
     caBundle: {{ b64enc $ca.Cert }}
     service:
@@ -286,7 +286,7 @@ webhooks:
       resources: ["serviceplans"]
 - name: validating.clusterserviceplans.servicecatalog.k8s.io
   sideEffects: None
-  admissionReviewVersions: ["v1beta1"]
+  admissionReviewVersions: ["v1", "v1beta1"]
   clientConfig:
     caBundle: {{ b64enc $ca.Cert }}
     service:

@@ -23,7 +23,7 @@ import (
 	"strconv"
 
 	"k8s.io/apiserver/pkg/server/healthz"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 // ServeHTTP starts a new Http Server thread for /metrics and health probing

@@ -1,5 +1,5 @@
 /*
-Copyright 2021 The Kubernetes Authors.
+Copyright 2022 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -117,7 +117,7 @@ func (c *FakeServiceBrokers) UpdateStatus(ctx context.Context, serviceBroker *v1
 // Delete takes name of the serviceBroker and deletes it. Returns an error if one occurs.
 func (c *FakeServiceBrokers) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
 	_, err := c.Fake.
-		Invokes(testing.NewDeleteAction(servicebrokersResource, c.ns, name), &v1beta1.ServiceBroker{})
+		Invokes(testing.NewDeleteActionWithOptions(servicebrokersResource, c.ns, name, opts), &v1beta1.ServiceBroker{})
 
 	return err
 }

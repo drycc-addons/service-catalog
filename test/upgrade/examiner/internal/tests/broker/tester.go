@@ -18,13 +18,14 @@ package broker
 
 import (
 	"context"
+
 	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	scClientset "github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset/typed/servicecatalog/v1beta1"
 	"github.com/pkg/errors"
 	apiErr "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 type tester struct {
@@ -143,7 +144,7 @@ func (t *tester) unregisterServiceBroker() error {
 }
 
 func (t *tester) serviceBindingExist() (bool, error) {
-	_, err := t.sc.ServiceBindings(t.namespace).Get(context.Background(),serviceBindingName, metav1.GetOptions{})
+	_, err := t.sc.ServiceBindings(t.namespace).Get(context.Background(), serviceBindingName, metav1.GetOptions{})
 	if apiErr.IsNotFound(err) {
 		return false, nil
 	}
@@ -154,7 +155,7 @@ func (t *tester) serviceBindingExist() (bool, error) {
 }
 
 func (t *tester) deleteServiceBinding() error {
-	err := t.sc.ServiceBindings(t.namespace).Delete(context.Background(),serviceBindingName, metav1.DeleteOptions{})
+	err := t.sc.ServiceBindings(t.namespace).Delete(context.Background(), serviceBindingName, metav1.DeleteOptions{})
 	if err != nil {
 		return err
 	}
@@ -163,7 +164,7 @@ func (t *tester) deleteServiceBinding() error {
 
 func (t *tester) assertServiceBindingIsRemoved() error {
 	return wait.Poll(waitInterval, timeoutInterval, func() (done bool, err error) {
-		_, err = t.sc.ServiceBindings(t.namespace).Get(context.Background(),serviceBindingName, metav1.GetOptions{})
+		_, err = t.sc.ServiceBindings(t.namespace).Get(context.Background(), serviceBindingName, metav1.GetOptions{})
 		if apiErr.IsNotFound(err) {
 			klog.Infof("ServiceBinding %q not exist", serviceBindingName)
 			return true, nil
@@ -177,7 +178,7 @@ func (t *tester) assertServiceBindingIsRemoved() error {
 }
 
 func (t *tester) serviceInstanceExist() (bool, error) {
-	_, err := t.sc.ServiceInstances(t.namespace).Get(context.Background(),serviceInstanceName, metav1.GetOptions{})
+	_, err := t.sc.ServiceInstances(t.namespace).Get(context.Background(), serviceInstanceName, metav1.GetOptions{})
 	if apiErr.IsNotFound(err) {
 		return false, nil
 	}
@@ -188,7 +189,7 @@ func (t *tester) serviceInstanceExist() (bool, error) {
 }
 
 func (t *tester) removeServiceInstanceFinalizer() error {
-	instance, err := t.sc.ServiceInstances(t.namespace).Get(context.Background(),serviceInstanceName, metav1.GetOptions{})
+	instance, err := t.sc.ServiceInstances(t.namespace).Get(context.Background(), serviceInstanceName, metav1.GetOptions{})
 	if err != nil {
 		return err
 	}
@@ -196,7 +197,7 @@ func (t *tester) removeServiceInstanceFinalizer() error {
 	toUpdate := instance.DeepCopy()
 	toUpdate.Finalizers = nil
 
-	_, err = t.sc.ServiceInstances(toUpdate.Namespace).Update(context.Background(),toUpdate,metav1.UpdateOptions{})
+	_, err = t.sc.ServiceInstances(toUpdate.Namespace).Update(context.Background(), toUpdate, metav1.UpdateOptions{})
 	if err != nil {
 		return err
 	}
@@ -205,7 +206,7 @@ func (t *tester) removeServiceInstanceFinalizer() error {
 }
 
 func (t *tester) deleteServiceInstance() error {
-	err := t.sc.ServiceInstances(t.namespace).Delete(context.Background(),serviceInstanceName, metav1.DeleteOptions{})
+	err := t.sc.ServiceInstances(t.namespace).Delete(context.Background(), serviceInstanceName, metav1.DeleteOptions{})
 	if err != nil {
 		return err
 	}
@@ -214,7 +215,7 @@ func (t *tester) deleteServiceInstance() error {
 
 func (t *tester) assertServiceInstanceIsRemoved() error {
 	return wait.Poll(waitInterval, timeoutInterval, func() (done bool, err error) {
-		_, err = t.sc.ServiceInstances(t.namespace).Get(context.Background(),serviceInstanceName, metav1.GetOptions{})
+		_, err = t.sc.ServiceInstances(t.namespace).Get(context.Background(), serviceInstanceName, metav1.GetOptions{})
 		if apiErr.IsNotFound(err) {
 			return true, nil
 		}
@@ -227,7 +228,7 @@ func (t *tester) assertServiceInstanceIsRemoved() error {
 }
 
 func (t *tester) deleteServiceBroker() error {
-	err := t.sc.ServiceBrokers(t.namespace).Delete(context.Background(),serviceBrokerName, metav1.DeleteOptions{})
+	err := t.sc.ServiceBrokers(t.namespace).Delete(context.Background(), serviceBrokerName, metav1.DeleteOptions{})
 	if err != nil {
 		return err
 	}

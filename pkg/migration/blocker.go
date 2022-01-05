@@ -18,9 +18,10 @@ package migration
 
 import (
 	"context"
-	"k8s.io/api/admissionregistration/v1beta1"
+
+	v1 "k8s.io/api/admissionregistration/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 // DisableBlocker deletes blocking validation webhook
@@ -51,33 +52,33 @@ func (m *Service) EnableBlocker(baseName string) error {
 	return nil
 }
 
-func getValidationWebhookConfigurationObject(name string) *v1beta1.ValidatingWebhookConfiguration {
+func getValidationWebhookConfigurationObject(name string) *v1.ValidatingWebhookConfiguration {
 	path := "/this-endpoint-does-not-have-to-exist"
-	failurePolicy := v1beta1.Fail
+	failurePolicy := v1.Fail
 
-	return &v1beta1.ValidatingWebhookConfiguration{
+	return &v1.ValidatingWebhookConfiguration{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: name,
 		},
-		Webhooks: []v1beta1.ValidatingWebhook{
+		Webhooks: []v1.ValidatingWebhook{
 			{
 				Name:          "validating.reject-changes-to-service-catalog-crds.servicecatalog.k8s.io",
 				FailurePolicy: &failurePolicy,
-				ClientConfig: v1beta1.WebhookClientConfig{
-					Service: &v1beta1.ServiceReference{
+				ClientConfig: v1.WebhookClientConfig{
+					Service: &v1.ServiceReference{
 						Name:      name,
 						Namespace: "dummy",
 						Path:      &path,
 					},
 				},
-				Rules: []v1beta1.RuleWithOperations{
+				Rules: []v1.RuleWithOperations{
 					{
-						Operations: []v1beta1.OperationType{
-							v1beta1.Create,
-							v1beta1.Update,
-							v1beta1.Delete,
+						Operations: []v1.OperationType{
+							v1.Create,
+							v1.Update,
+							v1.Delete,
 						},
-						Rule: v1beta1.Rule{
+						Rule: v1.Rule{
 							APIGroups:   []string{"servicecatalog.k8s.io"},
 							APIVersions: []string{"v1beta1"},
 							Resources: []string{

@@ -29,7 +29,7 @@ import (
 	"github.com/kubernetes-sigs/service-catalog/contrib/pkg/broker/server"
 	"github.com/kubernetes-sigs/service-catalog/contrib/pkg/broker/user_provided/controller"
 	"github.com/kubernetes-sigs/service-catalog/pkg"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 var flags *flag.FlagSet

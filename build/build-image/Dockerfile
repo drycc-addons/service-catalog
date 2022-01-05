@@ -20,7 +20,7 @@ RUN curl -sSL https://github.com/coreos/etcd/releases/download/v3.2.24/etcd-v3.2
 
 # Install the golint, use this to check our source for niceness
 COPY vendor/golang.org /go/src/golang.org
-RUN go install golang.org/x/lint/golint
+RUN go install golang.org/x/lint/golint@latest
 
 RUN apt-get update && \
     apt-get install jq -y

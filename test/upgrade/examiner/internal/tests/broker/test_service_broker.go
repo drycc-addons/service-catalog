@@ -17,9 +17,10 @@ limitations under the License.
 package broker
 
 import (
-	sc "github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset"
-	"k8s.io/klog"
 	"time"
+
+	sc "github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset"
+	"k8s.io/klog/v2"
 )
 
 const (

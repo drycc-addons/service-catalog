@@ -21,15 +21,13 @@ var (
 	ErrNotAPointer = errors.New("envconfig: value is not a pointer")
 	// ErrInvalidValueKind is the error returned by the Init* functions when the configuration object is not a struct.
 	ErrInvalidValueKind = errors.New("envconfig: invalid value kind, only works on structs")
-	// ErrDefaultUnsupportedOnSlice is the error returned by the Init* functions when there is a default tag on a slice.
-	// The `default` tag is unsupported on slices because slice parsing uses , as the separator, as does the envconfig tags separator.
-	ErrDefaultUnsupportedOnSlice = errors.New("envconfig: default tag unsupported on slice")
 )
 
 type context struct {
 	name               string
 	customName         string
 	defaultVal         string
+	usingDefault       bool
 	parents            []reflect.Value
 	optional, leaveNil bool
 	allowUnexported    bool
@@ -150,9 +148,11 @@ func readStruct(value reflect.Value, ctx *context) (nonNil bool, err error) {
 
 	for i := 0; i < value.NumField(); i++ {
 		field := value.Field(i)
-		name := value.Type().Field(i).Name
+		fieldType := field.Type()
+		fieldInfo := value.Type().Field(i)
+		name := fieldInfo.Name
 
-		tag := parseTag(value.Type().Field(i).Tag.Get("envconfig"))
+		tag := parseTag(fieldInfo.Tag.Get("envconfig"))
 		if tag.skip || !field.CanSet() {
 			if !field.CanSet() && !ctx.allowUnexported {
 				return false, ErrUnexportedField
@@ -163,8 +163,8 @@ func readStruct(value reflect.Value, ctx *context) (nonNil bool, err error) {
 		parents = ctx.parents
 
 	doRead:
-		switch field.Kind() {
-		case reflect.Ptr:
+		switch {
+		case field.Kind() == reflect.Ptr && !isUnmarshaler(fieldType):
 			// it's a pointer, create a new value and restart the switch
 			if field.IsNil() {
 				field.Set(reflect.New(field.Type().Elem()))
@@ -172,7 +172,7 @@ func readStruct(value reflect.Value, ctx *context) (nonNil bool, err error) {
 			}
 			field = field.Elem()
 			goto doRead
-		case reflect.Struct:
+		case field.Kind() == reflect.Struct && !isUnmarshaler(fieldType):
 			var nonNilIn bool
 			nonNilIn, err = readStruct(field, &context{
 				name:            combineName(ctx.name, name),
@@ -241,12 +241,13 @@ func setField(value reflect.Value, ctx *context) (ok bool, err error) {
 }
 
 func setSliceField(value reflect.Value, str string, ctx *context) error {
-	if ctx.defaultVal != "" {
-		return ErrDefaultUnsupportedOnSlice
+	separator := sliceEnvSeparator
+	if ctx.usingDefault {
+		separator = sliceDefaultSeparator
 	}
 
 	elType := value.Type().Elem()
-	tnz := newSliceTokenizer(str)
+	tnz := newSliceTokenizer(str, separator)
 
 	slice := reflect.MakeSlice(value.Type(), value.Len(), value.Cap())
 
@@ -268,8 +269,8 @@ func setSliceField(value reflect.Value, str string, ctx *context) error {
 }
 
 var (
-	durationType    = reflect.TypeOf(new(time.Duration)).Elem()
-	unmarshalerType = reflect.TypeOf(new(Unmarshaler)).Elem()
+	durationType    = reflect.TypeOf((*time.Duration)(nil)).Elem()
+	unmarshalerType = reflect.TypeOf((*Unmarshaler)(nil)).Elem()
 )
 
 func isDurationField(t reflect.Type) bool {
@@ -324,7 +325,15 @@ func parseValue(v reflect.Value, str string, ctx *context) (err error) {
 }
 
 func parseWithUnmarshaler(v reflect.Value, str string) error {
-	var u = v.Addr().Interface().(Unmarshaler)
+	var u Unmarshaler
+	if v.Kind() == reflect.Ptr {
+		if v.IsNil() {
+			v.Set(reflect.New(v.Type().Elem()))
+		}
+		u = v.Interface().(Unmarshaler)
+	} else {
+		u = v.Addr().Interface().(Unmarshaler)
+	}
 	return u.Unmarshal(str)
 }
 
@@ -341,7 +350,12 @@ func parseDuration(v reflect.Value, str string) error {
 
 // NOTE(vincent): this is only called when parsing structs inside a slice.
 func parseStruct(value reflect.Value, token string, ctx *context) error {
-	tokens := strings.Split(token[1:len(token)-1], ",")
+	separator := string(sliceEnvSeparator)
+	if ctx.usingDefault {
+		separator = string(sliceDefaultSeparator)
+	}
+
+	tokens := strings.Split(token[1:len(token)-1], separator)
 	if len(tokens) != value.NumField() {
 		return fmt.Errorf("struct token has %d fields but struct has %d", len(tokens), value.NumField())
 	}
@@ -433,6 +447,7 @@ func readValue(ctx *context) (string, error) {
 	}
 
 	if ctx.defaultVal != "" {
+		ctx.usingDefault = true
 		return ctx.defaultVal, nil
 	}
 

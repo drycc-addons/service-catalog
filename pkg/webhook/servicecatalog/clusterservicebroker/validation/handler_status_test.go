@@ -18,16 +18,17 @@ package validation_test
 
 import (
 	"context"
+	"testing"
+
 	sc "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	"github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/clusterservicebroker/validation"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	admissionv1beta1 "k8s.io/api/admission/v1beta1"
+	admissionv1 "k8s.io/api/admission/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/kubernetes/scheme"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
-	"testing"
 )
 
 // TestHandlerStatusValidate tests basic cases of ServiceBindingStatus validation. All status validations tests
@@ -76,8 +77,8 @@ func TestHandlerStatusValidate(t *testing.T) {
 			handler.InjectDecoder(decoder)
 
 			req := admission.Request{
-				AdmissionRequest: admissionv1beta1.AdmissionRequest{
-					Operation: admissionv1beta1.Update,
+				AdmissionRequest: admissionv1.AdmissionRequest{
+					Operation: admissionv1.Update,
 					Name:      "test-broker",
 					Namespace: "system",
 					Kind: metav1.GroupVersionKind{

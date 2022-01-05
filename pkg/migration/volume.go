@@ -22,7 +22,7 @@ import (
 	"github.com/pkg/errors"
 	apiErr "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 // AssertPersistentVolumeClaimDeleted deletes PVC resource in which backup data will be kept and make sure it was removed

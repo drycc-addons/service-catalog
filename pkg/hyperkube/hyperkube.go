@@ -26,7 +26,7 @@ import (
 	"path"
 
 	"github.com/kubernetes-sigs/service-catalog/pkg/version"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 
 	"github.com/spf13/pflag"
 

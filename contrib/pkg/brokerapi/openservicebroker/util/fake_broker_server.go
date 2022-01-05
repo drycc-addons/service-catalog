@@ -21,7 +21,7 @@ import (
 	"net/http/httptest"
 
 	"github.com/gorilla/mux"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 
 	"github.com/kubernetes-sigs/service-catalog/contrib/pkg/brokerapi"
 	"github.com/kubernetes-sigs/service-catalog/contrib/pkg/brokerapi/openservicebroker/constants"

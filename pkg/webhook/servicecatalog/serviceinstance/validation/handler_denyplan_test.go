@@ -18,18 +18,19 @@ package validation_test
 
 import (
 	"context"
+	"testing"
+
 	sc "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	"github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/serviceinstance/validation"
 	"github.com/kubernetes-sigs/service-catalog/pkg/webhookutil/tester"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	admissionv1beta1 "k8s.io/api/admission/v1beta1"
+	admissionv1 "k8s.io/api/admission/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/kubernetes/scheme"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
-	"testing"
 )
 
 func TestSpecValidationHandlerDenyPlanChangeIfNotUpdatableSimpleScenarios(t *testing.T) {
@@ -42,7 +43,7 @@ func TestSpecValidationHandlerDenyPlanChangeIfNotUpdatableSimpleScenarios(t *tes
 	require.NoError(t, err)
 
 	request := admission.Request{
-		AdmissionRequest: admissionv1beta1.AdmissionRequest{
+		AdmissionRequest: admissionv1.AdmissionRequest{
 			UID:       "uuid",
 			Name:      "test-serviceinstance",
 			Namespace: "ns-test",
@@ -70,28 +71,28 @@ func TestSpecValidationHandlerDenyPlanChangeIfNotUpdatableSimpleScenarios(t *tes
 	require.NoError(t, err)
 
 	tests := map[string]struct {
-		operation               admissionv1beta1.Operation
+		operation               admissionv1.Operation
 		serviceClassName        string
 		serviceClassIsUpdatable bool
 		responseAllowed         bool
 		responseReason          string
 	}{
 		"UpdateablePlan set to false, no changes": {
-			admissionv1beta1.Update,
+			admissionv1.Update,
 			clusterServiceClassName,
 			false,
 			true,
 			"ServiceInstance validation successful",
 		},
 		"UpdateablePlan set to true": {
-			admissionv1beta1.Update,
+			admissionv1.Update,
 			clusterServiceClassName,
 			true,
 			true,
 			"ServiceInstance validation successful",
 		},
 		"Non-existing service class": {
-			admissionv1beta1.Update,
+			admissionv1.Update,
 			"NonExistingServiceClassName",
 			true,
 			false,
@@ -141,7 +142,7 @@ func TestSpecValidationHandlerDenyPlanChangeIfNotUpdatablePlanNameChanged(t *tes
 	require.NoError(t, err)
 
 	request := admission.Request{
-		AdmissionRequest: admissionv1beta1.AdmissionRequest{
+		AdmissionRequest: admissionv1.AdmissionRequest{
 			UID:       "uuid",
 			Name:      "test-serviceinstance",
 			Namespace: "ns-test",
@@ -214,7 +215,7 @@ func TestSpecValidationHandlerDenyPlanChangeIfNotUpdatablePlanNameChanged(t *tes
 			require.NoError(t, err)
 			err = handler.InjectClient(fakeClient)
 			require.NoError(t, err)
-			request.AdmissionRequest.Operation = admissionv1beta1.Update
+			request.AdmissionRequest.Operation = admissionv1.Update
 
 			// when
 			response := handler.Handle(context.Background(), request)

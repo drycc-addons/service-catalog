@@ -28,7 +28,7 @@ import (
 	"github.com/vrischmann/envconfig"
 	"k8s.io/apiserver/pkg/server"
 	"k8s.io/client-go/tools/clientcmd"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 const (

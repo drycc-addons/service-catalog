@@ -19,7 +19,8 @@ package util
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"k8s.io/klog"
+
+	"k8s.io/klog/v2"
 )
 
 // GenerateSHA generates the sha224 value from the given string

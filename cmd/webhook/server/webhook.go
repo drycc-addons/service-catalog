@@ -17,10 +17,12 @@ limitations under the License.
 package server
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
 	scTypes "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	"github.com/kubernetes-sigs/service-catalog/pkg/probe"
 	"github.com/kubernetes-sigs/service-catalog/pkg/util"
 	csbmutation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/clusterservicebroker/mutation"
 	cscmutation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/clusterserviceclass/mutation"
@@ -41,7 +43,6 @@ import (
 	sivalidation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/serviceinstance/validation"
 	spvalidation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/serviceplan/validation"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/probe"
 	"github.com/pkg/errors"
 	apiextensionsclientset "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	"k8s.io/apiserver/pkg/server/healthz"
@@ -50,6 +51,19 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
+
+type wrapCtx struct {
+	context.Context
+	stopCh <-chan struct{}
+}
+
+func (e *wrapCtx) Done() <-chan struct{} {
+	return e.stopCh
+}
+
+func wrapContext(stopCh <-chan struct{}) context.Context {
+	return &wrapCtx{context.Background(), stopCh}
+}
 
 // RunServer runs the webhook server with configuration according to opts
 func RunServer(opts *WebhookServerOptions, stopCh <-chan struct{}) error {
@@ -130,7 +144,7 @@ func run(opts *WebhookServerOptions, stopCh <-chan struct{}) error {
 	}
 
 	// setup healthz server
-	healthzSvr := manager.RunnableFunc(func(stopCh <-chan struct{}) error {
+	healthzSvr := manager.RunnableFunc(func(context.Context) error {
 		mux := http.NewServeMux()
 
 		// readiness registered at /healthz/ready indicates if traffic should be routed to this container
@@ -157,7 +171,7 @@ func run(opts *WebhookServerOptions, stopCh <-chan struct{}) error {
 	}
 
 	// starts the server blocks until the Stop channel is closed
-	if err := mgr.Start(stopCh); err != nil {
+	if err := mgr.Start(wrapContext(stopCh)); err != nil {
 		return errors.Wrap(err, "while running the webhook manager")
 
 	}

@@ -15,5 +15,5 @@ Parameters From:
 
 Bindings:
      NAME       STATUS  
-+-------------+--------+
+--------------+---------
   ups-binding   Ready   

@@ -20,7 +20,7 @@ import (
 	"context"
 	"net/http"
 
-	admissionTypes "k8s.io/api/admission/v1beta1"
+	admissionTypes "k8s.io/api/admission/v1"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 
 	sc "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"

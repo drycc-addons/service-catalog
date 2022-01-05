@@ -1,5 +1,5 @@
               NAME               NAMESPACE            CLASS                      DESCRIPTION            
-+------------------------------+-----------+--------------------------+--------------------------------+
+-------------------------------+-----------+--------------------------+---------------------------------
   user-provided-namespace-plan   default                                Sample namespace plan           
                                                                         description                     
   default                                    user-provided-service      Sample plan description         

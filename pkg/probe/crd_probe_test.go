@@ -17,14 +17,15 @@ limitations under the License.
 package probe
 
 import (
+	"net/http"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	extv1beta1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
+	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	apiextfake "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/fake"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	"net/http"
-	"testing"
 )
 
 func TestCRDProbe_Check(t *testing.T) {
@@ -78,118 +79,118 @@ func TestCRDProbe_CheckFailed(t *testing.T) {
 
 func newTestCRD() []runtime.Object {
 	return []runtime.Object{
-		&extv1beta1.CustomResourceDefinition{
+		&apiextensions.CustomResourceDefinition{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "NotServiceCatalogCRD",
 			},
 		},
-		&extv1beta1.CustomResourceDefinition{
+		&apiextensions.CustomResourceDefinition{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:   ServiceBroker,
 				Labels: map[string]string{"svcat": "true"},
 			},
-			Status: extv1beta1.CustomResourceDefinitionStatus{
-				Conditions: []extv1beta1.CustomResourceDefinitionCondition{
+			Status: apiextensions.CustomResourceDefinitionStatus{
+				Conditions: []apiextensions.CustomResourceDefinitionCondition{
 					{
-						Type:   extv1beta1.Established,
+						Type:   apiextensions.Established,
 						Status: "True",
 					},
 				},
 			},
 		},
-		&extv1beta1.CustomResourceDefinition{
+		&apiextensions.CustomResourceDefinition{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:   ClusterServiceBroker,
 				Labels: map[string]string{"svcat": "true"},
 			},
-			Status: extv1beta1.CustomResourceDefinitionStatus{
-				Conditions: []extv1beta1.CustomResourceDefinitionCondition{
+			Status: apiextensions.CustomResourceDefinitionStatus{
+				Conditions: []apiextensions.CustomResourceDefinitionCondition{
 					{
-						Type:   extv1beta1.Established,
+						Type:   apiextensions.Established,
 						Status: "True",
 					},
 				},
 			},
 		},
-		&extv1beta1.CustomResourceDefinition{
+		&apiextensions.CustomResourceDefinition{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:   ServiceClass,
 				Labels: map[string]string{"svcat": "true"},
 			},
-			Status: extv1beta1.CustomResourceDefinitionStatus{
-				Conditions: []extv1beta1.CustomResourceDefinitionCondition{
+			Status: apiextensions.CustomResourceDefinitionStatus{
+				Conditions: []apiextensions.CustomResourceDefinitionCondition{
 					{
-						Type:   extv1beta1.Established,
+						Type:   apiextensions.Established,
 						Status: "True",
 					},
 				},
 			},
 		},
-		&extv1beta1.CustomResourceDefinition{
+		&apiextensions.CustomResourceDefinition{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:   ClusterServiceClass,
 				Labels: map[string]string{"svcat": "true"},
 			},
-			Status: extv1beta1.CustomResourceDefinitionStatus{
-				Conditions: []extv1beta1.CustomResourceDefinitionCondition{
+			Status: apiextensions.CustomResourceDefinitionStatus{
+				Conditions: []apiextensions.CustomResourceDefinitionCondition{
 					{
-						Type:   extv1beta1.Established,
+						Type:   apiextensions.Established,
 						Status: "True",
 					},
 				},
 			},
 		},
-		&extv1beta1.CustomResourceDefinition{
+		&apiextensions.CustomResourceDefinition{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:   ServicePlan,
 				Labels: map[string]string{"svcat": "true"},
 			},
-			Status: extv1beta1.CustomResourceDefinitionStatus{
-				Conditions: []extv1beta1.CustomResourceDefinitionCondition{
+			Status: apiextensions.CustomResourceDefinitionStatus{
+				Conditions: []apiextensions.CustomResourceDefinitionCondition{
 					{
-						Type:   extv1beta1.Established,
+						Type:   apiextensions.Established,
 						Status: "True",
 					},
 				},
 			},
 		},
-		&extv1beta1.CustomResourceDefinition{
+		&apiextensions.CustomResourceDefinition{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:   ClusterServicePlan,
 				Labels: map[string]string{"svcat": "true"},
 			},
-			Status: extv1beta1.CustomResourceDefinitionStatus{
-				Conditions: []extv1beta1.CustomResourceDefinitionCondition{
+			Status: apiextensions.CustomResourceDefinitionStatus{
+				Conditions: []apiextensions.CustomResourceDefinitionCondition{
 					{
-						Type:   extv1beta1.Established,
+						Type:   apiextensions.Established,
 						Status: "True",
 					},
 				},
 			},
 		},
-		&extv1beta1.CustomResourceDefinition{
+		&apiextensions.CustomResourceDefinition{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:   ServiceInstance,
 				Labels: map[string]string{"svcat": "true"},
 			},
-			Status: extv1beta1.CustomResourceDefinitionStatus{
-				Conditions: []extv1beta1.CustomResourceDefinitionCondition{
+			Status: apiextensions.CustomResourceDefinitionStatus{
+				Conditions: []apiextensions.CustomResourceDefinitionCondition{
 					{
-						Type:   extv1beta1.Established,
+						Type:   apiextensions.Established,
 						Status: "True",
 					},
 				},
 			},
 		},
-		&extv1beta1.CustomResourceDefinition{
+		&apiextensions.CustomResourceDefinition{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:   ServiceBinding,
 				Labels: map[string]string{"svcat": "true"},
 			},
-			Status: extv1beta1.CustomResourceDefinitionStatus{
-				Conditions: []extv1beta1.CustomResourceDefinitionCondition{
+			Status: apiextensions.CustomResourceDefinitionStatus{
+				Conditions: []apiextensions.CustomResourceDefinitionCondition{
 					{
-						Type:   extv1beta1.Established,
+						Type:   apiextensions.Established,
 						Status: "True",
 					},
 				},
@@ -200,49 +201,49 @@ func newTestCRD() []runtime.Object {
 
 func newTestCRDNotReady() []runtime.Object {
 	return []runtime.Object{
-		&extv1beta1.CustomResourceDefinition{
+		&apiextensions.CustomResourceDefinition{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:   ServiceBroker,
 				Labels: map[string]string{"svcat": "true"},
 			},
 		},
-		&extv1beta1.CustomResourceDefinition{
+		&apiextensions.CustomResourceDefinition{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:   ClusterServiceBroker,
 				Labels: map[string]string{"svcat": "true"},
 			},
 		},
-		&extv1beta1.CustomResourceDefinition{
+		&apiextensions.CustomResourceDefinition{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:   ServiceClass,
 				Labels: map[string]string{"svcat": "true"},
 			},
 		},
-		&extv1beta1.CustomResourceDefinition{
+		&apiextensions.CustomResourceDefinition{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:   ClusterServiceClass,
 				Labels: map[string]string{"svcat": "true"},
 			},
 		},
-		&extv1beta1.CustomResourceDefinition{
+		&apiextensions.CustomResourceDefinition{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:   ServicePlan,
 				Labels: map[string]string{"svcat": "true"},
 			},
 		},
-		&extv1beta1.CustomResourceDefinition{
+		&apiextensions.CustomResourceDefinition{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:   ClusterServicePlan,
 				Labels: map[string]string{"svcat": "true"},
 			},
 		},
-		&extv1beta1.CustomResourceDefinition{
+		&apiextensions.CustomResourceDefinition{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:   ServiceInstance,
 				Labels: map[string]string{"svcat": "true"},
 			},
 		},
-		&extv1beta1.CustomResourceDefinition{
+		&apiextensions.CustomResourceDefinition{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:   ServiceBinding,
 				Labels: map[string]string{"svcat": "true"},

@@ -1,5 +1,5 @@
 /*
-Copyright 2021 The Kubernetes Authors.
+Copyright 2022 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -26,10 +26,13 @@ import (
 )
 
 // ClusterServiceClassLister helps list ClusterServiceClasses.
+// All objects returned here must be treated as read-only.
 type ClusterServiceClassLister interface {
 	// List lists all ClusterServiceClasses in the indexer.
+	// Objects returned here must be treated as read-only.
 	List(selector labels.Selector) (ret []*v1beta1.ClusterServiceClass, err error)
 	// Get retrieves the ClusterServiceClass from the index for a given name.
+	// Objects returned here must be treated as read-only.
 	Get(name string) (*v1beta1.ClusterServiceClass, error)
 	ClusterServiceClassListerExpansion
 }

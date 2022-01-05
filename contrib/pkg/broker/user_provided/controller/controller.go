@@ -24,7 +24,7 @@ import (
 
 	"github.com/kubernetes-sigs/service-catalog/contrib/pkg/broker/controller"
 	"github.com/kubernetes-sigs/service-catalog/contrib/pkg/brokerapi"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 type errNoSuchInstance struct {

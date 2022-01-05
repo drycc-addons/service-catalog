@@ -1,5 +1,5 @@
 /*
-Copyright 2021 The Kubernetes Authors.
+Copyright 2022 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -26,10 +26,13 @@ import (
 )
 
 // ClusterServiceBrokerLister helps list ClusterServiceBrokers.
+// All objects returned here must be treated as read-only.
 type ClusterServiceBrokerLister interface {
 	// List lists all ClusterServiceBrokers in the indexer.
+	// Objects returned here must be treated as read-only.
 	List(selector labels.Selector) (ret []*v1beta1.ClusterServiceBroker, err error)
 	// Get retrieves the ClusterServiceBroker from the index for a given name.
+	// Objects returned here must be treated as read-only.
 	Get(name string) (*v1beta1.ClusterServiceBroker, error)
 	ClusterServiceBrokerListerExpansion
 }

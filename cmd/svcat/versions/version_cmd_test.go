@@ -50,7 +50,7 @@ func TestVersionCommand(t *testing.T) {
 			name:       "show server & client version",
 			client:     true,
 			server:     true,
-			wantOutput: "Client Version: v0.0.0\nServer Version: v0.0.0-master+$Format:%h$\n",
+			wantOutput: "Client Version: v0.0.0\nServer Version: v0.0.0-master+$Format:%H$\n",
 			wantError:  false,
 		},
 	}

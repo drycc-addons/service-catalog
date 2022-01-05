@@ -21,7 +21,7 @@ import (
 
 	"github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset"
 
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 // ClientBuilder allows you to get clients and configs for controllers

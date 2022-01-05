@@ -31,8 +31,7 @@ import (
 	v1coordination "k8s.io/client-go/kubernetes/typed/coordination/v1"
 	v1core "k8s.io/client-go/kubernetes/typed/core/v1"
 
-	"k8s.io/api/core/v1"
-	corev1 "k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/tools/record"
@@ -59,7 +58,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 // NewControllerManagerCommand creates a *cobra.Command object with default
@@ -192,7 +191,7 @@ func Run(controllerManagerOptions *options.ControllerManagerServer) error {
 	klog.V(4).Info("Creating event broadcaster")
 	eventsScheme := runtime.NewScheme()
 	// We use ConfigMapLock/EndpointsLock which emit events for ConfigMap/Endpoints and hence we need core/v1 types for it
-	if err = corev1.AddToScheme(eventsScheme); err != nil {
+	if err = v1.AddToScheme(eventsScheme); err != nil {
 		return err
 	}
 	// We also emit events for our own types

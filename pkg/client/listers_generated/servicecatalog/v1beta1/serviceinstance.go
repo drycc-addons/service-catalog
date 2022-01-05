@@ -1,5 +1,5 @@
 /*
-Copyright 2021 The Kubernetes Authors.
+Copyright 2022 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -26,8 +26,10 @@ import (
 )
 
 // ServiceInstanceLister helps list ServiceInstances.
+// All objects returned here must be treated as read-only.
 type ServiceInstanceLister interface {
 	// List lists all ServiceInstances in the indexer.
+	// Objects returned here must be treated as read-only.
 	List(selector labels.Selector) (ret []*v1beta1.ServiceInstance, err error)
 	// ServiceInstances returns an object that can list and get ServiceInstances.
 	ServiceInstances(namespace string) ServiceInstanceNamespaceLister
@@ -58,10 +60,13 @@ func (s *serviceInstanceLister) ServiceInstances(namespace string) ServiceInstan
 }
 
 // ServiceInstanceNamespaceLister helps list and get ServiceInstances.
+// All objects returned here must be treated as read-only.
 type ServiceInstanceNamespaceLister interface {
 	// List lists all ServiceInstances in the indexer for a given namespace.
+	// Objects returned here must be treated as read-only.
 	List(selector labels.Selector) (ret []*v1beta1.ServiceInstance, err error)
 	// Get retrieves the ServiceInstance from the indexer for a given namespace and name.
+	// Objects returned here must be treated as read-only.
 	Get(name string) (*v1beta1.ServiceInstance, error)
 	ServiceInstanceNamespaceListerExpansion
 }

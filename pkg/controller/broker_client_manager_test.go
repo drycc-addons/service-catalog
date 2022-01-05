@@ -19,8 +19,8 @@ package controller_test
 import (
 	"testing"
 
-	osb "github.com/kubernetes-sigs/go-open-service-broker-client/v2"
 	"github.com/kubernetes-sigs/service-catalog/pkg/controller"
+	osb "sigs.k8s.io/go-open-service-broker-client/v2"
 )
 
 func TestBrokerClientManager_CreateBrokerClient(t *testing.T) {

@@ -27,8 +27,8 @@ import (
 	"sync"
 	"time"
 
-	osb "github.com/kubernetes-sigs/go-open-service-broker-client/v2"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
+	osb "sigs.k8s.io/go-open-service-broker-client/v2"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"

@@ -18,12 +18,13 @@ package clusterbroker
 
 import (
 	"context"
+
 	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	scClientset "github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset/typed/servicecatalog/v1beta1"
 	"github.com/pkg/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 type creator struct {
@@ -63,7 +64,7 @@ func (c *creator) execute() error {
 
 func (c *creator) registerClusterServiceBroker() error {
 	klog.Infof("Create ClusterServiceBroker %q", clusterServiceBrokerName)
-	_, err := c.sc.ClusterServiceBrokers().Create(context.Background(),&v1beta1.ClusterServiceBroker{
+	_, err := c.sc.ClusterServiceBrokers().Create(context.Background(), &v1beta1.ClusterServiceBroker{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      clusterServiceBrokerName,
 			Namespace: c.namespace,
@@ -73,7 +74,7 @@ func (c *creator) registerClusterServiceBroker() error {
 				URL: "http://test-broker-test-broker.test-broker.svc.cluster.local",
 			},
 		},
-	},metav1.CreateOptions{})
+	}, metav1.CreateOptions{})
 
 	if err != nil {
 		return errors.Wrap(err, "failed during creating ClusterServiceBroker")

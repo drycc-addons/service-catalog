@@ -25,11 +25,11 @@ import (
 	"sync"
 	"time"
 
-	osb "github.com/kubernetes-sigs/go-open-service-broker-client/v2"
 	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	scfeatures "github.com/kubernetes-sigs/service-catalog/pkg/features"
 	"github.com/kubernetes-sigs/service-catalog/pkg/pretty"
 	"github.com/kubernetes-sigs/service-catalog/pkg/util"
+	osb "sigs.k8s.io/go-open-service-broker-client/v2"
 
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
@@ -42,7 +42,7 @@ import (
 	utilfeature "k8s.io/apiserver/pkg/util/feature"
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/util/workqueue"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 const (
@@ -145,7 +145,7 @@ func (c *controller) enqueueInstanceAfter(obj interface{}, d time.Duration) {
 
 // instanceAdd handles the ServiceInstance ADDED watch event
 func (c *controller) instanceAdd(obj interface{}) {
-	if klog.V(eventHandlerLogLevel) {
+	if klog.V(eventHandlerLogLevel).Enabled() {
 		instance := obj.(*v1beta1.ServiceInstance)
 		pcb := pretty.NewInstanceContextBuilder(instance)
 		klog.Info(pcb.Messagef("Received ADD event: %v", toJSON(instance)))
@@ -157,7 +157,7 @@ func (c *controller) instanceAdd(obj interface{}) {
 func (c *controller) instanceUpdate(oldObj, newObj interface{}) {
 	instance := newObj.(*v1beta1.ServiceInstance)
 	pcb := pretty.NewInstanceContextBuilder(instance)
-	if klog.V(eventHandlerLogLevel) {
+	if klog.V(eventHandlerLogLevel).Enabled() {
 		pcb := pretty.NewInstanceContextBuilder(instance)
 		klog.Info(pcb.Messagef("Received UPDATE event: %v", toJSON(instance)))
 	}
@@ -181,7 +181,7 @@ func (c *controller) instanceDelete(obj interface{}) {
 		return
 	}
 
-	if klog.V(eventHandlerLogLevel) {
+	if klog.V(eventHandlerLogLevel).Enabled() {
 		pcb := pretty.NewInstanceContextBuilder(instance)
 		klog.Info(pcb.Messagef("Received DELETE event: %v", toJSON(instance)))
 		klog.Info(pcb.Message("no further processing will occur"))

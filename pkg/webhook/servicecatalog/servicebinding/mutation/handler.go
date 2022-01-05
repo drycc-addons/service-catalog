@@ -25,7 +25,7 @@ import (
 	scfeatures "github.com/kubernetes-sigs/service-catalog/pkg/features"
 	"github.com/kubernetes-sigs/service-catalog/pkg/webhookutil"
 
-	admissionTypes "k8s.io/api/admission/v1beta1"
+	admissionTypes "k8s.io/api/admission/v1"
 	utilfeature "k8s.io/apiserver/pkg/util/feature"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )

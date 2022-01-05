@@ -22,11 +22,11 @@ import (
 	"math/rand"
 	"net/http"
 
-	"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1beta1"
+	apiextensions "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	apiextensionsclientset "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 const (
@@ -106,7 +106,7 @@ func (r *CRDProbe) IsReady() (bool, error) {
 }
 
 func (r *CRDProbe) check(ctx context.Context) (bool, error) {
-	list, err := r.client.ApiextensionsV1beta1().CustomResourceDefinitions().List(ctx, v1.ListOptions{LabelSelector: labels.SelectorFromSet(labels.Set{"svcat": "true"}).String()})
+	list, err := r.client.ApiextensionsV1().CustomResourceDefinitions().List(ctx, v1.ListOptions{LabelSelector: labels.SelectorFromSet(labels.Set{"svcat": "true"}).String()})
 	if err != nil {
 		return false, fmt.Errorf("failed to list CustomResourceDefinition: %s", err)
 	}
@@ -129,9 +129,9 @@ func (r *CRDProbe) check(ctx context.Context) (bool, error) {
 	return true, nil
 }
 
-func crdStatusConditionIsTrue(status v1beta1.CustomResourceDefinitionStatus) bool {
+func crdStatusConditionIsTrue(status apiextensions.CustomResourceDefinitionStatus) bool {
 	for _, condition := range status.Conditions {
-		if condition.Type != v1beta1.Established {
+		if condition.Type != apiextensions.Established {
 			continue
 		}
 		if condition.Status == "True" {
@@ -143,7 +143,7 @@ func crdStatusConditionIsTrue(status v1beta1.CustomResourceDefinitionStatus) boo
 }
 
 // IsServiceCatalogCustomResourceDefinition checks if CRD belongs to ServiceCatalog crd
-func IsServiceCatalogCustomResourceDefinition(crd v1beta1.CustomResourceDefinition) bool {
+func IsServiceCatalogCustomResourceDefinition(crd apiextensions.CustomResourceDefinition) bool {
 	for _, crdName := range customResourceDefinitionNames {
 		if crdName == crd.Name {
 			return true

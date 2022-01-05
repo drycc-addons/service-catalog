@@ -19,19 +19,20 @@ package validation_test
 import (
 	"context"
 	"errors"
+	"testing"
+
 	sc "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	"github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/clusterservicebroker/validation"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	admissionv1beta1 "k8s.io/api/admission/v1beta1"
-	"k8s.io/api/authorization/v1"
+	admissionv1 "k8s.io/api/admission/v1"
+	v1 "k8s.io/api/authorization/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/kubernetes/scheme"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
-	"testing"
 )
 
 const (
@@ -47,7 +48,7 @@ type fakedClient struct {
 }
 
 // Create overrides real client Create method for the test
-func (m *fakedClient) Create(ctx context.Context, obj runtime.Object, opts ...client.CreateOption) error {
+func (m *fakedClient) Create(ctx context.Context, obj client.Object, opts ...client.CreateOption) error {
 	if _, ok := obj.(*v1.SubjectAccessReview); !ok {
 		return errors.New("Input object is not SubjectAccessReview type")
 	}
@@ -65,7 +66,7 @@ func TestSpecValidationHandlerAccessToBrokerAllowed(t *testing.T) {
 	require.NoError(t, err)
 
 	request := admission.Request{
-		AdmissionRequest: admissionv1beta1.AdmissionRequest{
+		AdmissionRequest: admissionv1.AdmissionRequest{
 			UID:       "3333-cccc",
 			Name:      "test-broker",
 			Namespace: "test-handler",
@@ -82,11 +83,11 @@ func TestSpecValidationHandlerAccessToBrokerAllowed(t *testing.T) {
 	require.NoError(t, err)
 
 	tests := map[string]struct {
-		operation admissionv1beta1.Operation
+		operation admissionv1.Operation
 		object    []byte
 	}{
 		"Request for Create ClusterServiceBroker without AuthInfo should be allowed": {
-			admissionv1beta1.Create,
+			admissionv1.Create,
 			[]byte(`{
   				"apiVersion": "servicecatalog.k8s.io/v1beta1",
   				"kind": "ClusterServiceBroker",
@@ -101,7 +102,7 @@ func TestSpecValidationHandlerAccessToBrokerAllowed(t *testing.T) {
 			}`),
 		},
 		"Request for Update ClusterServiceBroker without AuthInfo should be allowed": {
-			admissionv1beta1.Update,
+			admissionv1.Update,
 			[]byte(`{
   				"apiVersion": "servicecatalog.k8s.io/v1beta1",
   				"kind": "ClusterServiceBroker",
@@ -116,7 +117,7 @@ func TestSpecValidationHandlerAccessToBrokerAllowed(t *testing.T) {
 			}`),
 		},
 		"Request for Create ClusterServiceBroker with AuthInfo should be allowed": {
-			admissionv1beta1.Create,
+			admissionv1.Create,
 			[]byte(`{
   				"apiVersion": "servicecatalog.k8s.io/v1beta1",
   				"kind": "ClusterServiceBroker",
@@ -139,7 +140,7 @@ func TestSpecValidationHandlerAccessToBrokerAllowed(t *testing.T) {
 			}`),
 		},
 		"Request for Update ClusterServiceBroker with AuthInfo should be allowed": {
-			admissionv1beta1.Update,
+			admissionv1.Update,
 			[]byte(`{
   				"apiVersion": "servicecatalog.k8s.io/v1beta1",
   				"kind": "ClusterServiceBroker",
@@ -193,7 +194,7 @@ func TestSpecValidationHandlerAccessToBrokerDenied(t *testing.T) {
 	require.NoError(t, err)
 
 	request := admission.Request{
-		AdmissionRequest: admissionv1beta1.AdmissionRequest{
+		AdmissionRequest: admissionv1.AdmissionRequest{
 			UID:       "4444-dddd",
 			Name:      "test-broker",
 			Namespace: "test-handler",
@@ -212,11 +213,11 @@ func TestSpecValidationHandlerAccessToBrokerDenied(t *testing.T) {
 	require.NoError(t, err)
 
 	tests := map[string]struct {
-		operation admissionv1beta1.Operation
+		operation admissionv1.Operation
 		object    []byte
 	}{
 		"Request for Create ClusterServiceBroker should be denied": {
-			admissionv1beta1.Create,
+			admissionv1.Create,
 			[]byte(`{
   				"apiVersion": "servicecatalog.k8s.io/v1beta1",
   				"kind": "ClusterServiceBroker",
@@ -239,7 +240,7 @@ func TestSpecValidationHandlerAccessToBrokerDenied(t *testing.T) {
 			}`),
 		},
 		"Request for Update ClusterServiceBroker should be denied": {
-			admissionv1beta1.Update,
+			admissionv1.Update,
 			[]byte(`{
   				"apiVersion": "servicecatalog.k8s.io/v1beta1",
   				"kind": "ClusterServiceBroker",

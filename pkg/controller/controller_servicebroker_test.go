@@ -28,7 +28,6 @@ import (
 	"github.com/kubernetes-sigs/service-catalog/pkg/util"
 	"github.com/kubernetes-sigs/service-catalog/test/fake"
 
-	osb "github.com/kubernetes-sigs/go-open-service-broker-client/v2"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/fields"
@@ -36,6 +35,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	utilfeature "k8s.io/apiserver/pkg/util/feature"
 	clientgotesting "k8s.io/client-go/testing"
+	osb "sigs.k8s.io/go-open-service-broker-client/v2"
 )
 
 // NOTE: This only tests a single test case. Others are tested in TestShouldReconcileClusterServiceBroker.

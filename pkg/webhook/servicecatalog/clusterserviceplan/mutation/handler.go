@@ -25,7 +25,7 @@ import (
 	"github.com/kubernetes-sigs/service-catalog/pkg/util"
 	webhookutil "github.com/kubernetes-sigs/service-catalog/pkg/webhookutil"
 
-	admissionTypes "k8s.io/api/admission/v1beta1"
+	admissionTypes "k8s.io/api/admission/v1"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 

@@ -21,8 +21,8 @@ import (
 	"reflect"
 	"sync"
 
-	osb "github.com/kubernetes-sigs/go-open-service-broker-client/v2"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
+	osb "sigs.k8s.io/go-open-service-broker-client/v2"
 )
 
 // BrokerKey defines a key which points to a broker (cluster wide or namespaced)
