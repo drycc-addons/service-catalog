@@ -65,26 +65,7 @@ Service Catalog uses CRDs to store information.
 ## Helm
 
 You'll install Service Catalog with [Helm](http://helm.sh/), and you'll need
-v2.7.0 or newer for that. See the steps below to install.
-
-### If You Don't Have Helm Installed
-
-If you don't have Helm installed already,
-[download the `helm` CLI](https://github.com/kubernetes/helm#install) and
-then run `helm init` (this installs Tiller, the server-side component of
-Helm, into your Kubernetes cluster).
-
-### If You Already Have Helm Installed
-
-If you already have Helm installed, run `helm version` and ensure that both
-the client and server versions are `v2.7.0` or above.
-
-If they aren't,
-[install a newer version of the `helm` CLI](https://github.com/kubernetes/helm#install)
-and run `helm init --upgrade`.
-
-For more details on installation, see the
-[Helm installation instructions](https://github.com/kubernetes/helm/blob/master/docs/install.md).
+v3.4.0 or newer for that. See the steps below to install.
 
 ## Helm Repository Setup
 
@@ -98,35 +79,26 @@ just for Service Catalog. Add this repository to your local machine:
 For stable charts:
 
 ```console
-helm repo add svc-cat https://charts.drycc.cc/stable/catalog
+helm repo add drycc https://charts.drycc.cc/stable/catalog
 ```
 
 For testing charts:
 
 ```console
-helm repo add svc-cat https://charts.drycc.cc/testing/catalog
+helm repo add drycc https://charts.drycc.cc/testing/catalog
 ```
 
 Then, ensure that the repository was successfully added:
 
-{{< tabs name="helm-versions" >}}
-{{% tab name="Helm version 3" %}}
 ```console
 helm search repo service-catalog
 ```
-{{% /tab %}}
-{{% tab name="Helm version 2" %}}
-```console
-helm search service-catalog
-```
-{{% /tab %}}
-{{< /tabs >}}
+
 You should see the following output:
 
 ```console
 NAME                         VERSION    DESCRIPTION
-svc-cat/catalog              0.3.X      service-catalog helm chart
-svc-cat/catalog-v0.2         0.2.X      service-catalog API server and controller-manager helm chart
+drycc/catalog              0.3.X      service-catalog helm chart
 ```
 
 ## RBAC
@@ -176,33 +148,10 @@ check with your provider's documentation for details.
 
 Now that your cluster and Helm are configured properly, installing
 Service Catalog is simple:
-{{< tabs name="helm versions" >}}
-{{% tab name="Helm version 3" %}}
-```console
-helm install catalog svc-cat/catalog --namespace catalog --create-namespace
-```
-{{% /tab %}}
-{{% tab name="helm version 2" %}}
-```console
-helm install svc-cat/catalog --name catalog --namespace catalog
-```
-{{% /tab %}}
-{{< /tabs >}}
-If you want to install older version of service catalog (for instance the  API-server based version from v0.2 branch) append branch name to the chart name:
 
-{{< tabs name="Helm3" >}}
-{{% tab name="Helm3" %}}
 ```console
-helm install catalog svc-cat/catalog-v0.2 --namespace catalog
+helm install catalog drycc/catalog --namespace catalog --create-namespace
 ```
-
-{{% /tab %}}
-{{% tab name="Helm2" %}}
-```console
-helm install svc-cat/catalog-v0.2 --name catalog --namespace catalog
-```
-{{% /tab %}}
-{{< /tabs >}}
 
 # Installing the Service Catalog CLI
 
