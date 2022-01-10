@@ -1,5 +1,5 @@
 kind: pipeline
-type: docker
+type: exec
 name: linux-amd64-test
 
 platform:
@@ -8,9 +8,6 @@ platform:
 
 steps:
 - name: test
-  image: docker.io/drycc/go-dev
-  pull: always
-  privileged: true
   commands:
   - contrib/hack/ci/test.sh
   environment:
@@ -23,24 +20,10 @@ steps:
     - push
     - tag
     - pull_request
-  volumes:
-  - name: image_registries
-    path: /etc/containers/registries.conf
-
-trigger:
-  event:
-  - push
-  - tag
-  - pull_request
-
-volumes:
-- name: image_registries
-  host:
-    path: /etc/containers/registries.conf
 
 ---
 kind: pipeline
-type: docker
+type: exec
 name: linux-amd64-docs
 
 platform:
@@ -49,8 +32,6 @@ platform:
 
 steps:
 - name: build-docs
-  image: docker.io/drycc/go-dev
-  privileged: true
   commands:
   - mkdir -p docsite/.bundler
   - make docs
@@ -58,30 +39,30 @@ steps:
   environment:
     SSH_DEPLOY_KEY:
       from_secret: ssh_deploy_key
-  when:
-    event:
-    - push
-    - tag
-  volumes:
-  - name: image_registries
-    path: /etc/containers/registries.conf
 
 - name: publish-docs
-  image: docker.io/appleboy/drone-git-push
-  pull: always
-  settings:
-    branch: main
-    remote: git@github.com:drycc/service-catalog.drycc.cc.git
-    path: docsite/_site
-    force: true
-    commit: true
-    commit_message: init repo
-    ssh_key:
+  commands:
+  - docker run --rm
+      -e DRONE_COMMIT_AUTHOR="$DRONE_COMMIT_AUTHOR"
+      -e DRONE_COMMIT_AUTHOR_EMAIL="$DRONE_COMMIT_AUTHOR_EMAIL"
+      -e PLUGIN_SSH_KEY="$SSH_DEPLOY_KEY"
+      -e PLUGIN_BRANCH=main
+      -e PLUGIN_REMOTE=git@github.com:drycc/service-catalog.drycc.cc.git
+      -e PLUGIN_FORCE=true
+      -e PLUGIN_COMMIT=true
+      -e PLUGIN_PATH=_build/html
+      -e PLUGIN_COMMIT_MESSAGE="init repo"
+      -v "$(pwd):$(pwd)"
+      -w "$(pwd)"
+      appleboy/drone-git-push
+  environment:
+    SSH_DEPLOY_KEY:
       from_secret: ssh_deploy_key
-  when:
-    event:
-    - push
-    - tag
+
+trigger:
+  event:
+  - push
+  - tag
 depends_on:
 - linux-amd64-test
 
@@ -104,18 +85,12 @@ steps:
     - tag
     - pull_request
 
-trigger:
-  event:
-  - push
-  - tag
-  - pull_request
-
 depends_on:
 - linux-amd64-test
 
 ---
 kind: pipeline
-type: docker
+type: exec
 name: linux-amd64-coverage
 
 platform:
@@ -124,22 +99,14 @@ platform:
 
 steps:
 - name: make coverage
-  image: docker.io/drycc/go-dev
-  pull: always
-  privileged: true
   commands:
   - make coverage
   when:
     event:
     - push
     - tag
-  volumes:
-  - name: image_registries
-    path: /etc/containers/registries.conf
 
 - name: publish codecov
-  image: docker.io/drycc/go-dev
-  pull: always
   commands:
   - curl -s https://codecov.io/bash | bash
   environment:
@@ -149,29 +116,16 @@ steps:
     status:
     - success
 
-trigger:
-  event:
-  - push
-  - tag
-
 depends_on:
 - linux-amd64-test
 
-volumes:
-- name: image_registries
-  host:
-    path: /etc/containers/registries.conf
-
 ---
 kind: pipeline
-type: docker
+type: exec
 name: linux-amd64-image
 
 steps:
 - name: make image
-  image: docker.io/drycc/go-dev
-  pull: always
-  privileged: true
   commands:
   - echo $DOCKER_PASSWORD | docker login $DRYCC_REGISTRY --username $DOCKER_USERNAME --password-stdin
   - make service-catalog-push
@@ -190,26 +144,13 @@ steps:
     event:
     - push
     - tag
-  volumes:
-  - name: image_registries
-    path: /etc/containers/registries.conf
-
-trigger:
-  event:
-  - push
-  - tag
 
 depends_on:
 - linux-amd64-test
 
-volumes:
-- name: image_registries
-  host:
-    path: /etc/containers/registries.conf
-
 ---
 kind: pipeline
-type: docker
+type: exec
 name: linux-arm64-image
 
 platform:
@@ -218,9 +159,6 @@ platform:
 
 steps:
 - name: make image
-  image: docker.io/drycc/go-dev
-  pull: always
-  privileged: true
   commands:
   - echo $DOCKER_PASSWORD | docker login $DRYCC_REGISTRY --username $DOCKER_USERNAME --password-stdin
   - make service-catalog-push
@@ -235,22 +173,13 @@ steps:
       from_secret: docker_username
     DOCKER_PASSWORD:
       from_secret: docker_password
-  volumes:
-  - name: image_registries
-    path: /etc/containers/registries.conf
-
-trigger:
-  event:
-  - push
-  - tag
+  when:
+    event:
+    - push
+    - tag
 
 depends_on:
 - linux-amd64-test
-
-volumes:
-- name: image_registries
-  host:
-    path: /etc/containers/registries.conf
 
 ---
 kind: pipeline
@@ -292,12 +221,11 @@ depends_on:
 
 ---
 kind: pipeline
-type: docker
+type: exec
 name: output
 
 steps:
 - name: generate chart catalog
-  image: docker.io/drycc/python-dev
   commands:
   - IMAGE_TAG=$([ ! -z $DRONE_TAG ] && echo \"${DRONE_TAG:1}\" || echo \"canary\")
   - sed -i "s/image_tag:\ \"canary\"/image_tag:\ $IMAGE_TAG/g" charts/catalog/values.yaml
@@ -310,11 +238,12 @@ steps:
       from_secret: chartmuseum_password
     CHARTMUSEUM_API:
       from_secret: chartmuseum_api
+  when:
+    event:
+    - push
+    - tag
 
 - name: make svcat
-  image: docker.io/drycc/go-dev
-  pull: always
-  privileged: true
   commands:
   - make svcat-all
   environment:
@@ -322,25 +251,28 @@ steps:
       from_secret: dev_registry
     DRYCC_REGISTRY:
       from_secret: drycc_registry
-  volumes:
-    - name: image_registries
-      path: /etc/containers/registries.conf
   when:
     event: tag
 
 - name: release svcat
-  image: plugins/github-release
-  settings:
-    api_key:
+  commands:
+  - docker run --rm
+      -e DRONE_BUILD_EVENT=tag
+      -e DRONE_REPO_OWNER="$DRONE_REPO_OWNER"
+      -e DRONE_REPO_NAME="$DRONE_REPO_NAME"
+      -e PLUGIN_API_KEY="$API_KEY"
+      -e DRONE_COMMIT_REF="refs/tags/$DRONE_TAG"
+      -e PLUGIN_OVERWRITE="true"
+      -e PLUGIN_FILES="bin/svcat/*"
+      -v $(pwd):$(pwd)
+      -w $(pwd)
+      plugins/github-release
+  environment:
+    API_KEY:
       from_secret: github_token
-    files: bin/svcat/*
   when:
-    event: tag
+    event:
+    - tag
 
 depends_on:
 - linux-amd64-test
-
-trigger:
-  event:
-  - push
-  - tag
