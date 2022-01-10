@@ -32,7 +32,7 @@ clean() {
 preview() {
   clean
 
-  docker run -it --rm \
+  docker run --rm \
     -v $DOCSITE:/srv/jekyll \
     -v $REPO_ROOT/docs:/srv/docs \
     -v $DOCSITE/.bundler:/usr/local/bundle \
@@ -44,7 +44,7 @@ generate() {
   clean
 
   echo "Generating site..."
-  docker run -it --rm \
+  docker run --rm \
     -v $DOCSITE:/srv/jekyll \
     -v $REPO_ROOT/docs:/srv/docs \
     -v $DOCSITE/.bundler:/usr/local/bundle \

@@ -36,9 +36,6 @@ steps:
   - mkdir -p docsite/.bundler
   - make docs
   - cd docsite/_site && echo "service-catalog.drycc.cc" >> CNAME && git init
-  environment:
-    SSH_DEPLOY_KEY:
-      from_secret: ssh_deploy_key
 
 - name: publish-docs
   commands:
@@ -50,7 +47,7 @@ steps:
       -e PLUGIN_REMOTE=git@github.com:drycc/service-catalog.drycc.cc.git
       -e PLUGIN_FORCE=true
       -e PLUGIN_COMMIT=true
-      -e PLUGIN_PATH=_build/html
+      -e PLUGIN_PATH=docsite/_site
       -e PLUGIN_COMMIT_MESSAGE="init repo"
       -v "$(pwd):$(pwd)"
       -w "$(pwd)"
