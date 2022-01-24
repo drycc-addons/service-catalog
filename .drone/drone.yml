@@ -18,7 +18,6 @@ steps:
   when:
     event:
     - push
-    - tag
     - pull_request
 
 ---
@@ -242,6 +241,7 @@ steps:
 
 - name: make svcat
   commands:
+  - export TAG_VERSION=$DRONE_TAG
   - make svcat-all
   environment:
     DEV_REGISTRY:
