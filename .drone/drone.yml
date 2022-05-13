@@ -260,12 +260,14 @@ steps:
       -e DRONE_REPO_OWNER="$DRONE_REPO_OWNER"
       -e DRONE_REPO_NAME="$DRONE_REPO_NAME"
       -e PLUGIN_API_KEY="$API_KEY"
+      -e PLUGIN_BASE_URL="https://api.github.com/"
+      -e PLUGIN_UPLOAD_URL="https://uploads.github.com/"
       -e DRONE_COMMIT_REF="refs/tags/$DRONE_TAG"
       -e PLUGIN_OVERWRITE="true"
       -e PLUGIN_FILES="bin/svcat/*"
       -v $(pwd):$(pwd)
       -w $(pwd)
-      plugins/github-release
+      docker.io/plugins/github-release
   environment:
     API_KEY:
       from_secret: github_token
