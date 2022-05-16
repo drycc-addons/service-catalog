@@ -183,6 +183,8 @@ depends_on:
 kind: pipeline
 type: docker
 name: manifest image
+image_pull_secrets:
+- container_pull_secrets
 
 steps:
 - name: generate manifest
@@ -191,6 +193,8 @@ steps:
   commands:
   - sed -i "s/registry.drycc.cc/$${DRYCC_REGISTRY}/g" .drone/manifest.tmpl
   environment:
+    DEV_REGISTRY:
+      from_secret: dev_registry
     DRYCC_REGISTRY:
       from_secret: drycc_registry
 
@@ -277,3 +281,4 @@ steps:
 
 depends_on:
 - linux-amd64-test
+
