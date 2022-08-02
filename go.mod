@@ -4,7 +4,7 @@
 
 module github.com/kubernetes-sigs/service-catalog
 
-go 1.17
+go 1.18
 
 require (
 	github.com/google/gofuzz v1.2.0
