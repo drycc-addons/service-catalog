@@ -85,6 +85,7 @@ spec:
               parameters:
                 description: "Parameters is a set of the parameters to be passed to the underlying broker. The inline YAML/JSON payload to be translated into equivalent JSON object. If a top-level parameter name exists in multiples sources among `Parameters` and `ParametersFrom` fields, it is considered to be a user error in the specification. \n The Parameters field is NOT secret or secured in any way and should NEVER be used to hold sensitive information. To set parameters that contain secret information, you should ALWAYS store that information in a Secret and use the ParametersFrom field."
                 type: object
+                x-kubernetes-preserve-unknown-fields: true
               parametersFrom:
                 description: List of sources to populate parameters. If a top-level parameter name exists in multiples sources among `Parameters` and `ParametersFrom` fields, it is considered to be a user error in the specification
                 items:
