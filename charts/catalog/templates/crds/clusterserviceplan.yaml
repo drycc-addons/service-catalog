@@ -63,6 +63,7 @@ spec:
               defaultProvisionParameters:
                 description: DefaultProvisionParameters are default parameters passed to the broker when an instance of this plan is provisioned. Any parameters defined on the instance are merged with these defaults, with instance-defined parameters taking precedence over defaults.
                 type: object
+                x-kubernetes-preserve-unknown-fields: true
               description:
                 description: Description is a short description of this ServicePlan.
                 type: string
@@ -72,6 +73,7 @@ spec:
               externalMetadata:
                 description: ExternalMetadata is a blob of information about the plan, meant to be user-facing content and display instructions.  This field may contain platform-specific conventional values.
                 type: object
+                x-kubernetes-preserve-unknown-fields: true
               externalName:
                 description: ExternalName is the name of this object that the Service Broker exposed this Service Plan as. Mutable.
                 type: string
@@ -81,12 +83,15 @@ spec:
               instanceCreateParameterSchema:
                 description: "Currently, this field is ALPHA: it may change or disappear at any time and its data will not be migrated. \n InstanceCreateParameterSchema is the schema for the parameters that may be supplied when provisioning a new ServiceInstance on this plan."
                 type: object
+                x-kubernetes-preserve-unknown-fields: true
               instanceUpdateParameterSchema:
                 description: "Currently, this field is ALPHA: it may change or disappear at any time and its data will not be migrated. \n InstanceUpdateParameterSchema is the schema for the parameters that may be updated once an ServiceInstance has been provisioned on this plan. This field only has meaning if the corresponding ServiceClassSpec is PlanUpdatable."
                 type: object
+                x-kubernetes-preserve-unknown-fields: true
               serviceBindingCreateParameterSchema:
                 description: "Currently, this field is ALPHA: it may change or disappear at any time and its data will not be migrated. \n ServiceBindingCreateParameterSchema is the schema for the parameters that may be supplied binding to a ServiceInstance on this plan."
                 type: object
+                x-kubernetes-preserve-unknown-fields: true
             required:
             - clusterServiceBrokerName
             - clusterServiceClassRef
