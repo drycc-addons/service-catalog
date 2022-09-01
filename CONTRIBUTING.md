@@ -40,7 +40,7 @@ be reviewed.
 ## Development status
 
 We have finished the work for the v0.2 release.
-We are currently working towards our [v0.3 milestone](https://github.com/kubernetes-sigs/service-catalog/milestone/51).
+We are currently working towards our [v0.3 milestone](https://github.com/drycc/service-catalog).
 
 ## Methodology
 
@@ -55,7 +55,3 @@ project, adding or altering a file within the `docs` directory.
 
 We'll update this space as we begin developing code with relevant dev
 information.
-
-[help-wanted]: https://github.com/kubernetes-sigs/service-catalog/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22
-[good-first-issue]: https://github.com/kubernetes-sigs/service-catalog/issues?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22+
-

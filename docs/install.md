@@ -69,37 +69,10 @@ v3.4.0 or newer for that. See the steps below to install.
 
 ## Helm Repository Setup
 
-Service Catalog is easily installed via a
-[Helm chart](https://github.com/kubernetes/helm/blob/master/docs/charts.md).
+Service catalog uses OCI to store charts. Here are two OCI addresses, which store testing and stable versions respectively.
 
-This chart is located in a
-[chart repository](https://github.com/kubernetes/helm/blob/master/docs/chart_repository.md)
-just for Service Catalog. Add this repository to your local machine:
-
-For stable charts:
-
-```console
-helm repo add drycc oci://registry.drycc.cc/charts
-```
-
-For testing charts:
-
-```console
-helm repo add drycc oci://registry.drycc.cc/charts-testing
-```
-
-Then, ensure that the repository was successfully added:
-
-```console
-helm search repo service-catalog
-```
-
-You should see the following output:
-
-```console
-NAME                         VERSION    DESCRIPTION
-drycc/catalog              0.3.X      service-catalog helm chart
-```
+* `helm install catalog oci://registry.drycc.cc/charts/catalog`
+* `helm install catalog oci://registry.drycc.cc/charts-testing/catalog`
 
 ## RBAC
 

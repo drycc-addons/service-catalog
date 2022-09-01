@@ -40,6 +40,7 @@ steps:
 
 - name: publish-docs
   commands:
+  - chown -R root:root docsite/_site
   - docker run --rm
       -e DRONE_COMMIT_AUTHOR="$DRONE_COMMIT_AUTHOR"
       -e DRONE_COMMIT_AUTHOR_EMAIL="$DRONE_COMMIT_AUTHOR_EMAIL"

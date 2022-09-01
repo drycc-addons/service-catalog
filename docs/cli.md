@@ -248,19 +248,19 @@ svcat does not currently support provisioning instances of namespaced classes an
 
 svcat commands that get information about the current state of the system also support the `--scope` flag, which is set
 to `all` by default. This will return all of the resources visible in the cluster scope, and the namespace of your current
-context. In the following examples, [minibroker](https://github.com/osbkit/minibroker) is installed as a cluster broker, while `ups-broker` is installed in the
+context. In the following examples, [helmbroker](https://github.com/drycc/helmbroker) is installed as a cluster broker, while `ups-broker` is installed in the
 `default` namespace.
 
 ```console
 $ svcat get brokers
      NAME      NAMESPACE                              URL                              STATUS
 +------------+-----------+-----------------------------------------------------------+--------+
-  minibroker               http://minibroker-minibroker.minibroker.svc.cluster.local   Ready
+  helmbroker               http://helmbroker-helmbroker.helmbroker.svc.cluster.local   Ready
   ups-broker   default     http://ups-broker-ups-broker.ups-broker.svc.cluster.local   Ready
 $ svcat get brokers -n foobar
        NAME      NAMESPACE                              URL                              STATUS
 +------------+-----------+-----------------------------------------------------------+--------+
-minibroker               http://minibroker-minibroker.minibroker.svc.cluster.local   Ready
+helmbroker               http://helmbroker-helmbroker.helmbroker.svc.cluster.local   Ready
 $ svcat get brokers --scope namespace
      NAME      NAMESPACE                              URL                              STATUS
 +------------+-----------+-----------------------------------------------------------+--------+

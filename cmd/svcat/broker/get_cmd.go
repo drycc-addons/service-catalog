@@ -22,7 +22,7 @@ import (
 
 	"github.com/kubernetes-sigs/service-catalog/cmd/svcat/command"
 	"github.com/kubernetes-sigs/service-catalog/cmd/svcat/output"
-	"github.com/kubernetes-sigs/service-catalog/pkg/svcat/service-catalog"
+	servicecatalog "github.com/kubernetes-sigs/service-catalog/pkg/svcat/service-catalog"
 	"github.com/spf13/cobra"
 )
 
@@ -50,7 +50,7 @@ func NewGetCmd(cxt *command.Context) *cobra.Command {
   svcat get brokers
   svcat get brokers --scope=cluster
   svcat get brokers --scope=all
-  svcat get broker minibroker
+  svcat get broker helmbroker
 `),
 		PreRunE: command.PreRunE(getCmd),
 		RunE:    command.RunE(getCmd),

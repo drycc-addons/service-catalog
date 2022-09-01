@@ -53,7 +53,7 @@ recommended because your changes may be lost the next time the catalog syncs.
     metadata:
       name: custom-mysql
     spec:
-      clusterServiceBrokerName: minibroker
+      clusterServiceBrokerName: helmbroker
       externalID: mysql-5-7-14
       externalName: custom-mysql
       defaultProvisionParameters:
@@ -88,7 +88,7 @@ recommended because your changes may be lost the next time the catalog syncs.
     metadata:
       name: custom-mysql
     spec:
-      clusterServiceBrokerName: minibroker
+      clusterServiceBrokerName: helmbroker
       externalID: mysql-5-7-14
       externalName: custom-mysql
       defaultProvisionParameters:
@@ -109,7 +109,7 @@ recommended because your changes may be lost the next time the catalog syncs.
     metadata:
       name: tiny-plan
     spec:
-      clusterServiceBrokerName: minibroker
+      clusterServiceBrokerName: helmbroker
       clusterServiceClassRef:
         name: custom-mysql
       externalID: mysql-5-7-14

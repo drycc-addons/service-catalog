@@ -12,38 +12,22 @@ so that you may follow this walkthrough using svcat or using only kubectl.
 
 <a id="install" />
 
-# Step 1 - Installing the minibroker Server
+# Step 1 - Installing the drycc and helmbroker
 
 Since the Service Catalog provides a Kubernetes-native interface to an
 [Open Service Broker API](https://www.openservicebrokerapi.org/) compatible broker
 server, we'll need to install one in order to proceed with a demo.
 
-We plan on using the minibroker for demo purposes. The codebase for that broker is
-[here](https://github.com/kubernetes-sigs/minibroker).
+We plan on using the helmbroker for demo purposes. The codebase for that broker is
+[here](https://github.com/drycc/helmbroker).
 
-We're going to deploy the minibroker to our Kubernetes cluster before
-proceeding, and we'll do so with the minibroker helm chart. You can find details about the chart in the minibroker
-[README](https://github.com/kubernetes-sigs/minibroker#install-minibroker).
-
-Otherwise, to install with sensible defaults, run the following command:
-
-**NOTE:** The walkthrough installs a cluster-wide Broker with the defaults from minibroker.
-
-```console
-helm repo add minibroker https://minibroker.blob.core.windows.net/charts
-```
-If you are using Helm v3, run this command:
-```console
-helm install minibroker minibroker/minibroker --namespace minibroker --create-namespace
-```
-For older versions of Helm, use the --name option:
-```console
-helm install --name minibroker --namespace minibroker minibroker/minibroker
-```
+But it seems that installing helmbroker alone is a little troublesome. It needs rabbitmq message queue. 
+We strongly recommend using drycc one click installation script to experience it. This script comes with a k3s and drycc workflow installed. You can find details about the install drycc.
+[README](https://www.drycc.cc/quickstart/install-workflow/).
 
 # Step 2 - Viewing ClusterServiceClasses and ClusterServicePlans
 
-The controller created a `ClusterServiceClass` for each service that the minibroker
+The controller created a `ClusterServiceClass` for each service that the helmbroker
 provides. We can view the `ClusterServiceClass` resources available:
 
 ```console
@@ -58,18 +42,18 @@ $ svcat get classes
 
 $ kubectl get clusterserviceclasses
 NAME         EXTERNAL-NAME   BROKER       AGE
-mariadb      mariadb         minibroker   5m50s
-mongodb      mongodb         minibroker   5m50s
-mysql        mysql           minibroker   5m50s
-postgresql   postgresql      minibroker   5m50s
-redis        redis           minibroker   5m50s
+mariadb      mariadb         helmbroker   5m50s
+mongodb      mongodb         helmbroker   5m50s
+mysql        mysql           helmbroker   5m50s
+postgresql   postgresql      helmbroker   5m50s
+redis        redis           helmbroker   5m50s
 ```
 
 **NOTE:** The above kubectl command uses a custom set of columns.  The `NAME` field is
 the Kubernetes name of the `ClusterServiceClass` and the `EXTERNAL NAME` field is the
 human-readable name for the service that the broker returns.
 
-The minibroker provides a service with the external name
+The helmbroker provides a service with the external name
 `mariadb`. View the details of this offering:
 
 ```console
@@ -80,7 +64,7 @@ $ svcat describe class mariadb
   Kubernetes Name:   mariadb                        
   Status:            Active                         
   Tags:              mariadb, mysql, database, sql  
-  Broker:            minibroker                     
+  Broker:            helmbroker                     
 
 Plans:
         NAME                  DESCRIPTION            
@@ -115,7 +99,7 @@ metadata:
     blockOwnerDeletion: false
     controller: true
     kind: ClusterServiceBroker
-    name: minibroker
+    name: helmbroker
     uid: 6a9a047e-916b-11e9-bfe5-0242ac110008
   resourceVersion: "9"
   selfLink: /apis/servicecatalog.k8s.io/v1beta1/clusterserviceclasses/mariadb
@@ -123,7 +107,7 @@ metadata:
 spec:
   bindable: true
   bindingRetrievable: false
-  clusterServiceBrokerName: minibroker
+  clusterServiceBrokerName: helmbroker
   description: Helm Chart for mariadb
   externalID: mariadb
   externalName: mariadb
@@ -166,15 +150,15 @@ $ svcat get plans
 .
 $ kubectl get clusterserviceplans
 NAME                       EXTERNAL-NAME      BROKER       CLASS        AGE                                                                                                                                                                                                    
-mariadb-10-3-22            10-3-22            minibroker   mariadb      34m                                                                                                                                                                                                    
-mariadb-10-1-28            10-1-28            minibroker   mariadb      34m                                                                                                                                                                                                    
-mariadb-10-1-29            10-1-29            minibroker   mariadb      34m                                                                                                                                                                                                    
-mariadb-10-1-30            10-1-30            minibroker   mariadb      34m                                                                                                                                                                                                    
-mariadb-10-1-31            10-1-31            minibroker   mariadb      34m                                                                                                                                                                                                    
-mariadb-10-1-32            10-1-32            minibroker   mariadb      34m                                                                                                                                                                                                    
-mariadb-10-1-33            10-1-33            minibroker   mariadb      34m                                                                                                                                                                                                    
-mariadb-10-1-34            10-1-34            minibroker   mariadb      34m                                                                                                                                                                                                    
-mariadb-10-1-34-debian-9   10-1-34-debian-9   minibroker   mariadb      34m
+mariadb-10-3-22            10-3-22            helmbroker   mariadb      34m                                                                                                                                                                                                    
+mariadb-10-1-28            10-1-28            helmbroker   mariadb      34m                                                                                                                                                                                                    
+mariadb-10-1-29            10-1-29            helmbroker   mariadb      34m                                                                                                                                                                                                    
+mariadb-10-1-30            10-1-30            helmbroker   mariadb      34m                                                                                                                                                                                                    
+mariadb-10-1-31            10-1-31            helmbroker   mariadb      34m                                                                                                                                                                                                    
+mariadb-10-1-32            10-1-32            helmbroker   mariadb      34m                                                                                                                                                                                                    
+mariadb-10-1-33            10-1-33            helmbroker   mariadb      34m                                                                                                                                                                                                    
+mariadb-10-1-34            10-1-34            helmbroker   mariadb      34m                                                                                                                                                                                                    
+mariadb-10-1-34-debian-9   10-1-34-debian-9   helmbroker   mariadb      34m
 ```
 
 You can view the details of a `ClusterServicePlan` with this command:
@@ -202,13 +186,13 @@ metadata:
     blockOwnerDeletion: false
     controller: true
     kind: ClusterServiceBroker
-    name: minibroker
+    name: helmbroker
     uid: 6ee99fc5-9179-11e9-8cb6-0242ac110009
   resourceVersion: "28"
   selfLink: /apis/servicecatalog.k8s.io/v1beta1/clusterserviceplans/mariadb-10-3-22
   uid: b496eaf5-9179-11e9-8cb6-0242ac110009
 spec:
-  clusterServiceBrokerName: minibroker
+  clusterServiceBrokerName: helmbroker
   clusterServiceClassRef:
     name: mariadb
   description: Fast, reliable, scalable, and easy to use open-source relational database
@@ -448,8 +432,8 @@ catalog to remove the broker's services from the catalog. Do so with this
 command:
 
 ```console
-$ kubectl delete clusterservicebrokers minibroker
-clusterservicebroker.servicecatalog.k8s.io "minibroker" deleted
+$ kubectl delete clusterservicebrokers helmbroker
+clusterservicebroker.servicecatalog.k8s.io "helmbroker" deleted
 ```
 
 We should then see that all the `ClusterServiceClass` resources that came from that
@@ -466,23 +450,23 @@ No resources found.
 
 # Step 9 - Final Cleanup
 
-To clean up minibroker deployment, delete the helm release.
+To clean up helmbroker deployment, delete the helm release.
 
 If you are using Helm v3, run this command:
 
 ```console
-helm delete minibroker
+helm delete helmbroker
 ```
 For older versions of Helm, use the --purge option:
 
 ```console
-helm delete --purge minibroker
+helm delete --purge helmbroker
 ```
 
 Then, delete all the namespaces we created:
 
 ```console
-kubectl delete ns test-ns minibroker
+kubectl delete ns test-ns helmbroker
 ```
 
 # Troubleshooting

@@ -16,11 +16,11 @@ brokers to the Kubernetes ecosystem via the [Open Service Broker API](https://gi
 
 ### About
 
-It seems that the original [kubernetes-sigs/service-catalog](https://github.com/kubernetes-sigs/service-catalog) is no longer active.
+It seems that the original [drycc/service-catalog](https://github.com/drycc/service-catalog) is no longer active.
 
 However, we use a lot of service-catalog related components in drycc, so we decided to establish a branch.
 
-If the service-catalog is reactivated at some point in the future, we expect that the changes of this branch can be finally merged into [kubernetes-sigs/service-catalog](https://github.com/kubernetes-sigs/service-catalog).
+If the service-catalog is reactivated at some point in the future, we expect that the changes of this branch can be finally merged into [drycc/service-catalog](https://github.com/drycc/service-catalog).
 
 Now our main goal is to upgrade some outdated APIs, including charts and source code. Then consider adding some new features.
 
@@ -49,18 +49,6 @@ Open Service Broker API project's [Getting Started guide](https://github.com/ope
 - [SIG Service Catalog Meeting Playlist](https://goo.gl/ZmLNX9)
 
 ---
-
-### Project Status
-
-Service Catalog recently switched to a new [CRDs-based](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/#custom-resources) architecture. The old API Server-based implementation is available on the [v0.2 branch](https://github.com/kubernetes-sigs/service-catalog/tree/v0.2). We support this implementation by providing bug fixes until July 2020.
-
-We are currently working towards a beta-quality release. See the [milestones list](https://github.com/kubernetes-sigs/service-catalog/milestones?direction=desc&sort=due_date&state=open)
-for information about the issues and PRs in current and future milestones.
-
-The project [roadmap](https://github.com/kubernetes-sigs/service-catalog/wiki/Roadmap)
-contains information about our high-level goals for future milestones.
-
-The release process of Service Catalog is described [here](https://github.com/kubernetes-sigs/service-catalog/wiki/Release-Process).
 
 ### Terminology
 

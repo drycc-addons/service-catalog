@@ -209,7 +209,7 @@ tree:
         svcat get brokers
         svcat get brokers --scope=cluster
         svcat get brokers --scope=all
-        svcat get broker minibroker
+        svcat get broker helmbroker
     flags:
     - desc: If present, list the requested object(s) across all namespaces. Namespace
         in current context is ignored even if specified with --namespace
