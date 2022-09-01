@@ -79,13 +79,13 @@ just for Service Catalog. Add this repository to your local machine:
 For stable charts:
 
 ```console
-helm repo add drycc https://charts.drycc.cc/stable/catalog
+helm repo add drycc oci://registry.drycc.cc/charts
 ```
 
 For testing charts:
 
 ```console
-helm repo add drycc https://charts.drycc.cc/testing/catalog
+helm repo add drycc oci://registry.drycc.cc/charts-testing
 ```
 
 Then, ensure that the repository was successfully added:

@@ -27,8 +27,8 @@ Now our main goal is to upgrade some outdated APIs, including charts and source 
 If you are also using service-catalog, you can help us together.
 
 * Github: https://github.com/drycc/service-catalog
-* Stable Charts: https://charts.drycc.cc/stable/catalog
-* Testing Charts: https://charts.drycc.cc/testing/catalog
+* Stable Charts: oci://registry.drycc.cc/charts/catalog
+* Testing Charts: https://registry.drycc.cc/charts-testing/catalog
 * Helmbroker: https://github.com/drycc/helmbroker
 
 ### Documentation

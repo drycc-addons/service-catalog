@@ -2,7 +2,7 @@
 imageOrg: "drycc"
 imagePullPolicy: "Always"
 imageTag: "canary"
-imageRegistry: "docker.io"
+imageRegistry: "registry.drycc.cc"
 # service-catalog image to use
 # image: service-catalog:canary
 # imagePullSecrets pre-existing secrets to use to pull images from a private registry
