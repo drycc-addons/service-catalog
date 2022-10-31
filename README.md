@@ -28,7 +28,7 @@ If you are also using service-catalog, you can help us together.
 
 * Github: https://github.com/drycc/service-catalog
 * Stable Charts: oci://registry.drycc.cc/charts/catalog
-* Testing Charts: https://registry.drycc.cc/charts-testing/catalog
+* Testing Charts: oci://registry.drycc.cc/charts-testing/catalog
 * Helmbroker: https://github.com/drycc/helmbroker
 
 ### Documentation
