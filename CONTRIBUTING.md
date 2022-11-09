@@ -40,7 +40,7 @@ be reviewed.
 ## Development status
 
 We have finished the work for the v0.2 release.
-We are currently working towards our [v0.3 milestone](https://github.com/drycc/service-catalog).
+We are currently working towards our [v0.3 milestone](https://github.com/drycc-addons/service-catalog).
 
 ## Methodology
 

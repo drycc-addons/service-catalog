@@ -150,7 +150,7 @@ github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/dgryski/go-sip13 v0.0.0-20181026042036-e10d5fee7954/go.mod h1:vAd38F8PWV+bWy6jNmig1y/TA+kYO4g3RSRF0IAv0no=
 github.com/docopt/docopt-go v0.0.0-20180111231733-ee0de3bc6815/go.mod h1:WwZ+bS3ebgob9U8Nd0kOddGdZWjyMGR8Wziv+TBNwSE=
-github.com/drycc-addons/go-open-service-broker-client/v2 v2.0.0-20210928082444-d912fc53f8bd h1:G1XFwKW8WgYXpUiaZ8IQNYe9niFzZWqE2fzhM+locPE=
+github.com/drycc-addons/go-open-service-broker-client/v2 v2.0.0-20210928082444-d912fc53f8bd h1:P1rtNAV9S1NB88B98b28LeuKPS7bA0J2Kv+Lpc0UqSA=
 github.com/drycc-addons/go-open-service-broker-client/v2 v2.0.0-20210928082444-d912fc53f8bd/go.mod h1:TF5NsMVOxCw6ewZKcTTBvnE2SNEKfsFidBOEljuFRhA=
 github.com/dustin/go-humanize v1.0.0 h1:VSnTsYCnlFHaM2/igO1h6X3HA71jcobQuxemgkq4zYo=
 github.com/dustin/go-humanize v1.0.0/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
