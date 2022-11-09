@@ -1321,7 +1321,7 @@ sigs.k8s.io/controller-runtime/pkg/scheme
 sigs.k8s.io/controller-runtime/pkg/webhook
 sigs.k8s.io/controller-runtime/pkg/webhook/admission
 sigs.k8s.io/controller-runtime/pkg/webhook/internal/metrics
-# sigs.k8s.io/go-open-service-broker-client/v2 v2.0.0-20210928082444-d912fc53f8bd => github.com/drycc/go-open-service-broker-client/v2 v2.0.0-20210928082444-d912fc53f8bd
+# sigs.k8s.io/go-open-service-broker-client/v2 v2.0.0-20210928082444-d912fc53f8bd => github.com/drycc-addons/go-open-service-broker-client/v2 v2.0.0-20210928082444-d912fc53f8bd
 ## explicit; go 1.14
 sigs.k8s.io/go-open-service-broker-client/v2
 sigs.k8s.io/go-open-service-broker-client/v2/fake

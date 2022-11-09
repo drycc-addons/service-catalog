@@ -25,7 +25,7 @@ readonly REPO_ROOT_DIR=${CURRENT_DIR}/../../../
 
 source "${CURRENT_DIR}/lib/utilities.sh" || { echo 'Cannot load CI utilities.'; exit 1; }
 
-export REGISTRY=${REGISTRY:-registry.drycc.cc/drycc/}
+export REGISTRY=${REGISTRY:-registry.drycc.cc/drycc-addons/}
 
 echo "${DOCKER_PASSWORD}" | docker login "${DRYCC_REGISTRY}" --username "${DOCKER_USERNAME}" --password-stdin
 

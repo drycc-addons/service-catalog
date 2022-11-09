@@ -153,4 +153,4 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.0 // indirect
 )
 
-replace sigs.k8s.io/go-open-service-broker-client/v2 v2.0.0-20210928082444-d912fc53f8bd => github.com/drycc/go-open-service-broker-client/v2 v2.0.0-20210928082444-d912fc53f8bd
+replace sigs.k8s.io/go-open-service-broker-client/v2 v2.0.0-20210928082444-d912fc53f8bd => github.com/drycc-addons/go-open-service-broker-client/v2 v2.0.0-20210928082444-d912fc53f8bd

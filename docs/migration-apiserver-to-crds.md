@@ -88,7 +88,7 @@ The resulting executable file can be found in the `bin` subdirectory.
 
 In order to perform a successful migration, the Service Catalog resources can't be in the unfinished or deleted state. Otherwise, the upgrade job can fail.
 
-To check if your cluster is ready for migration, use the sanity check [script](https://github.com/drycc/service-catalog/blob/master/contrib/hack/migration-check.sh).
+To check if your cluster is ready for migration, use the sanity check [script](https://github.com/drycc-addons/service-catalog/blob/master/contrib/hack/migration-check.sh).
 
 The script checks if the Service Catalog resources are prepared for migration. If some of them are not ready, the script prints a proper error message.
 
@@ -97,7 +97,7 @@ There are a few possible messages you can see:
 - `There are {type} in progress` - prints the resources list of a given type with `asyncOpInProgress` set to `true`.
 - `ServiceClass not exist for the ServiceInstances:` - prints the Service Instances list which Service Class was deleted.
 
-The above errors can be fixed manually, read more about it in [this](https://github.com/drycc/service-catalog/blob/master/docs/tasks/stuck_instance.md) document. 
+The above errors can be fixed manually, read more about it in [this](https://github.com/drycc-addons/service-catalog/blob/master/docs/tasks/stuck_instance.md) document. 
 
 ### Execution
 

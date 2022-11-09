@@ -46,7 +46,7 @@ steps:
       -e DRONE_COMMIT_AUTHOR_EMAIL="$DRONE_COMMIT_AUTHOR_EMAIL"
       -e PLUGIN_SSH_KEY="$SSH_DEPLOY_KEY"
       -e PLUGIN_BRANCH=main
-      -e PLUGIN_REMOTE=git@github.com:drycc/service-catalog.drycc.cc.git
+      -e PLUGIN_REMOTE=git@github.com:drycc-addons/service-catalog.drycc.cc.git
       -e PLUGIN_FORCE=true
       -e PLUGIN_COMMIT=true
       -e PLUGIN_PATH=docsite/_site

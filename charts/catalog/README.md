@@ -7,7 +7,7 @@ to provision and bind to application dependencies like databases, object
 storage, message-oriented middleware, and more.
 
 For more information,
-[visit the project on github](https://github.com/drycc/service-catalog).
+[visit the project on github](https://github.com/drycc-addons/service-catalog).
 
 ## Prerequisites
 

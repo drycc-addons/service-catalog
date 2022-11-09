@@ -6,7 +6,7 @@ for use demonstrating the Kubernetes
 Service Catalog.
 
 For more information,
-[visit the Service Catalog project on github](https://github.com/drycc/service-catalog).
+[visit the Service Catalog project on github](https://github.com/drycc-addons/service-catalog).
 
 ## Installing the Chart
 

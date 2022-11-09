@@ -30,7 +30,7 @@ when running in plugin mode, so instead of using `--flag` you must specify a val
 Run `svcat --help` to see the available commands.
 
 Below are some common tasks made easy with svcat. The example output assumes that the
-[User Provided Service Broker](https://github.com/drycc/service-catalog/tree/master/charts/ups-broker) is installed on the cluster.
+[User Provided Service Broker](https://github.com/drycc-addons/service-catalog/tree/master/charts/ups-broker) is installed on the cluster.
 
 ## Register a broker
 ```console 
@@ -248,7 +248,7 @@ svcat does not currently support provisioning instances of namespaced classes an
 
 svcat commands that get information about the current state of the system also support the `--scope` flag, which is set
 to `all` by default. This will return all of the resources visible in the cluster scope, and the namespace of your current
-context. In the following examples, [helmbroker](https://github.com/drycc/helmbroker) is installed as a cluster broker, while `ups-broker` is installed in the
+context. In the following examples, [helmbroker](https://github.com/drycc-addons/helmbroker) is installed as a cluster broker, while `ups-broker` is installed in the
 `default` namespace.
 
 ```console

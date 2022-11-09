@@ -96,7 +96,7 @@ ORIG_GOPATH   ?= $(shell go env GOPATH)
 export GOPATH  = $(BASE_PATH):$(ROOT)/vendor
 
 DRYCC_REGISTRY ?= $(DEV_REGISTRY)
-IMAGE_PREFIX ?= drycc
+IMAGE_PREFIX ?= drycc-addons
 COMPONENT ?= service-catalog
 PLATFORM ?= linux/amd64,linux/arm64
 REGISTRY ?= ${DRYCC_REGISTRY}/${IMAGE_PREFIX}/

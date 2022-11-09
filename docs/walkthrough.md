@@ -19,7 +19,7 @@ Since the Service Catalog provides a Kubernetes-native interface to an
 server, we'll need to install one in order to proceed with a demo.
 
 We plan on using the helmbroker for demo purposes. The codebase for that broker is
-[here](https://github.com/drycc/helmbroker).
+[here](https://github.com/drycc-addons/helmbroker).
 
 But it seems that installing helmbroker alone is a little troublesome. It needs rabbitmq message queue. 
 We strongly recommend using drycc one click installation script to experience it. This script comes with a k3s and drycc workflow installed. You can find details about the install drycc.

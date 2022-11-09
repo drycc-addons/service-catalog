@@ -1,8 +1,8 @@
 ## `service-catalog`
 
-[![Build Status](https://drone.drycc.cc/api/badges/drycc/service-catalog/status.svg)](https://drone.drycc.cc/drycc/service-catalog)
-[![Go Report Card](https://goreportcard.com/badge/github.com/drycc/service-catalog)](https://goreportcard.com/report/github.com/drycc/service-catalog)
-[![codecov](https://codecov.io/gh/drycc/service-catalog/branch/main/graph/badge.svg)](https://codecov.io/gh/drycc/service-catalog)
+[![Build Status](https://drone.drycc.cc/api/badges/drycc-addons/service-catalog/status.svg)](https://drone.drycc.cc/drycc-addons/service-catalog)
+[![Go Report Card](https://goreportcard.com/badge/github.com/drycc-addons/service-catalog)](https://goreportcard.com/report/github.com/drycc-addons/service-catalog)
+[![codecov](https://codecov.io/gh/drycc-addons/service-catalog/branch/main/graph/badge.svg)](https://codecov.io/gh/drycc-addons/service-catalog)
 
 <p align="center">
     <a href="https://service-catalog.drycc.cc">
@@ -16,20 +16,20 @@ brokers to the Kubernetes ecosystem via the [Open Service Broker API](https://gi
 
 ### About
 
-It seems that the original [drycc/service-catalog](https://github.com/drycc/service-catalog) is no longer active.
+It seems that the original [drycc-addons/service-catalog](https://github.com/drycc-addons/service-catalog) is no longer active.
 
 However, we use a lot of service-catalog related components in drycc, so we decided to establish a branch.
 
-If the service-catalog is reactivated at some point in the future, we expect that the changes of this branch can be finally merged into [drycc/service-catalog](https://github.com/drycc/service-catalog).
+If the service-catalog is reactivated at some point in the future, we expect that the changes of this branch can be finally merged into [drycc-addons/service-catalog](https://github.com/drycc-addons/service-catalog).
 
 Now our main goal is to upgrade some outdated APIs, including charts and source code. Then consider adding some new features.
 
 If you are also using service-catalog, you can help us together.
 
-* Github: https://github.com/drycc/service-catalog
+* Github: https://github.com/drycc-addons/service-catalog
 * Stable Charts: oci://registry.drycc.cc/charts/catalog
 * Testing Charts: https://registry.drycc.cc/charts-testing/catalog
-* Helmbroker: https://github.com/drycc/helmbroker
+* Helmbroker: https://github.com/drycc-addons/helmbroker
 
 ### Documentation
 
