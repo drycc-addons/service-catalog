@@ -47,9 +47,10 @@ func NewWaitable() *Waitable {
 }
 
 // AddWaitFlags adds the wait related flags.
-//   --wait
-//   --timeout
-//   --interval
+//
+//	--wait
+//	--timeout
+//	--interval
 func (c *Waitable) AddWaitFlags(cmd *cobra.Command) {
 	cmd.Flags().BoolVar(&c.Wait, "wait", false,
 		"Wait until the operation completes.")
@@ -60,9 +61,10 @@ func (c *Waitable) AddWaitFlags(cmd *cobra.Command) {
 }
 
 // ApplyWaitFlags validates and persists the wait related flags.
-//   --wait
-//   --timeout
-//   --interval
+//
+//	--wait
+//	--timeout
+//	--interval
 func (c *Waitable) ApplyWaitFlags() error {
 	if !c.Wait {
 		return nil

@@ -296,13 +296,11 @@ func TestCommandOutput(t *testing.T) {
 //
 //	go test ./cmd/svcat/... -update
 //
-//
 // once. This command updates the golden file according to your new command.
 // After you run the update, make sure your tests pass against the new golden
 // file:
 //
-// 	go test ./cmd/svcat/...
-//
+//	go test ./cmd/svcat/...
 func TestGenerateManifest(t *testing.T) {
 	svcat := buildRootCommand(newContext())
 

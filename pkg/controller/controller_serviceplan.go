@@ -57,7 +57,8 @@ func (c *controller) servicePlanDelete(obj interface{}) {
 // reconcileServicePlanKey reconciles a ServicePlan due to resync
 // or an event on the ServicePlan.  Note that this is NOT the main
 // reconciliation loop for ServicePlans. ServicePlans are primarily
-//  reconciled in a separate flow when a ServiceBroker is reconciled.
+//
+//	reconciled in a separate flow when a ServiceBroker is reconciled.
 func (c *controller) reconcileServicePlanKey(key string) error {
 	namespace, name, err := cache.SplitMetaNamespaceKey(key)
 	if err != nil {

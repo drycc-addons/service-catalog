@@ -36,7 +36,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
-//TestDecoderHandler represents a handler with a decoder
+// TestDecoderHandler represents a handler with a decoder
 type TestDecoderHandler interface {
 	InjectDecoder(d *admission.Decoder) error
 	Handle(ctx context.Context, req admission.Request) admission.Response

@@ -3657,20 +3657,20 @@ func TestReconcileServiceInstanceWithStatusUpdateError(t *testing.T) {
 // TestSetServiceInstanceCondition ensures that with the expected conditions the
 // SetServiceInstanceCondition() updates a status properly with the given condition
 // The test cases are proving:
-// - status with no existing conditions accepts new condition of Ready=False
-//   and updates the timestamp
-// - status with existing Ready=False condition accepts new condition of
-//   Ready=False with no timestamp change
-// - status with existing Ready=False condition accepts new condition of
-//   Ready=False  with reason & msg change and results with no timestamp change
-// - status with existing Ready=False condition accepts new condition of
-//   Ready=True  and reflects new timestamp
-// - status with existing Ready=True condition accepts new condition of
-//   Ready=True with no timestamp change
-// - status with existing Ready=True condition accepts new condition of
-//   Ready=False and reflects new timestamp
-// - status with existing Ready=False condition accepts new condition of
-//   Failed=True  and reflects Ready=False, Failed=True, new timestamp
+//   - status with no existing conditions accepts new condition of Ready=False
+//     and updates the timestamp
+//   - status with existing Ready=False condition accepts new condition of
+//     Ready=False with no timestamp change
+//   - status with existing Ready=False condition accepts new condition of
+//     Ready=False  with reason & msg change and results with no timestamp change
+//   - status with existing Ready=False condition accepts new condition of
+//     Ready=True  and reflects new timestamp
+//   - status with existing Ready=True condition accepts new condition of
+//     Ready=True with no timestamp change
+//   - status with existing Ready=True condition accepts new condition of
+//     Ready=False and reflects new timestamp
+//   - status with existing Ready=False condition accepts new condition of
+//     Failed=True  and reflects Ready=False, Failed=True, new timestamp
 func TestSetServiceInstanceCondition(t *testing.T) {
 	instanceWithCondition := func(condition *v1beta1.ServiceInstanceCondition) *v1beta1.ServiceInstance {
 		instance := getTestServiceInstance()

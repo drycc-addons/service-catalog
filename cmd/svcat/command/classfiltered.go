@@ -38,7 +38,8 @@ func NewClassFiltered() *ClassFiltered {
 }
 
 // AddClassFlag adds the class related flag.
-//   --class
+//
+//	--class
 func (c *ClassFiltered) AddClassFlag(cmd *cobra.Command) {
 	cmd.Flags().StringP(
 		"class",
@@ -49,7 +50,8 @@ func (c *ClassFiltered) AddClassFlag(cmd *cobra.Command) {
 }
 
 // ApplyClassFlag persists the class related flag.
-//   --class
+//
+//	--class
 func (c *ClassFiltered) ApplyClassFlag(cmd *cobra.Command) error {
 	var err error
 	c.ClassFilter, err = cmd.Flags().GetString("class")

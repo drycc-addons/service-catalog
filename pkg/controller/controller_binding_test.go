@@ -1812,18 +1812,18 @@ func TestReconcileServiceBindingWithServiceBindingFailure(t *testing.T) {
 // condition transitions on a binding work as expected.
 //
 // The test cases are proving:
-// - a binding with no status that has status condition set to false will update
-//   the transition time
-// - a binding with condition false set to condition false will not update the
-//   transition time
-// - a binding with condition false set to condition false with a new message and
-//   reason will not update the transition time
-// - a binding with condition false set to condition true will update the
-//   transition time
-// - a binding with condition status true set to true will not update the
-//   transition time
-// - a binding with condition status true set to false will update the transition
-//   time
+//   - a binding with no status that has status condition set to false will update
+//     the transition time
+//   - a binding with condition false set to condition false will not update the
+//     transition time
+//   - a binding with condition false set to condition false with a new message and
+//     reason will not update the transition time
+//   - a binding with condition false set to condition true will update the
+//     transition time
+//   - a binding with condition status true set to true will not update the
+//     transition time
+//   - a binding with condition status true set to false will update the transition
+//     time
 func TestUpdateServiceBindingCondition(t *testing.T) {
 	getTestServiceBindingWithStatus := func(status v1beta1.ConditionStatus) *v1beta1.ServiceBinding {
 		instance := getTestServiceBinding()

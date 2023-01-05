@@ -135,23 +135,26 @@ type CommonServiceBrokerSpec struct {
 //
 // This is an example of a whitelist on service externalName.
 // Goal: Only list Services with the externalName of FooService and BarService,
-// Solution: restrictions := ServiceCatalogRestrictions{
-// 		ServiceClass: ["spec.externalName in (FooService, BarService)"]
-// }
+//
+//	Solution: restrictions := ServiceCatalogRestrictions{
+//			ServiceClass: ["spec.externalName in (FooService, BarService)"]
+//	}
 //
 // This is an example of a blacklist on service externalName.
 // Goal: Allow all services except the ones with the externalName of FooService and BarService,
-// Solution: restrictions := ServiceCatalogRestrictions{
-// 		ServiceClass: ["spec.externalName notin (FooService, BarService)"]
-// }
+//
+//	Solution: restrictions := ServiceCatalogRestrictions{
+//			ServiceClass: ["spec.externalName notin (FooService, BarService)"]
+//	}
 //
 // This whitelists plans called "Demo", and blacklists (but only a single element in
 // the list) a service and a plan.
 // Goal: Allow all plans with the externalName demo, but not AABBCC, and not a specific service by name,
-// Solution: restrictions := ServiceCatalogRestrictions{
-// 		ServiceClass: ["name!=AABBB-CCDD-EEGG-HIJK"]
-// 		ServicePlan: ["spec.externalName in (Demo)", "name!=AABBCC"]
-// }
+//
+//	Solution: restrictions := ServiceCatalogRestrictions{
+//			ServiceClass: ["name!=AABBB-CCDD-EEGG-HIJK"]
+//			ServicePlan: ["spec.externalName in (Demo)", "name!=AABBCC"]
+//	}
 //
 // CatalogRestrictions strings have a special format similar to Label Selectors,
 // except the catalog supports only a very specific property set.
@@ -164,16 +167,19 @@ type CommonServiceBrokerSpec struct {
 // Multiple predicates are allowed to be chained with a comma (,)
 //
 // ServiceClass allowed property names:
-//   name - the value set to [Cluster]ServiceClass.Name
-//   spec.externalName - the value set to [Cluster]ServiceClass.Spec.ExternalName
-//   spec.externalID - the value set to [Cluster]ServiceClass.Spec.ExternalID
+//
+//	name - the value set to [Cluster]ServiceClass.Name
+//	spec.externalName - the value set to [Cluster]ServiceClass.Spec.ExternalName
+//	spec.externalID - the value set to [Cluster]ServiceClass.Spec.ExternalID
+//
 // ServicePlan allowed property names:
-//   name - the value set to [Cluster]ServicePlan.Name
-//   spec.externalName - the value set to [Cluster]ServicePlan.Spec.ExternalName
-//   spec.externalID - the value set to [Cluster]ServicePlan.Spec.ExternalID
-//   spec.free - the value set to [Cluster]ServicePlan.Spec.Free
-//   spec.serviceClass.name - the value set to ServicePlan.Spec.ServiceClassRef.Name
-//   spec.clusterServiceClass.name - the value set to ClusterServicePlan.Spec.ClusterServiceClassRef.Name
+//
+//	name - the value set to [Cluster]ServicePlan.Name
+//	spec.externalName - the value set to [Cluster]ServicePlan.Spec.ExternalName
+//	spec.externalID - the value set to [Cluster]ServicePlan.Spec.ExternalID
+//	spec.free - the value set to [Cluster]ServicePlan.Spec.Free
+//	spec.serviceClass.name - the value set to ServicePlan.Spec.ServiceClassRef.Name
+//	spec.clusterServiceClass.name - the value set to ClusterServicePlan.Spec.ClusterServiceClassRef.Name
 type CatalogRestrictions struct {
 	// ServiceClass represents a selector for plans, used to filter catalog re-lists.
 	// +listType=set
@@ -780,12 +786,12 @@ type ServiceInstance struct {
 // exclusive.
 //
 // Currently supported ways:
-//  - ClusterServiceClassExternalName and ClusterServicePlanExternalName
-//  - ClusterServiceClassExternalID and ClusterServicePlanExternalID
-//  - ClusterServiceClassName and ClusterServicePlanName
-//  - ServiceClassExternalName and ServicePlanExternalName
-//  - ServiceClassExternalID and ServicePlanExternalID
-//  - ServiceClassName and ServicePlanName
+//   - ClusterServiceClassExternalName and ClusterServicePlanExternalName
+//   - ClusterServiceClassExternalID and ClusterServicePlanExternalID
+//   - ClusterServiceClassName and ClusterServicePlanName
+//   - ServiceClassExternalName and ServicePlanExternalName
+//   - ServiceClassExternalID and ServicePlanExternalID
+//   - ServiceClassName and ServicePlanName
 //
 // For any of these ways, if a ClusterServiceClass only has one plan
 // then the corresponding service plan field is optional.
@@ -1447,11 +1453,16 @@ type SecretTransform struct {
 // from the broker should be renamed and stored under a different key
 // in the Secret.
 // For example, given the following credentials entry:
-//     "USERNAME": "johndoe"
+//
+//	"USERNAME": "johndoe"
+//
 // and the following RenameKeyTransform:
-//     {"from": "USERNAME", "to": "DB_USER"}
+//
+//	{"from": "USERNAME", "to": "DB_USER"}
+//
 // the following entry will appear in the Secret:
-//     "DB_USER": "johndoe"
+//
+//	"DB_USER": "johndoe"
 type RenameKeyTransform struct {
 	// The name of the key to rename
 	From string `json:"from"`
@@ -1462,9 +1473,13 @@ type RenameKeyTransform struct {
 // AddKeyTransform specifies that Service Catalog should add an
 // additional entry to the Secret associated with the ServiceBinding.
 // For example, given the following AddKeyTransform:
-//     {"key": "CONNECTION_POOL_SIZE", "stringValue": "10"}
+//
+//	{"key": "CONNECTION_POOL_SIZE", "stringValue": "10"}
+//
 // the following entry will appear in the Secret:
-//     "CONNECTION_POOL_SIZE": "10"
+//
+//	"CONNECTION_POOL_SIZE": "10"
+//
 // Note that this transform should only be used to add non-sensitive
 // (non-secret) values. To add sensitive information, the
 // AddKeysFromTransform should be used instead.
@@ -1487,7 +1502,9 @@ type AddKeyTransform struct {
 // AddKeysFromTransform specifies that Service Catalog should merge
 // an existing secret into the Secret associated with the ServiceBinding.
 // For example, given the following AddKeysFromTransform:
-//     {"secretRef": {"namespace": "foo", "name": "bar"}}
+//
+//	{"secretRef": {"namespace": "foo", "name": "bar"}}
+//
 // the entries of the Secret "bar" from Namespace "foo" will be merged into
 // the credentials Secret.
 type AddKeysFromTransform struct {

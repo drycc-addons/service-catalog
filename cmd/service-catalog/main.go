@@ -16,7 +16,6 @@ limitations under the License.
 
 // A binary that can morph into all of the other kubernetes service-catalog
 // binaries. You can also soft-link to it busybox style.
-//
 package main
 
 import (

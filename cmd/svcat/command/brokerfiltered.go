@@ -43,7 +43,8 @@ func NewBrokerFiltered() *BrokerFiltered {
 }
 
 // AddBrokerFlag adds the broker related flag.
-//   --broker
+//
+//	--broker
 func (c *BrokerFiltered) AddBrokerFlag(cmd *cobra.Command) {
 	cmd.Flags().StringP(
 		"broker",
@@ -54,7 +55,8 @@ func (c *BrokerFiltered) AddBrokerFlag(cmd *cobra.Command) {
 }
 
 // ApplyBrokerFlag persists the broker related flag.
-//   --broker
+//
+//	--broker
 func (c *BrokerFiltered) ApplyBrokerFlag(cmd *cobra.Command) error {
 	var err error
 	c.BrokerFilter, err = cmd.Flags().GetString("broker")

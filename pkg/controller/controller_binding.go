@@ -674,7 +674,6 @@ func (c *controller) ejectServiceBinding(binding *v1beta1.ServiceBinding) error 
 // conditions in the // status are not altered. If the condition exists and its
 // status changes, the LastTransitionTime field is updated.
 
-//
 // Note: objects coming from informers should never be mutated; always pass a
 // deep copy as the binding parameter.
 func setServiceBindingCondition(toUpdate *v1beta1.ServiceBinding,

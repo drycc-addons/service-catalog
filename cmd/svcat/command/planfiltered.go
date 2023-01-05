@@ -38,7 +38,8 @@ func NewPlanFiltered() *PlanFiltered {
 }
 
 // AddPlanFlag adds the plan related flag.
-//   --plan
+//
+//	--plan
 func (c *PlanFiltered) AddPlanFlag(cmd *cobra.Command) {
 	cmd.Flags().StringP(
 		"plan",
@@ -49,7 +50,8 @@ func (c *PlanFiltered) AddPlanFlag(cmd *cobra.Command) {
 }
 
 // ApplyPlanFlag persists the plan related flag.
-//   --plan
+//
+//	--plan
 func (c *PlanFiltered) ApplyPlanFlag(cmd *cobra.Command) error {
 	var err error
 	c.PlanFilter, err = cmd.Flags().GetString("plan")

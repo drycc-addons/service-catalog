@@ -202,26 +202,33 @@ func (pr PlanReference) String() string {
 
 // Format the PlanReference
 // %c - Print specified class fields only
-//    Examples:
-//     {ClassExternalName:"foo"}
-//     {ClassExternalID:"foo123"}
-//     {ClassName:"k8s-foo123"}
+//
+//	Examples:
+//	 {ClassExternalName:"foo"}
+//	 {ClassExternalID:"foo123"}
+//	 {ClassName:"k8s-foo123"}
+//
 // %b - Print specified plan fields only
-//    NOTE: %p is a reserved verb so we can't use it, and go vet fails for non-standard verbs
-//    Examples:
-//     {PlanExternalName:"bar"}
-//     {PlanExternalID:"bar456"}
-//     {PlanName:"k8s-bar456"}
+//
+//	NOTE: %p is a reserved verb so we can't use it, and go vet fails for non-standard verbs
+//	Examples:
+//	 {PlanExternalName:"bar"}
+//	 {PlanExternalID:"bar456"}
+//	 {PlanName:"k8s-bar456"}
+//
 // %s - Print a short form of the plan and class
-//    Examples:
-//     foo/bar
-//     foo123/bar456
-//     k8s-foo123/k8s-bar456
+//
+//	Examples:
+//	 foo/bar
+//	 foo123/bar456
+//	 k8s-foo123/k8s-bar456
+//
 // %v - Print all specified fields
-//    Examples:
-//     {ClassExternalName:"foo", PlanExternalName:"bar"}
-//     {ClassExternalID:"foo123", PlanExternalID:"bar456"}
-//     {ClassName:"k8s-foo123", PlanName:"k8s-bar456"}
+//
+//	Examples:
+//	 {ClassExternalName:"foo", PlanExternalName:"bar"}
+//	 {ClassExternalID:"foo123", PlanExternalID:"bar456"}
+//	 {ClassName:"k8s-foo123", PlanName:"k8s-bar456"}
 func (pr PlanReference) Format(s fmt.State, verb rune) {
 	var classFields []string
 	var planFields []string

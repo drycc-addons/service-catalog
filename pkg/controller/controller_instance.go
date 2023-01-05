@@ -2085,7 +2085,9 @@ func isServiceInstancePropertiesStateEqual(s1 *v1beta1.ServiceInstanceProperties
 // operation - operation that is being performed on the instance
 // returns:
 // 1 - a modifiable copy of the updated instance in the registry; or toUpdate
-//     if there was an error
+//
+//	if there was an error
+//
 // 2 - any error that occurred
 func (c *controller) recordStartOfServiceInstanceOperation(toUpdate *v1beta1.ServiceInstance, operation v1beta1.ServiceInstanceOperation, inProgressProperties *v1beta1.ServiceInstancePropertiesState) (*v1beta1.ServiceInstance, error) {
 	clearServiceInstanceCurrentOperation(toUpdate)

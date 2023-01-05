@@ -174,7 +174,7 @@ func (sdk *SDK) RetrieveBrokerByClass(class *v1beta1.ClusterServiceClass,
 	return broker, nil
 }
 
-//Register creates a broker
+// Register creates a broker
 func (sdk *SDK) Register(brokerName string, url string, opts *RegisterOptions, scopeOpts *ScopeOptions) (Broker, error) {
 	var err error
 	var caBytes []byte
