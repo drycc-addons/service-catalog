@@ -26,10 +26,10 @@ else
     DOCS_REGEX='(OWNERS|LICENSE)|(\.md$)|(^docs/)|(^docsite/)'
     if [[ -n "$(git diff --name-only $COMMIT_RANGE | grep -vE $DOCS_REGEX)" ]]; then DOCS_ONLY=1; fi
 fi
-if [[ $DRONE_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+[a-z]*((-beta.[0-9]+)|(-(r|R)(c|C)[0-9]+))?$ ]]; then
+if [[ $CI_COMMIT_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+[a-z]*((-beta.[0-9]+)|(-(r|R)(c|C)[0-9]+))?$ ]]; then
     export DEPLOY_TYPE=release
-elif [[ $DRONE_BRANCH == "main" ]]; then
+elif [[ $CI_COMMIT_BRANCH == "main" ]]; then
     export DEPLOY_TYPE=main
 else
-    export DEPLOY_TYPE=none-$DRONE_TAG-$DRONE_BRANCH
+    export DEPLOY_TYPE=none-$CI_COMMIT_TAG-$CI_COMMIT_BRANCH
 fi

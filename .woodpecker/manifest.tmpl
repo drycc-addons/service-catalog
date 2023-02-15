@@ -1,0 +1,18 @@
+image: registry.drycc.cc/drycc-addons/{{project}}:{{#if build.tag}}{{trimPrefix "v" build.tag}}{{else}}canary{{/if}}
+{{#if build.tags}}
+tags:
+{{#each build.tags}}
+  - {{this}}
+{{/each}}
+{{/if}}
+manifests:
+  -
+    image: registry.drycc.cc/drycc-addons/{{project}}:{{#if build.tag}}{{build.tag}}-{{else}}latest-{{/if}}linux-amd64
+    platform:
+      architecture: amd64
+      os: linux
+  -
+    image: registry.drycc.cc/drycc-addons/{{project}}:{{#if build.tag}}{{build.tag}}-{{else}}latest-{{/if}}linux-arm64
+    platform:
+      architecture: arm64
+      os: linux

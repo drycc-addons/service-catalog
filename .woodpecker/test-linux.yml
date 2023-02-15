@@ -1,0 +1,28 @@
+matrix:
+  platform:
+  - linux/amd64
+  - linux/arm64
+
+platform: ${platform}
+
+labels:
+  type: exec
+
+pipeline:
+- name: test-linux
+  image: bash
+  commands:
+  - contrib/hack/ci/test.sh
+  environment:
+    VERSION: ${CI_COMMIT_TAG=latest}-linux-amd64
+    CI_COMMIT_TAG: ${CI_COMMIT_TAG=latest}
+  secrets:
+  - dev_registry
+  - drycc_registry
+  when:
+    event:
+    - push
+    - tag
+
+depends_on:
+- test-e2e
