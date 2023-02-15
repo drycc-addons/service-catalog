@@ -1,6 +1,6 @@
 ## `service-catalog`
 
-[![Build Status](https://drone.drycc.cc/api/badges/drycc-addons/service-catalog/status.svg)](https://drone.drycc.cc/drycc-addons/service-catalog)
+[![Build Status](https://woodpecker.drycc.cc/api/badges/drycc-addons/service-catalog/status.svg)](https://woodpecker.drycc.cc/drycc-addons/service-catalog)
 [![Go Report Card](https://goreportcard.com/badge/github.com/drycc-addons/service-catalog)](https://goreportcard.com/report/github.com/drycc-addons/service-catalog)
 [![codecov](https://codecov.io/gh/drycc-addons/service-catalog/branch/main/graph/badge.svg)](https://codecov.io/gh/drycc-addons/service-catalog)
 

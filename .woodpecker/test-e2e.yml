@@ -1,0 +1,24 @@
+platform: linux/amd64
+
+labels:
+  type: exec
+
+pipeline:
+- name: test-e2e
+  image: bash
+  commands:
+  - make test-e2e
+  - make coverage
+  - curl -s https://codecov.io/bash | bash
+  environment:
+    VERSION: ${CI_COMMIT_TAG=latest}-linux-amd64
+    CI_COMMIT_TAG: ${CI_COMMIT_TAG=latest}
+  secrets:
+  - codecov_token
+  - dev_registry
+  - drycc_registry
+  when:
+    event:
+    - push
+    - tag
+    - pull_request

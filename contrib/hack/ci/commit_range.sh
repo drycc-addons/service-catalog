@@ -17,13 +17,13 @@
 set -o nounset # treat unset variables as an error and exit immediately.
 set -o errexit # exit immediately when a command fails.
 
-# ref: https://discourse.drone.io/t/how-to-get-the-commit-range-of-a-push-pr-event/1716/5
-if [[ $DRONE_BUILD_EVENT == 'pull_request' ]]; then
-  BASE=$(curl -s https://api.github.com/repos/$DRONE_REPO_OWNER/$DRONE_REPO_NAME/pulls/$DRONE_PULL_REQUEST | jq -r .base.sha)
-elif [[ $DRONE_BUILD_EVENT == 'push' ]]; then
-  BASE=$(curl -s https://api.github.com/repos/$DRONE_REPO_OWNER/$DRONE_REPO_NAME/commits/$DRONE_COMMIT_SHA | jq -r .parents[0].sha)
+# ref: https://woodpecker-ci.org/docs/next/usage/environment
+if [[ $CI_PIPELINE_EVENT == 'pull_request' ]]; then
+  BASE=$(curl -s https://api.github.com/repos/$CI_REPO_OWNER/$CI_REPO_NAME/pulls/$CI_COMMIT_PULL_REQUEST | jq -r .base.sha)
+elif [[ $CI_PIPELINE_EVENT == 'push' ]]; then
+  BASE=$(curl -s https://api.github.com/repos/$CI_REPO_OWNER/$CI_REPO_NAME/commits/$CI_COMMIT_SHA | jq -r .parents[0].sha)
 else
-  echo "build event $DRONE_BUILD_EVENT not supported" >&2
+  echo "build event $CI_PIPELINE_EVENT not supported" >&2
   exit 1
 fi
-echo "$BASE..$DRONE_COMMIT_SHA"
+echo "$BASE..$CI_COMMIT_SHA"
