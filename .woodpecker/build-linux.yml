@@ -12,7 +12,7 @@ pipeline:
 - name: publish-linux
   image: bash
   commands:
-  - export ARCH=$(sed 's#/#-#g' <<< $CI_SYSTEM_ARCH)
+  - export ARCH=$(sed 's#linux/##g' <<< $CI_SYSTEM_ARCH)
   - echo $CONTAINER_PASSWORD | docker login $DRYCC_REGISTRY --username $CONTAINER_USERNAME --password-stdin > /dev/null 2>&1
   - make service-catalog-push
   environment:
