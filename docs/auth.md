@@ -37,7 +37,7 @@ exist as part of the installation.
 
 In case you need to generate any of the CA certificate pairs mentioned
 above yourself, the Kubernetes documentation has [detailed
-instructions](https://kubernetes.io/docs/admin/authentication/#creating-certificates)
+instructions](https://kubernetes.io/docs/reference/access-authn-authz/authentication/)
 on how to create certificates several different ways.
 
 Service Catalog Helm chart uses build-in [Sprig’s](https://github.com/Masterminds/sprig) functions to generate 
@@ -68,6 +68,6 @@ certificate authentication.  Additionally, off-cluster non-human clients
 often use client certificate authentication.
 
 See the [x509 client
-certificates](https://kubernetes.io/docs/admin/authentication/#x509-client-certs)
+certificates](https://kubernetes.io/docs/reference/access-authn-authz/authentication/#x509-client-certs)
 section of the Kubernetes documentation for more information.
 

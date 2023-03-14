@@ -57,7 +57,7 @@ STAT           = stat -c '%Y %n'
 endif
 
 TYPES_FILES    = $(shell find pkg/apis -name types.go)
-GO_VERSION    ?= 1.19
+GO_VERSION    ?= 1.20
 
 # Preserve also user values
 ifeq ($(GOFLAGS),)
@@ -415,10 +415,8 @@ endif
 
 service-catalog-push: service-catalog-image
 	docker push $(SERVICE_CATALOG_IMAGE)
-	docker push $(SERVICE_CATALOG_MUTABLE_IMAGE)
 ifeq ($(ARCH),amd64)
 	docker push $(REGISTRY)service-catalog:$(VERSION)
-	docker push $(REGISTRY)service-catalog:$(MUTABLE_TAG)
 endif
 
 

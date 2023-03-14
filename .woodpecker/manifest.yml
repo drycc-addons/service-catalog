@@ -23,6 +23,7 @@ pipeline:
     -e PLUGIN_SPEC=.woodpecker/manifest.tmpl
     -e PLUGIN_USERNAME=$CONTAINER_USERNAME
     -e PLUGIN_PASSWORD=$CONTAINER_PASSWORD
+    -e DRONE_TAG=$CI_COMMIT_TAG
     -v $(pwd):$(pwd)
     -w $(pwd)
     plugins/manifest

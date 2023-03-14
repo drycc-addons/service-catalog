@@ -20,7 +20,7 @@ set -o errexit # exit immediately when a command fails.
 # ref: https://woodpecker-ci.org/docs/next/usage/environment
 if [[ $CI_PIPELINE_EVENT == 'pull_request' ]]; then
   BASE=$(curl -s https://api.github.com/repos/$CI_REPO_OWNER/$CI_REPO_NAME/pulls/$CI_COMMIT_PULL_REQUEST | jq -r .base.sha)
-elif [[ $CI_PIPELINE_EVENT == 'push' ]]; then
+elif [[ "push tag" =~  "${CI_PIPELINE_EVENT}" ]]; then
   BASE=$(curl -s https://api.github.com/repos/$CI_REPO_OWNER/$CI_REPO_NAME/commits/$CI_COMMIT_SHA | jq -r .parents[0].sha)
 else
   echo "build event $CI_PIPELINE_EVENT not supported" >&2

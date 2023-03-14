@@ -77,7 +77,7 @@ Service catalog uses OCI to store charts. Here are two OCI addresses, which stor
 ## RBAC
 
 Your Kubernetes cluster must have
-[RBAC](https://kubernetes.io/docs/admin/authorization/rbac/) enabled to use
+[RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) enabled to use
 Service Catalog.
 
 Like in-cluster DNS, many installation methods should enable RBAC for you.
