@@ -1,5 +1,5 @@
 # Default values for Test Service Broker
-imageOrg: "drycc"
+imageOrg: "drycc-addons"
 imagePullPolicy: "Always"
 imageTag: "canary"
 imageRegistry: "registry.drycc.cc"
