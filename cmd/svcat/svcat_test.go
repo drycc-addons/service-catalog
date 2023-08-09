@@ -20,7 +20,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -41,7 +41,6 @@ import (
 	"github.com/kubernetes-sigs/service-catalog/pkg/svcat"
 	servicecatalog "github.com/kubernetes-sigs/service-catalog/pkg/svcat/service-catalog"
 	"github.com/kubernetes-sigs/service-catalog/pkg/util"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -360,7 +359,7 @@ func TestNamespacedCommands(t *testing.T) {
 				CurrentNamespace: contextNS,
 				SvcatClient:      &servicecatalog.SDK{ServiceCatalogClient: fakeClient},
 			}
-			cxt.Output = ioutil.Discard
+			cxt.Output = io.Discard
 
 			executeFakeCommand(t, tc.cmd, cxt, true)
 
@@ -415,7 +414,7 @@ func TestParametersForBinding(t *testing.T) {
 			cxt.App = &svcat.App{
 				SvcatClient: &servicecatalog.SDK{ServiceCatalogClient: fakeClient},
 			}
-			cxt.Output = ioutil.Discard
+			cxt.Output = io.Discard
 
 			executeFakeCommand(t, tc.cmd, cxt, true)
 
@@ -652,7 +651,7 @@ func apihandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method != http.MethodGet {
-		requestBody, err := ioutil.ReadAll(r.Body)
+		requestBody, err := io.ReadAll(r.Body)
 		if err != nil {
 			w.WriteHeader(500)
 			w.Write([]byte(err.Error()))
@@ -705,12 +704,15 @@ func writeTestKubeconfig(fakeURL string) (string, error) {
 	}
 	t := template.Must(template.New("kubeconfig").Parse(string(configT)))
 
-	f, err := ioutil.TempFile("", "kubeconfig")
+	f, err := os.CreateTemp("", "kubeconfig")
 	if err != nil {
-		return "", errors.Wrap(err, "unable to create a temporary kubeconfig file")
+		return "", fmt.Errorf("unable to create a temporary kubeconfig file: %w", err)
 	}
 	defer f.Close()
 
 	err = t.Execute(f, data)
-	return f.Name(), errors.Wrap(err, "error executing the kubeconfig template")
+	if err != nil {
+		err = fmt.Errorf("error executing the kubeconfig template: %w", err)
+	}
+	return f.Name(), err
 }

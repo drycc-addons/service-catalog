@@ -18,10 +18,10 @@ package clusterbroker
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	scClientset "github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset/typed/servicecatalog/v1beta1"
-	"github.com/pkg/errors"
 	apiErr "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -97,16 +97,16 @@ func (t *tester) assertClusterServiceBrokerIsReady() error {
 func (t *tester) removeServiceBinding() error {
 	exist, err := t.serviceBindingExist()
 	if err != nil {
-		return errors.Wrap(err, "failed during fetching ServiceBinding")
+		return fmt.Errorf("failed during fetching ServiceBinding: %w", err)
 	}
 	if !exist {
 		return nil
 	}
 	if err := t.deleteServiceBinding(); err != nil {
-		return errors.Wrap(err, "failed during removing ServiceBinding")
+		return fmt.Errorf("failed during removing ServiceBinding: %w", err)
 	}
 	if err := t.assertServiceBindingIsRemoved(); err != nil {
-		return errors.Wrap(err, "failed during asserting ServiceBinding is removed")
+		return fmt.Errorf("failed during asserting ServiceBinding is removed: %w", err)
 	}
 	return nil
 }
@@ -114,7 +114,7 @@ func (t *tester) removeServiceBinding() error {
 func (t *tester) removeServiceInstance() error {
 	exist, err := t.serviceInstanceExist()
 	if err != nil {
-		return errors.Wrap(err, "failed during fetching ServiceInstance")
+		return fmt.Errorf("failed during fetching ServiceInstance: %w", err)
 	}
 	if !exist {
 		return nil
@@ -123,20 +123,20 @@ func (t *tester) removeServiceInstance() error {
 	// will handle ServiceInstance delete operation
 	// for now BrokerTest failed and ServiceInstance has deprovisioning false status
 	if err := t.removeServiceInstanceFinalizer(); err != nil {
-		return errors.Wrap(err, "failed during removing ServiceInstance finalizers")
+		return fmt.Errorf("failed during removing ServiceInstance finalizers: %w", err)
 	}
 	if err := t.deleteServiceInstance(); err != nil {
-		return errors.Wrap(err, "failed during removing ServiceInstance")
+		return fmt.Errorf("failed during removing ServiceInstance: %w", err)
 	}
 	if err := t.assertServiceInstanceIsRemoved(); err != nil {
-		return errors.Wrap(err, "failed during asserting ServiceInstance is removed")
+		return fmt.Errorf("failed during asserting ServiceInstance is removed: %w", err)
 	}
 	return nil
 }
 
 func (t *tester) unregisterClusterServiceBroker() error {
 	if err := t.deleteClusterServiceBroker(); err != nil {
-		return errors.Wrap(err, "failed during removing ClusterServiceBroker")
+		return fmt.Errorf("failed during removing ClusterServiceBroker: %w", err)
 	}
 	return nil
 }

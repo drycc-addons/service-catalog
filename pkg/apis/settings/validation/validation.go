@@ -18,6 +18,7 @@ package validation
 
 import (
 	apivalidation "k8s.io/apimachinery/pkg/api/validation"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/validation"
 	unversionedvalidation "k8s.io/apimachinery/pkg/apis/meta/v1/validation"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 
@@ -38,7 +39,14 @@ func ValidatePodPresetName(name string, prefix bool) []string {
 func ValidatePodPresetSpec(spec *settings.PodPresetSpec, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	allErrs = append(allErrs, unversionedvalidation.ValidateLabelSelector(&spec.Selector, fldPath.Child("selector"))...)
+	allErrs = append(
+		allErrs,
+		unversionedvalidation.ValidateLabelSelector(
+			&spec.Selector,
+			validation.LabelSelectorValidationOptions{},
+			fldPath.Child("selector"),
+		)...,
+	)
 
 	if spec.Env == nil && spec.EnvFrom == nil && spec.VolumeMounts == nil && spec.Volumes == nil {
 		allErrs = append(allErrs, field.Required(fldPath.Child("volumes", "env", "envFrom", "volumeMounts"), "must specify at least one"))

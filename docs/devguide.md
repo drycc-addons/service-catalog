@@ -419,7 +419,6 @@ These are targets for the service-catalog client, `svcat`:
 * `make svcat-all` builds all supported client platforms (darwin, linux, windows).
 * `make svcat-for-X` builds a specific platform.
 * `make svcat` builds for the current dev's platform.
-* `make svcat-publish` compiles everything and uploads the binaries.
 
 The same tags are used for both client and server. The cli uses the format that
 always includes a tag, so that it's clear which release you are "closest" to,

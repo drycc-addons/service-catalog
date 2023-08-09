@@ -17,6 +17,8 @@ pipeline:
     VERSION: ${CI_COMMIT_TAG=latest}-linux-amd64
     CI_COMMIT_TAG: ${CI_COMMIT_TAG=latest}
   secrets:
+  - codename
+  - codecov_token
   - dev_registry
   - drycc_registry
   when:

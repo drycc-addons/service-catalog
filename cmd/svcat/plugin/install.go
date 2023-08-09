@@ -19,7 +19,6 @@ package plugin
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"syscall"
@@ -159,7 +158,7 @@ func copyFile(src, dest string) error {
 
 func saveManifest(installPath string, manifest []byte) error {
 	manifestPath := filepath.Join(installPath, "plugin.yaml")
-	err := ioutil.WriteFile(manifestPath, []byte(manifest), 0644)
+	err := os.WriteFile(manifestPath, []byte(manifest), 0644)
 	if err != nil {
 		return fmt.Errorf("could not write the plugin manifest to %s (%s)", manifestPath, err)
 	}

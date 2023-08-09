@@ -18,10 +18,10 @@ package clusterbroker
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	scClientset "github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset/typed/servicecatalog/v1beta1"
-	"github.com/pkg/errors"
 	apiErr "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -36,7 +36,7 @@ type common struct {
 func (c *common) checkClusterServiceClass() error {
 	klog.Info("Check ClusterServiceClasses")
 	if err := c.assertProperAmountOfClusterServiceClasses(); err != nil {
-		return errors.Wrap(err, "failed during list ClusterServiceClasses")
+		return fmt.Errorf("failed during list ClusterServiceClasses: %w", err)
 	}
 
 	return nil
@@ -67,7 +67,7 @@ func (c *common) assertProperAmountOfClusterServiceClasses() error {
 func (c *common) checkClusterServicePlan() error {
 	klog.Info("Check ClusterServicePlans")
 	if err := c.assertProperAmountOfClusterServicePlans(); err != nil {
-		return errors.Wrap(err, "failed during list ClusterServicePlans")
+		return fmt.Errorf("failed during list ClusterServicePlans: %w", err)
 	}
 
 	return nil

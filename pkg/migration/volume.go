@@ -18,8 +18,8 @@ package migration
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/pkg/errors"
 	apiErr "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/klog/v2"
@@ -34,7 +34,7 @@ func (m *Service) AssertPersistentVolumeClaimDeleted(name string) error {
 		return nil
 	}
 	if err != nil {
-		return errors.Wrap(err, "while deleting PersistentVolumeClaim")
+		return fmt.Errorf("while deleting PersistentVolumeClaim: %w", err)
 	}
 
 	// PVC will be removed after erase "kubernetes.io/pvc-protection" finalizer

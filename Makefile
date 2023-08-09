@@ -85,7 +85,7 @@ FILE_EXT=
 endif
 
 # TODO: Consider using busybox instead of debian
-BASEIMAGE?=gcr.io/google-containers/debian-base-$(ARCH):v1.0.0
+BASEIMAGE?=registry.drycc.cc/drycc/base:$(CODENAME)
 
 GO_BUILD       = env CGO_ENABLED=0 GOOS=$(PLATFORM) GOARCH=$(ARCH) \
                   go build -a -tags netgo -installsuffix netgo \
@@ -93,7 +93,6 @@ GO_BUILD       = env CGO_ENABLED=0 GOOS=$(PLATFORM) GOARCH=$(ARCH) \
 
 BASE_PATH      = $(ROOT:/src/github.com/kubernetes-sigs/service-catalog/=)
 ORIG_GOPATH   ?= $(shell go env GOPATH)
-export GOPATH  = $(BASE_PATH):$(ROOT)/vendor
 
 DRYCC_REGISTRY ?= $(DEV_REGISTRY)
 IMAGE_PREFIX ?= drycc-addons
@@ -127,13 +126,15 @@ endif
 ifdef NO_DOCKER
 	DOCKER_CMD =
 	scBuildImageTarget =
+	.initGoModVendorResult:=$(shell go mod vendor)
 else
 	# Mount .pkg as pkg so that we save our cached "go build" output files
 	DOCKER_CMD = docker run --security-opt label=disable --rm \
 	  -v $(CURDIR):/go/src/$(SC_PKG):delegated \
 	  -v $(CURDIR)/.cache:/root/.cache/:cached \
-	  -v $(CURDIR)/.pkg:/go/pkg:cached --env AZURE_STORAGE_CONNECTION_STRING scbuildimage
+	  -v $(CURDIR)/.pkg:/go/pkg:cached scbuildimage
 	scBuildImageTarget = .scBuildImage
+	.initGoModVendorResult:=$(shell $(DOCKER_CMD) go mod vendor)
 endif
 
 # This section builds the output binaries.
@@ -210,8 +211,7 @@ $(BINDIR):
 .scBuildImage: build/build-image/Dockerfile $$(shell sh -c "docker inspect scbuildimage" > /dev/null 2>&1 || echo .forceIt)
 	mkdir -p .cache
 	mkdir -p .pkg
-	sed "s/GO_VERSION/$(GO_VERSION)/g" < build/build-image/Dockerfile | \
-	  docker build -t scbuildimage -f - .
+	docker build -t scbuildimage --build-arg GO_VERSION=$(GO_VERSION) -f build/build-image/Dockerfile .
 	touch $@
 
 # Just a dummy target that will force anything dependent on it to rebuild
@@ -255,7 +255,7 @@ verify: .init verify-generated verify-client-gen verify-docs verify-modules
 
 verify-docs: .init
 	@echo Running href checker$(SKIP_COMMENT):
-	@$(DOCKER_CMD) verify-links.sh -s .pkg -s .bundler -s _plugins -s _includes -s contribute/docs.md -t $(SKIP_HTTP) .
+	@$(DOCKER_CMD) $(BUILD_DIR)/verify-links.sh -s .pkg -s .bundler -s _plugins -s _includes -s contribute/docs.md -t $(SKIP_HTTP) .
 
 verify-generated: .init generators
 	$(DOCKER_CMD) $(BUILD_DIR)/update-apis-gen.sh --verify-only
@@ -450,13 +450,6 @@ svcat-xbuild: $(BINDIR)/svcat/svcat-$(TAG_VERSION)-$(PLATFORM)-$(ARCH)$(FILE_EXT
 $(BINDIR)/svcat/svcat-$(TAG_VERSION)-$(PLATFORM)-$(ARCH)$(FILE_EXT): .init .generate_files
 	mkdir -p $(dir $@)
 	$(DOCKER_CMD) $(GO_BUILD) -o $@ $(SC_PKG)/cmd/svcat
-
-svcat-publish: clean-bin svcat-all
-	# Download the latest client with https://download.svcat.sh/cli/latest/darwin/amd64/svcat
-	# Download an older client with  https://download.svcat.sh/cli/VERSION/darwin/amd64/svcat
-	$(DOCKER_CMD) cp -R $(BINDIR)/svcat/$(TAG_VERSION) $(BINDIR)/svcat/$(MUTABLE_TAG)
-	# AZURE_STORAGE_CONNECTION_STRING will be used for auth in the following command
-	$(DOCKER_CMD) az storage blob upload-batch -d cli -s $(BINDIR)/svcat
 
 # Dependency management via go modules
 .PHONY: verify-modules

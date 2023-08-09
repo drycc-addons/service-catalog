@@ -19,12 +19,10 @@ package test
 import (
 	"bytes"
 	"flag"
-	"io/ioutil"
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
-
-	"github.com/pkg/errors"
 )
 
 // UpdateGolden writes out the golden files with the latest values, rather than failing the test.
@@ -36,7 +34,7 @@ var UpdateGolden = flag.Bool("update", false, "update golden files")
 func buildTestdataPath(relpath string) (string, error) {
 	pwd, err := os.Getwd()
 	if err != nil {
-		return "", errors.Wrap(err, "unable to get the current working directory")
+		return "", fmt.Errorf("unable to get the current working directory: %w", err)
 	}
 
 	path := filepath.Join(pwd, "testdata", relpath)
@@ -51,8 +49,11 @@ func GetTestdata(relpath string) (fullpath string, contents []byte, err error) {
 		return "", nil, err
 	}
 
-	contents, err = ioutil.ReadFile(fullpath)
-	return fullpath, contents, errors.Wrapf(err, "unable to read testdata %s", fullpath)
+	contents, err = os.ReadFile(fullpath)
+	if err != nil {
+		err = fmt.Errorf("unable to read testdata %s: %w", fullpath, err)
+	}
+	return fullpath, contents, err
 }
 
 // AssertEqualsGoldenFile asserts that the value equals the contents of the golden file.
@@ -68,9 +69,9 @@ func AssertEqualsGoldenFile(t *testing.T, goldenFile string, got string) {
 	gotB := []byte(got)
 	if !bytes.Equal(want, gotB) {
 		if *UpdateGolden {
-			err := ioutil.WriteFile(path, gotB, 0666)
+			err := os.WriteFile(path, gotB, 0666)
 			if err != nil {
-				t.Fatalf("%+v", errors.Wrapf(err, "unable to update golden file %s", path))
+				t.Fatalf("%+v", fmt.Errorf("unable to update golden file %s: %w", path, err))
 			}
 		} else {
 			t.Fatalf("does not match golden file %s\n\nWANT:\n%q\n\nGOT:\n%q\n\nSee https://service-catalog.drycc.cc/docs/devguide/#golden-files for how to work with golden files.", path, want, gotB)

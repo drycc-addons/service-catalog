@@ -23,9 +23,8 @@ import (
 	"time"
 
 	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"github.com/pkg/errors"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
-	"k8s.io/apimachinery/pkg/apis/meta/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -35,7 +34,7 @@ import (
 func (sdk *SDK) RetrieveInstances(ns, classFilter, planFilter string) (*v1beta1.ServiceInstanceList, error) {
 	instances, err := sdk.ServiceCatalog().ServiceInstances(ns).List(context.Background(), v1.ListOptions{})
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to list instances in %s", ns)
+		return nil, fmt.Errorf("unable to list instances in %s: %w", ns, err)
 	}
 
 	if classFilter == "" && planFilter == "" {

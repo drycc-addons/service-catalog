@@ -23,8 +23,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/pkg/errors"
-
 	"github.com/kubernetes-sigs/service-catalog/cmd/svcat/command"
 	"github.com/kubernetes-sigs/service-catalog/cmd/svcat/output"
 	"github.com/spf13/cobra"
@@ -155,7 +153,7 @@ func (c *unbindCmd) Run() error {
 	}
 
 	if hasErrors {
-		return errors.New("could not remove all bindings")
+		return fmt.Errorf("could not remove all bindings")
 	}
 	return nil
 }
@@ -194,7 +192,7 @@ func (c *unbindCmd) waitForBindingDeletes(waitMessage string, bindings ...types.
 			mutex.Lock()
 			defer mutex.Unlock()
 
-			if err != nil && !apierrors.IsNotFound(errors.Cause(err)) {
+			if err != nil && !apierrors.IsNotFound(err) {
 				hasErrors = true
 				fmt.Fprintln(c.Output, err)
 			} else if c.App.IsBindingFailed(binding) {

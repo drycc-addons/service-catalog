@@ -18,12 +18,10 @@ package meta
 
 import (
 	"k8s.io/apimachinery/pkg/api/meta"
-	"k8s.io/apimachinery/pkg/runtime"
 )
 
 var (
-	accessor   = meta.NewAccessor()
-	selfLinker = runtime.SelfLinker(accessor)
+	accessor = meta.NewAccessor()
 )
 
 // GetAccessor returns a MetadataAccessor to fetch general information on metadata of

@@ -43,7 +43,6 @@ import (
 	sivalidation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/serviceinstance/validation"
 	spvalidation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/serviceplan/validation"
 
-	"github.com/pkg/errors"
 	apiextensionsclientset "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	"k8s.io/apiserver/pkg/server/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
@@ -83,12 +82,12 @@ func RunServer(opts *WebhookServerOptions, stopCh <-chan struct{}) error {
 func run(opts *WebhookServerOptions, stopCh <-chan struct{}) error {
 	cfg, err := config.GetConfig()
 	if err != nil {
-		return errors.Wrap(err, "while getting Kubernetes client config")
+		return fmt.Errorf("while getting Kubernetes client config: %w", err)
 	}
 
 	apiextensionsClient, err := apiextensionsclientset.NewForConfig(cfg)
 	if err != nil {
-		return errors.Wrap(err, "while create apiextension clientset")
+		return fmt.Errorf("while create apiextension clientset: %w", err)
 	}
 
 	// It may take some time before Catalog CRDs registration shows up in main API Server.
@@ -100,12 +99,12 @@ func run(opts *WebhookServerOptions, stopCh <-chan struct{}) error {
 	mgr, err := manager.New(cfg, manager.Options{
 		MetricsBindAddress: fmt.Sprintf(":%d", opts.ControllerManagerMetricsPort)})
 	if err != nil {
-		return errors.Wrap(err, "while set up overall controller manager for webhook server")
+		return fmt.Errorf("while set up overall controller manager for webhook server: %w", err)
 	}
 
 	err = scTypes.AddToScheme(mgr.GetScheme())
 	if err != nil {
-		return errors.Wrap(err, "while register Service Catalog scheme into manager")
+		return fmt.Errorf("while register Service Catalog scheme into manager: %w", err)
 	}
 
 	// setup webhook server
@@ -163,16 +162,16 @@ func run(opts *WebhookServerOptions, stopCh <-chan struct{}) error {
 
 	// register servers
 	if err := mgr.Add(webhookSvr); err != nil {
-		return errors.Wrap(err, "while registering webhook server with manager")
+		return fmt.Errorf("while registering webhook server with manager: %w", err)
 	}
 
 	if err := mgr.Add(healthzSvr); err != nil {
-		return errors.Wrap(err, "while registering healthz server with manager")
+		return fmt.Errorf("while registering healthz server with manager: %w", err)
 	}
 
 	// starts the server blocks until the Stop channel is closed
 	if err := mgr.Start(wrapContext(stopCh)); err != nil {
-		return errors.Wrap(err, "while running the webhook manager")
+		return fmt.Errorf("while running the webhook manager: %w", err)
 
 	}
 

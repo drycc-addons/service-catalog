@@ -31,7 +31,6 @@ import (
 	"github.com/kubernetes-sigs/service-catalog/pkg/util"
 	osb "sigs.k8s.io/go-open-service-broker-client/v2"
 
-	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -571,7 +570,6 @@ func (c *controller) reconcileServiceInstanceAdd(instance *v1beta1.ServiceInstan
 	if err != nil {
 		return c.handleServiceInstanceReconciliationError(instance, err)
 	}
-
 	if instance.Status.CurrentOperation == "" || !isServiceInstancePropertiesStateEqual(instance.Status.InProgressProperties, inProgressProperties) {
 		updatedInstance, err := c.recordStartOfServiceInstanceOperation(instance, v1beta1.ServiceInstanceOperationProvision, inProgressProperties)
 		if err != nil {
@@ -2251,7 +2249,7 @@ func (c *controller) deleteExistingBindings(instance *v1beta1.ServiceInstance) e
 	klog.V(4).Infof("Delete existing bindings for the instance %s", instance.Name)
 	bindings, err := c.listExistingBindings(instance)
 	if err != nil {
-		return errors.Wrapf(err, "while listing existing service bindings")
+		return fmt.Errorf("while listing existing service bindings: %w", err)
 	}
 	for _, binding := range bindings {
 		err := c.serviceCatalogClient.ServiceBindings(instance.Namespace).Delete(context.Background(), binding.Name, metav1.DeleteOptions{})
@@ -2259,7 +2257,7 @@ func (c *controller) deleteExistingBindings(instance *v1beta1.ServiceInstance) e
 		case apierrors.IsNotFound(err):
 			continue
 		case err != nil:
-			return errors.Wrap(err, "while deleting existing service binding")
+			return fmt.Errorf("while deleting existing service binding: %w", err)
 		}
 	}
 	return nil

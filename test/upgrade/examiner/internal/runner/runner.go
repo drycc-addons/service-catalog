@@ -23,7 +23,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pkg/errors"
 	v1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -57,7 +56,7 @@ type TestRunner struct {
 func NewTestRunner(nsCreator NamespaceCreator, tests map[string]UpgradeTest) (*TestRunner, error) {
 	sanitizeRegex, err := regexp.Compile(regexSanitize)
 	if err != nil {
-		return nil, errors.Wrap(err, "while compiling sanitize regexp")
+		return nil, fmt.Errorf("while compiling sanitize regexp: %w", err)
 	}
 
 	return &TestRunner{

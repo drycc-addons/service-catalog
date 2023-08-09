@@ -20,7 +20,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -128,6 +128,6 @@ func DiscardLoggedMsg() {
 		flag.Set("alsologtostderr", "false")
 		flag.Set("stderrthreshold", "999")
 		flag.Parse()
-		klog.SetOutput(ioutil.Discard)
+		klog.SetOutput(io.Discard)
 	}
 }

@@ -19,7 +19,7 @@ package util
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os/exec"
 	"strings"
@@ -56,7 +56,7 @@ func WriteErrorResponse(w http.ResponseWriter, code int, err error) {
 // BodyToObject will convert the incoming HTTP request into the
 // passed in 'object'
 func BodyToObject(r *http.Request, object interface{}) error {
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		return err
 	}
@@ -72,7 +72,7 @@ func BodyToObject(r *http.Request, object interface{}) error {
 // ResponseBodyToObject will reading the HTTP response into the
 // passed in 'object'
 func ResponseBodyToObject(r *http.Response, object interface{}) error {
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		return err
 	}
@@ -112,7 +112,7 @@ func Fetch(u string) (string, error) {
 		return "", err
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}
@@ -127,7 +127,7 @@ func FetchObject(u string, object interface{}) error {
 		return err
 	}
 	defer r.Body.Close()
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		return err
 	}

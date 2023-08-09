@@ -19,14 +19,13 @@ package servicecatalog
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"math"
+	"os"
 	"time"
 
 	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"github.com/pkg/errors"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
-	"k8s.io/apimachinery/pkg/apis/meta/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 )
 
@@ -107,7 +106,7 @@ func (sdk *SDK) RetrieveBrokers(opts ScopeOptions) ([]Broker, error) {
 func (sdk *SDK) retrieveBroker(name string) (*v1beta1.ClusterServiceBroker, error) {
 	broker, err := sdk.ServiceCatalog().ClusterServiceBrokers().Get(context.Background(), name, v1.GetOptions{})
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to get broker '%s'", name)
+		return nil, fmt.Errorf("unable to get broker '%s': %w", name, err)
 	}
 
 	return broker, nil
@@ -179,7 +178,7 @@ func (sdk *SDK) Register(brokerName string, url string, opts *RegisterOptions, s
 	var err error
 	var caBytes []byte
 	if opts.CAFile != "" {
-		caBytes, err = ioutil.ReadFile(opts.CAFile)
+		caBytes, err = os.ReadFile(opts.CAFile)
 		if err != nil {
 			return nil, fmt.Errorf("Error opening CA file: %v", err.Error())
 		}
@@ -320,7 +319,7 @@ func (sdk *SDK) WaitForBroker(name string, opts *ScopeOptions, interval time.Dur
 		func() (bool, error) {
 			broker, err = sdk.RetrieveBrokerByID(name, *opts)
 			if err != nil {
-				if apierrors.IsNotFound(errors.Cause(err)) {
+				if apierrors.IsNotFound(err) {
 					err = nil
 				}
 				return false, err

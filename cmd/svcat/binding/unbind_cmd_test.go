@@ -20,7 +20,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -212,7 +211,7 @@ func TestUnbindCommand(t *testing.T) {
 	}
 
 	// Create a file for user stdin input
-	tmpfile, err := ioutil.TempFile("", "user_input")
+	tmpfile, err := os.CreateTemp("", "user_input")
 	if err != nil {
 		log.Fatal(err)
 	}

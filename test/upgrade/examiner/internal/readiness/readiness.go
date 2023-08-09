@@ -18,9 +18,9 @@ package readiness
 
 import (
 	"context"
+	"fmt"
 	"time"
 
-	"github.com/pkg/errors"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/kubernetes"
@@ -69,13 +69,13 @@ func (r *readiness) TestEnvironmentIsReady() error {
 func (r *readiness) assertServiceCatalogIsReady() error {
 	klog.Info("Make sure ServiceCatalog ApiServer is up")
 	if err := r.assertServiceCatalogAPIServerIsUp(); err != nil {
-		return errors.Wrap(err, "failed during waiting for ServiceCatalog ApiServer")
+		return fmt.Errorf("failed during waiting for ServiceCatalog ApiServer: %w", err)
 	}
 	klog.Info("ServiceCatalog ApiServer is ready")
 
 	klog.Info("Make sure ServiceCatalog Controller is up")
 	if err := r.assertServiceCatalogControllerIsUp(); err != nil {
-		return errors.Wrap(err, "failed during waiting for ServiceCatalog Controller")
+		return fmt.Errorf("failed during waiting for ServiceCatalog Controller: %w", err)
 	}
 	klog.Info("ServiceCatalog Controller is ready")
 
@@ -115,7 +115,7 @@ func (r *readiness) assertServiceCatalogControllerIsUp() error {
 func (r *readiness) assertTestBrokerIsReady() error {
 	klog.Info("Make sure TestBroker is up")
 	if err := r.assertTestBrokerIsUp(); err != nil {
-		return errors.Wrap(err, "failed during waiting for TestBroker")
+		return fmt.Errorf("failed during waiting for TestBroker: %w", err)
 	}
 	klog.Info("TestBroker is ready")
 

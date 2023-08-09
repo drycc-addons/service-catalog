@@ -21,7 +21,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path"
 
@@ -78,7 +77,7 @@ func (hk *HyperKube) Servers() []Server {
 func (hk *HyperKube) Flags() *pflag.FlagSet {
 	if hk.baseFlags == nil {
 		hk.baseFlags = pflag.NewFlagSet(hk.Name, pflag.ContinueOnError)
-		hk.baseFlags.SetOutput(ioutil.Discard)
+		hk.baseFlags.SetOutput(io.Discard)
 		hk.baseFlags.SetNormalizeFunc(utilflag.WordSepNormalizeFunc)
 		hk.baseFlags.BoolVarP(&hk.helpFlagVal, "help", "h", false, "help for "+hk.Name)
 		hk.baseFlags.BoolVar(&hk.printVersionFlagVal, "version", false, "Print version information and quit")

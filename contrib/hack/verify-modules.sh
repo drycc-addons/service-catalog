@@ -41,7 +41,7 @@ fi
 golang::verify_go_version
 require-jq
 
-outdated=$(go list -m -json all | jq -r "
+outdated=$(go list -mod=mod -m -json all | jq -r "
   select(.Replace.Version != null) |
   select(.Version != .Replace.Version) |
   select(.Path) |
@@ -72,7 +72,7 @@ fi
 
 "${CURRENT_DIR}/update-vendor.sh"
 
-modifedModules=$(git status --porcelain go.mod go.sum vendor)
+modifedModules=$(git status --porcelain go.mod go.sum)
 if [ -n "$modifedModules" ]; then
     echo "go mod tidy modified go.mod and/or go.sum"
 fi

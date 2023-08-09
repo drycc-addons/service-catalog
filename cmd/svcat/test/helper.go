@@ -18,7 +18,6 @@ package svcattest
 
 import (
 	"io"
-	"io/ioutil"
 
 	"strings"
 
@@ -31,7 +30,7 @@ import (
 // command output, or injecting a fake set of clients.
 func NewContext(outputCapture io.Writer, fakeApp *svcat.App) *command.Context {
 	if outputCapture == nil {
-		outputCapture = ioutil.Discard
+		outputCapture = io.Discard
 	}
 
 	return &command.Context{

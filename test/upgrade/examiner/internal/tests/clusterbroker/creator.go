@@ -18,10 +18,10 @@ package clusterbroker
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	scClientset "github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset/typed/servicecatalog/v1beta1"
-	"github.com/pkg/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/klog/v2"
@@ -77,7 +77,7 @@ func (c *creator) registerClusterServiceBroker() error {
 	}, metav1.CreateOptions{})
 
 	if err != nil {
-		return errors.Wrap(err, "failed during creating ClusterServiceBroker")
+		return fmt.Errorf("failed during creating ClusterServiceBroker: %w", err)
 	}
 
 	return nil
@@ -86,12 +86,12 @@ func (c *creator) registerClusterServiceBroker() error {
 func (c *creator) createServiceInstance() error {
 	klog.Info("Create ServiceInstance")
 	if err := c.createDefaultServiceInstance(); err != nil {
-		return errors.Wrap(err, "failed during creating ServiceInstance")
+		return fmt.Errorf("failed during creating ServiceInstance: %w", err)
 	}
 
 	klog.Info("Check ServiceInstance is ready")
 	if err := c.assertServiceInstanceIsReady(); err != nil {
-		return errors.Wrap(err, "failed during checking ServiceInstance conditions")
+		return fmt.Errorf("failed during checking ServiceInstance conditions: %w", err)
 	}
 
 	return nil
@@ -120,12 +120,12 @@ func (c *creator) createDefaultServiceInstance() error {
 func (c *creator) createServiceBinding() error {
 	klog.Info("Create ServiceBinding")
 	if err := c.createDefaultServiceBinding(); err != nil {
-		return errors.Wrap(err, "failed during creating ServiceBinding")
+		return fmt.Errorf("failed during creating ServiceBindin: %w", err)
 	}
 
 	klog.Info("Check ServiceBinding is ready")
 	if err := c.assertServiceBindingIsReady(); err != nil {
-		return errors.Wrap(err, "failed during checking ServiceBinding conditions")
+		return fmt.Errorf("failed during checking ServiceBinding conditions: %w", err)
 	}
 
 	return nil

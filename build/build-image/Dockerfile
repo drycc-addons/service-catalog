@@ -12,27 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:GO_VERSION
+ARG GO_VERSION
+FROM golang:${GO_VERSION}
 
-# Install etcd
-RUN curl -sSL https://github.com/coreos/etcd/releases/download/v3.2.24/etcd-v3.2.24-linux-amd64.tar.gz \
-    | tar -vxz -C /usr/local/bin --strip=1 etcd-v3.2.24-linux-amd64/etcd
-
-# Install the golint, use this to check our source for niceness
-COPY vendor/golang.org /go/src/golang.org
 RUN go install golang.org/x/lint/golint@latest
 
 RUN apt-get update && \
-    apt-get install jq -y
-
-# Install the href checker for our md files, update PATH to include it
-RUN git clone https://github.com/duglin/vlinker.git /vlinker
-ENV PATH=$PATH:/vlinker/bin
-
-# Install the azure client, used to publish svcat binaries
-ENV AZCLI_VERSION=v0.3.1
-RUN curl -sLo /usr/local/bin/az https://github.com/carolynvs/az-cli/releases/download/$AZCLI_VERSION/az-linux-amd64 && \
-    chmod +x /usr/local/bin/az
+    apt-get install jq etcd-server -y
 
 # Create the full dir tree that we'll mount our src into when we run the image
 RUN mkdir -p /go/src/github.com/kubernetes-sigs/service-catalog

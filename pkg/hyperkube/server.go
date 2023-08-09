@@ -17,7 +17,7 @@ limitations under the License.
 package hyperkube
 
 import (
-	"io/ioutil"
+	"io"
 	"strings"
 
 	utiltemplate "github.com/kubernetes-sigs/service-catalog/pkg/kubernetes/pkg/util/template"
@@ -70,7 +70,7 @@ func (s *Server) Name() string {
 func (s *Server) Flags() *pflag.FlagSet {
 	if s.flags == nil {
 		s.flags = pflag.NewFlagSet(s.Name(), pflag.ContinueOnError)
-		s.flags.SetOutput(ioutil.Discard)
+		s.flags.SetOutput(io.Discard)
 		s.flags.SetNormalizeFunc(flag.WordSepNormalizeFunc)
 	}
 	return s.flags

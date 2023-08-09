@@ -18,10 +18,10 @@ package broker
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	scClientset "github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset/typed/servicecatalog/v1beta1"
-	"github.com/pkg/errors"
 	apiErr "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -36,7 +36,7 @@ type common struct {
 func (c *common) checkServiceClass() error {
 	klog.Info("Check ServiceClasses")
 	if err := c.assertProperAmountOfServiceClasses(); err != nil {
-		return errors.Wrap(err, "failed during list ServiceClasses")
+		return fmt.Errorf("failed during list ServiceClasses: %w", err)
 	}
 
 	return nil
@@ -67,7 +67,7 @@ func (c *common) assertProperAmountOfServiceClasses() error {
 func (c *common) checkServicePlan() error {
 	klog.Info("Check ServicePlans")
 	if err := c.assertProperAmountOfServicePlans(); err != nil {
-		return errors.Wrap(err, "failed during list ServiceClasses")
+		return fmt.Errorf("failed during list ServiceClasses: %w", err)
 	}
 
 	return nil
