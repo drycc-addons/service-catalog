@@ -24,7 +24,6 @@ import (
 	v1beta1 "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	labels "k8s.io/apimachinery/pkg/labels"
-	schema "k8s.io/apimachinery/pkg/runtime/schema"
 	types "k8s.io/apimachinery/pkg/types"
 	watch "k8s.io/apimachinery/pkg/watch"
 	testing "k8s.io/client-go/testing"
@@ -36,9 +35,9 @@ type FakeServiceClasses struct {
 	ns   string
 }
 
-var serviceclassesResource = schema.GroupVersionResource{Group: "servicecatalog.k8s.io", Version: "v1beta1", Resource: "serviceclasses"}
+var serviceclassesResource = v1beta1.SchemeGroupVersion.WithResource("serviceclasses")
 
-var serviceclassesKind = schema.GroupVersionKind{Group: "servicecatalog.k8s.io", Version: "v1beta1", Kind: "ServiceClass"}
+var serviceclassesKind = v1beta1.SchemeGroupVersion.WithKind("ServiceClass")
 
 // Get takes name of the serviceClass, and returns the corresponding serviceClass object, and an error if there is any.
 func (c *FakeServiceClasses) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1beta1.ServiceClass, err error) {

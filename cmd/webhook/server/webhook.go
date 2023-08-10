@@ -24,6 +24,7 @@ import (
 	scTypes "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	"github.com/kubernetes-sigs/service-catalog/pkg/probe"
 	"github.com/kubernetes-sigs/service-catalog/pkg/util"
+	"github.com/kubernetes-sigs/service-catalog/pkg/webhook/inject"
 	csbmutation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/clusterservicebroker/mutation"
 	cscmutation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/clusterserviceclass/mutation"
 	cspmutation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/clusterserviceplan/mutation"
@@ -45,6 +46,7 @@ import (
 
 	apiextensionsclientset "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	"k8s.io/apiserver/pkg/server/healthz"
+	"k8s.io/client-go/kubernetes/scheme"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
@@ -108,10 +110,11 @@ func run(opts *WebhookServerOptions, stopCh <-chan struct{}) error {
 	}
 
 	// setup webhook server
-	webhookSvr := &webhook.Server{
+
+	webhookSvr := webhook.NewServer(webhook.Options{
 		Port:    opts.SecureServingOptions.BindPort,
 		CertDir: opts.SecureServingOptions.ServerCert.CertDirectory,
-	}
+	})
 
 	webhooks := map[string]admission.Handler{
 		"/mutating-clusterservicebrokers": &csbmutation.CreateUpdateHandler{},
@@ -140,6 +143,8 @@ func run(opts *WebhookServerOptions, stopCh <-chan struct{}) error {
 
 	for path, handler := range webhooks {
 		webhookSvr.Register(path, &webhook.Admission{Handler: handler})
+		inject.ClientInto(mgr.GetClient(), handler)
+		inject.DecoderInto(admission.NewDecoder(scheme.Scheme), handler)
 	}
 
 	// setup healthz server

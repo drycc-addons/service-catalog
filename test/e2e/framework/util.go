@@ -83,9 +83,9 @@ func CreateKubeNamespace(baseName string, c kubernetes.Interface) (*corev1.Names
 	Logf("namespace: %v", ns)
 	// Be robust about making the namespace creation call.
 	var got *corev1.Namespace
-	err := wait.PollImmediate(Poll, defaultTimeout, func() (bool, error) {
+	err := wait.PollUntilContextTimeout(context.Background(), Poll, defaultTimeout, true, func(ctx context.Context) (bool, error) {
 		var err error
-		got, err = c.CoreV1().Namespaces().Create(context.Background(),ns, metav1.CreateOptions{})
+		got, err = c.CoreV1().Namespaces().Create(ctx, ns, metav1.CreateOptions{})
 		if err != nil {
 			Logf("Unexpected error while creating namespace: %v", err)
 			return false, nil
@@ -99,7 +99,7 @@ func CreateKubeNamespace(baseName string, c kubernetes.Interface) (*corev1.Names
 }
 
 func DeleteKubeNamespace(c kubernetes.Interface, namespace string) error {
-	return c.CoreV1().Namespaces().Delete(context.Background(),namespace, metav1.DeleteOptions{})
+	return c.CoreV1().Namespaces().Delete(context.Background(), namespace, metav1.DeleteOptions{})
 }
 
 func ExpectNoError(err error, explain ...interface{}) {
@@ -119,16 +119,16 @@ func WaitForPodRunningInNamespace(c kubernetes.Interface, pod *corev1.Pod) error
 }
 
 func waitTimeoutForPodRunningInNamespace(c kubernetes.Interface, podName, namespace string, timeout time.Duration) error {
-	return wait.PollImmediate(Poll, defaultTimeout, podRunning(c, podName, namespace))
+	return wait.PollUntilContextTimeout(context.Background(), Poll, defaultTimeout, true, podRunning(c, podName, namespace))
 }
 
 func WaitForEndpoint(c kubernetes.Interface, namespace, name string) error {
-	return wait.PollImmediate(Poll, EndpointRegisterTimeout, endpointAvailable(c, namespace, name))
+	return wait.PollUntilContextTimeout(context.Background(), Poll, EndpointRegisterTimeout, true, endpointAvailable(c, namespace, name))
 }
 
-func endpointAvailable(c kubernetes.Interface, namespace, name string) wait.ConditionFunc {
-	return func() (bool, error) {
-		endpoint, err := c.CoreV1().Endpoints(namespace).Get(context.Background(), name, metav1.GetOptions{})
+func endpointAvailable(c kubernetes.Interface, namespace, name string) wait.ConditionWithContextFunc {
+	return func(ctx context.Context) (bool, error) {
+		endpoint, err := c.CoreV1().Endpoints(namespace).Get(ctx, name, metav1.GetOptions{})
 		if err != nil {
 			if apierrs.IsNotFound(err) {
 				return false, nil
@@ -144,9 +144,9 @@ func endpointAvailable(c kubernetes.Interface, namespace, name string) wait.Cond
 	}
 }
 
-func podRunning(c kubernetes.Interface, podName, namespace string) wait.ConditionFunc {
-	return func() (bool, error) {
-		pod, err := c.CoreV1().Pods(namespace).Get(context.Background(), podName, metav1.GetOptions{})
+func podRunning(c kubernetes.Interface, podName, namespace string) wait.ConditionWithContextFunc {
+	return func(ctx context.Context) (bool, error) {
+		pod, err := c.CoreV1().Pods(namespace).Get(ctx, podName, metav1.GetOptions{})
 		if err != nil {
 			return false, err
 		}

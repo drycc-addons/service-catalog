@@ -18,12 +18,13 @@ package validation
 
 import (
 	"context"
+	"net/http"
+
 	sc "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	"github.com/kubernetes-sigs/service-catalog/pkg/webhook/inject"
 	"github.com/kubernetes-sigs/service-catalog/pkg/webhookutil"
 	admissionTypes "k8s.io/api/admission/v1"
-	"net/http"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/runtime/inject"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
@@ -39,10 +40,6 @@ type SpecValidationHandler struct {
 	CreateValidators []Validator
 	UpdateValidators []Validator
 }
-
-var _ admission.Handler = &SpecValidationHandler{}
-var _ admission.DecoderInjector = &SpecValidationHandler{}
-var _ inject.Client = &SpecValidationHandler{}
 
 // NewSpecValidationHandler creates new SpecValidationHandler and initializes validators list
 func NewSpecValidationHandler() *SpecValidationHandler {
@@ -110,13 +107,13 @@ func (h *SpecValidationHandler) InjectDecoder(d *admission.Decoder) error {
 	h.decoder = d
 
 	for _, v := range h.CreateValidators {
-		_, err := admission.InjectDecoderInto(d, v)
+		_, err := inject.DecoderInto(d, v)
 		if err != nil {
 			return err
 		}
 	}
 	for _, v := range h.UpdateValidators {
-		_, err := admission.InjectDecoderInto(d, v)
+		_, err := inject.DecoderInto(d, v)
 		if err != nil {
 			return err
 		}

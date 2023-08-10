@@ -109,7 +109,7 @@ func (c *Cleaner) scaleDownController(namespace, controllerName string) error {
 		return fmt.Errorf("failed to update deployment %s/%s: %v", namespace, controllerName, err)
 	}
 
-	err = wait.Poll(3*time.Second, 120*time.Second, func() (done bool, err error) {
+	err = wait.PollUntilContextTimeout(context.Background(), 3*time.Second, 120*time.Second, false, func(ctx context.Context) (done bool, err error) {
 		klog.V(4).Info("Waiting for deployment scales down...")
 		deployment, err := c.client.AppsV1().Deployments(namespace).Get(context.Background(), controllerName, v1.GetOptions{})
 		if err != nil {

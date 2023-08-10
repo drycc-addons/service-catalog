@@ -80,8 +80,6 @@ func (h *CreateUpdateHandler) Handle(ctx context.Context, req admission.Request)
 	return admission.PatchResponseFromRaw(req.AdmissionRequest.Object.Raw, rawMutated)
 }
 
-var _ admission.DecoderInjector = &CreateUpdateHandler{}
-
 // InjectDecoder injects the decoder
 func (h *CreateUpdateHandler) InjectDecoder(d *admission.Decoder) error {
 	h.decoder = d

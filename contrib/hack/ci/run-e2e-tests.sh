@@ -38,8 +38,6 @@ DUMP_CLUSTER_INFO="${DUMP_CLUSTER_INFO:-false}"
 SC_CHART_NAME="catalog"
 SC_NAMESPACE="catalog"
 
-export GOFLAGS=-mod=vendor
-
 cleanup() {
     if [[ "${DUMP_CLUSTER_INFO}" == true ]]; then
         shout '- Creating artifacts...'

@@ -181,7 +181,7 @@ type serviceBindingHandler struct {
 
 // OnAdd handles ServiceBinding add action.
 // Empty implementation just to fulfill cache.ResourceEventHandler interface
-func (*serviceBindingHandler) OnAdd(obj interface{}) {
+func (*serviceBindingHandler) OnAdd(obj interface{}, isInInitialList bool) {
 }
 
 // OnDelete handles ServiceBinding delete action.
@@ -678,8 +678,8 @@ func (ct *controllerTest) SetCatalogReactionError() {
 
 // WaitForServiceBindingToNotExists waits until the ServiceBinding will be removed
 func (ct *controllerTest) WaitForServiceBindingToNotExists() error {
-	return wait.PollImmediate(pollingInterval, pollingTimeout, func() (bool, error) {
-		_, err := ct.scInterface.ServiceBindings(testNamespace).Get(context.Background(), testBindingName, metav1.GetOptions{})
+	return wait.PollUntilContextTimeout(context.Background(), pollingInterval, pollingTimeout, true, func(ctx context.Context) (bool, error) {
+		_, err := ct.scInterface.ServiceBindings(testNamespace).Get(ctx, testBindingName, metav1.GetOptions{})
 		if err != nil && apierrors.IsNotFound(err) {
 			return true, nil
 		}
@@ -742,8 +742,8 @@ func (ct *controllerTest) WaitForBindingFailed() error {
 // WaitForUnbindStatus waits unit the ServiceBinding will have the given status
 func (ct *controllerTest) WaitForUnbindStatus(status v1beta1.ServiceBindingUnbindStatus) error {
 	var lastBinding *v1beta1.ServiceBinding
-	err := wait.PollImmediate(pollingInterval, pollingTimeout, func() (bool, error) {
-		binding, err := ct.scInterface.ServiceBindings(testNamespace).Get(context.Background(), testBindingName, metav1.GetOptions{})
+	err := wait.PollUntilContextTimeout(context.Background(), pollingInterval, pollingTimeout, true, func(ctx context.Context) (bool, error) {
+		binding, err := ct.scInterface.ServiceBindings(testNamespace).Get(ctx, testBindingName, metav1.GetOptions{})
 		if err != nil {
 			return false, fmt.Errorf("error getting Binding: %v", err)
 		}
@@ -764,8 +764,8 @@ func (ct *controllerTest) WaitForUnbindStatus(status v1beta1.ServiceBindingUnbin
 // WaitForDeprovisionStatus waits unit the ServiceInstance will have the given status
 func (ct *controllerTest) WaitForDeprovisionStatus(status v1beta1.ServiceInstanceDeprovisionStatus) error {
 	var lastInstance *v1beta1.ServiceInstance
-	err := wait.PollImmediate(pollingInterval, pollingTimeout, func() (bool, error) {
-		si, err := ct.scInterface.ServiceInstances(testNamespace).Get(context.Background(), testServiceInstanceName, metav1.GetOptions{})
+	err := wait.PollUntilContextTimeout(context.Background(), pollingInterval, pollingTimeout, true, func(ctx context.Context) (bool, error) {
+		si, err := ct.scInterface.ServiceInstances(testNamespace).Get(ctx, testServiceInstanceName, metav1.GetOptions{})
 		if err != nil {
 			return false, fmt.Errorf("error getting Binding: %v", err)
 		}
@@ -787,8 +787,8 @@ func (ct *controllerTest) WaitForDeprovisionStatus(status v1beta1.ServiceInstanc
 // waitForBindingStatusCondition waits until ServiceBinding will have the given condition
 func (ct *controllerTest) waitForBindingStatusCondition(condition v1beta1.ServiceBindingCondition) error {
 	var lastBinding *v1beta1.ServiceBinding
-	err := wait.PollImmediate(pollingInterval, pollingTimeout, func() (bool, error) {
-		binding, err := ct.scInterface.ServiceBindings(testNamespace).Get(context.Background(), testBindingName, metav1.GetOptions{})
+	err := wait.PollUntilContextTimeout(context.Background(), pollingInterval, pollingTimeout, true, func(ctx context.Context) (bool, error) {
+		binding, err := ct.scInterface.ServiceBindings(testNamespace).Get(ctx, testBindingName, metav1.GetOptions{})
 		if err != nil {
 			return false, fmt.Errorf("error getting Binding: %v", err)
 		}
@@ -812,8 +812,8 @@ func (ct *controllerTest) waitForBindingStatusCondition(condition v1beta1.Servic
 // WaitForServiceInstanceRemoved waits until the ServiceInstance will be removed
 func (ct *controllerTest) WaitForServiceInstanceRemoved() error {
 	var lastInstance *v1beta1.ServiceInstance
-	err := wait.PollImmediate(pollingInterval, pollingTimeout, func() (bool, error) {
-		instance, err := ct.scInterface.ServiceInstances(testNamespace).Get(context.Background(), testServiceInstanceName, metav1.GetOptions{})
+	err := wait.PollUntilContextTimeout(context.Background(), pollingInterval, pollingTimeout, true, func(ctx context.Context) (bool, error) {
+		instance, err := ct.scInterface.ServiceInstances(testNamespace).Get(ctx, testServiceInstanceName, metav1.GetOptions{})
 		if apierrors.IsNotFound(err) {
 			return true, nil
 		}
@@ -846,8 +846,8 @@ func (ct *controllerTest) WaitForInstanceUpdating() error {
 // WaitForServiceInstanceRemoved waits until the ServiceInstance will in given condition
 func (ct *controllerTest) waitForInstanceCondition(condition v1beta1.ServiceInstanceCondition) error {
 	var lastInstance *v1beta1.ServiceInstance
-	err := wait.PollImmediate(pollingInterval, pollingTimeout, func() (bool, error) {
-		instance, err := ct.scInterface.ServiceInstances(testNamespace).Get(context.Background(), testServiceInstanceName, metav1.GetOptions{})
+	err := wait.PollUntilContextTimeout(context.Background(), pollingInterval, pollingTimeout, true, func(ctx context.Context) (bool, error) {
+		instance, err := ct.scInterface.ServiceInstances(testNamespace).Get(ctx, testServiceInstanceName, metav1.GetOptions{})
 		if err != nil {
 			return false, fmt.Errorf("error getting Instance: %v", err)
 		}
@@ -869,8 +869,8 @@ func (ct *controllerTest) waitForInstanceCondition(condition v1beta1.ServiceInst
 // WaitForAsyncProvisioningInProgress waits until the ServiceInstance will be in process of async provisioning
 func (ct *controllerTest) WaitForAsyncProvisioningInProgress() error {
 	var lastInstance *v1beta1.ServiceInstance
-	err := wait.PollImmediate(pollingInterval, pollingTimeout, func() (bool, error) {
-		instance, err := ct.scInterface.ServiceInstances(testNamespace).Get(context.Background(), testServiceInstanceName, metav1.GetOptions{})
+	err := wait.PollUntilContextTimeout(context.Background(), pollingInterval, pollingTimeout, true, func(ctx context.Context) (bool, error) {
+		instance, err := ct.scInterface.ServiceInstances(testNamespace).Get(ctx, testServiceInstanceName, metav1.GetOptions{})
 		if err != nil {
 			return false, fmt.Errorf("error getting ServiceInstance: %v", err)
 		}
@@ -896,8 +896,8 @@ func (ct *controllerTest) WaitForReadyBroker() error {
 	}
 
 	var lastBroker *v1beta1.ClusterServiceBroker
-	err := wait.PollImmediate(pollingInterval, pollingTimeout, func() (bool, error) {
-		broker, err := ct.scInterface.ClusterServiceBrokers().Get(context.Background(), testClusterServiceBrokerName, metav1.GetOptions{})
+	err := wait.PollUntilContextTimeout(context.Background(), pollingInterval, pollingTimeout, true, func(ctx context.Context) (bool, error) {
+		broker, err := ct.scInterface.ClusterServiceBrokers().Get(ctx, testClusterServiceBrokerName, metav1.GetOptions{})
 		if err != nil {
 			return false, fmt.Errorf("error getting Broker: %v", err)
 		}
@@ -921,8 +921,8 @@ func (ct *controllerTest) WaitForReadyBroker() error {
 
 // WaitForClusterServiceClass waits until the ClusterServiceClass will be present
 func (ct *controllerTest) WaitForClusterServiceClass() error {
-	return wait.PollImmediate(pollingInterval, pollingTimeout, func() (bool, error) {
-		_, err := ct.scInterface.ClusterServiceClasses().Get(context.Background(), testClassExternalID, metav1.GetOptions{})
+	return wait.PollUntilContextTimeout(context.Background(), pollingInterval, pollingTimeout, true, func(ctx context.Context) (bool, error) {
+		_, err := ct.scInterface.ClusterServiceClasses().Get(ctx, testClassExternalID, metav1.GetOptions{})
 		if err == nil {
 			return true, nil
 		}
@@ -933,8 +933,8 @@ func (ct *controllerTest) WaitForClusterServiceClass() error {
 
 // WaitForClusterServiceClassToNotExists waits until the ClusterServiceClass will be removed
 func (ct *controllerTest) WaitForClusterServiceClassToNotExists() error {
-	return wait.PollImmediate(pollingInterval, pollingTimeout, func() (bool, error) {
-		_, err := ct.scInterface.ClusterServiceClasses().Get(context.Background(), testClassExternalID, metav1.GetOptions{})
+	return wait.PollUntilContextTimeout(context.Background(), pollingInterval, pollingTimeout, true, func(ctx context.Context) (bool, error) {
+		_, err := ct.scInterface.ClusterServiceClasses().Get(ctx, testClassExternalID, metav1.GetOptions{})
 		if err != nil && apierrors.IsNotFound(err) {
 			return true, nil
 		}
@@ -945,8 +945,8 @@ func (ct *controllerTest) WaitForClusterServiceClassToNotExists() error {
 
 // WaitForClusterServicePlanToNotExists waits until the ClusterServicePlan will be removed
 func (ct *controllerTest) WaitForClusterServicePlanToNotExists() error {
-	return wait.PollImmediate(pollingInterval, pollingTimeout, func() (bool, error) {
-		_, err := ct.scInterface.ClusterServicePlans().Get(context.Background(), testPlanExternalID, metav1.GetOptions{})
+	return wait.PollUntilContextTimeout(context.Background(), pollingInterval, pollingTimeout, true, func(ctx context.Context) (bool, error) {
+		_, err := ct.scInterface.ClusterServicePlans().Get(ctx, testPlanExternalID, metav1.GetOptions{})
 		if err != nil && apierrors.IsNotFound(err) {
 			return true, nil
 		}
@@ -957,8 +957,8 @@ func (ct *controllerTest) WaitForClusterServicePlanToNotExists() error {
 
 // WaitForClusterServicePlan waits until the ClusterServicePlan will be present
 func (ct *controllerTest) WaitForClusterServicePlan() error {
-	err := wait.PollImmediate(pollingInterval, pollingTimeout, func() (bool, error) {
-		_, err := ct.scInterface.ClusterServicePlans().Get(context.Background(), testPlanExternalID, metav1.GetOptions{})
+	err := wait.PollUntilContextTimeout(context.Background(), pollingInterval, pollingTimeout, true, func(ctx context.Context) (bool, error) {
+		_, err := ct.scInterface.ClusterServicePlans().Get(ctx, testPlanExternalID, metav1.GetOptions{})
 		if err == nil {
 			return true, nil
 		}
@@ -1052,8 +1052,8 @@ func (ct *controllerTest) SetupEmptyPlanListForOSBClient() {
 // returns error if the time limit has been reached
 func (ct *controllerTest) WaitForInstanceCondition(condition v1beta1.ServiceInstanceCondition) error {
 	var lastInstance *v1beta1.ServiceInstance
-	err := wait.PollImmediate(pollingInterval, pollingTimeout, func() (bool, error) {
-		instance, err := ct.scInterface.ServiceInstances(testNamespace).Get(context.Background(), testServiceInstanceName, metav1.GetOptions{})
+	err := wait.PollUntilContextTimeout(context.Background(), pollingInterval, pollingTimeout, true, func(ctx context.Context) (bool, error) {
+		instance, err := ct.scInterface.ServiceInstances(testNamespace).Get(ctx, testServiceInstanceName, metav1.GetOptions{})
 		if err != nil {
 			return false, fmt.Errorf("error getting Instance: %v", err)
 		}
@@ -1077,8 +1077,8 @@ func (ct *controllerTest) WaitForInstanceCondition(condition v1beta1.ServiceInst
 // equal or higher than ServiceInstance `generation` value, ServiceInstance is in Ready/True status and
 // ServiceInstance is not in Orphan Mitigation progress
 func (ct *controllerTest) WaitForServiceInstanceProcessedGeneration(generation int64) error {
-	err := wait.PollImmediate(pollingInterval, pollingTimeout, func() (bool, error) {
-		instance, err := ct.scInterface.ServiceInstances(testNamespace).Get(context.Background(), testServiceInstanceName, metav1.GetOptions{})
+	err := wait.PollUntilContextTimeout(context.Background(), pollingInterval, pollingTimeout, true, func(ctx context.Context) (bool, error) {
+		instance, err := ct.scInterface.ServiceInstances(testNamespace).Get(ctx, testServiceInstanceName, metav1.GetOptions{})
 		if err != nil {
 			return false, fmt.Errorf("error getting Instance: %v", err)
 		}
@@ -1415,8 +1415,8 @@ func (ct *controllerTest) AssertObservedGenerationIsCorrect(t *testing.T) {
 // WaitForReadyUpdateInstance waits for ServiceInstance when Generation parameter will be equal to
 // ObservedGeneration status parameter
 func (ct *controllerTest) WaitForReadyUpdateInstance() error {
-	err := wait.PollImmediate(pollingInterval, pollingTimeout, func() (bool, error) {
-		instance, err := ct.scInterface.ServiceInstances(testNamespace).Get(context.Background(), testServiceInstanceName, metav1.GetOptions{})
+	err := wait.PollUntilContextTimeout(context.Background(), pollingInterval, pollingTimeout, true, func(ctx context.Context) (bool, error) {
+		instance, err := ct.scInterface.ServiceInstances(testNamespace).Get(ctx, testServiceInstanceName, metav1.GetOptions{})
 		if err != nil {
 			return false, fmt.Errorf("error getting Instance: %v", err)
 		}

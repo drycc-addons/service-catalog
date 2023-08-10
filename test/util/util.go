@@ -44,14 +44,14 @@ func WaitForBrokerCondition(client v1beta1servicecatalog.ServicecatalogV1beta1In
 	// GetCatalog default timeout time is 60 seconds, so the wait here must be at least that (previously set to 30 seconds)
 	var err error
 	var broker servicecatalog.Broker
-	return wait.PollImmediate(500*time.Millisecond, 3*time.Minute,
-		func() (bool, error) {
+	return wait.PollUntilContextTimeout(context.Background(), 500*time.Millisecond, 3*time.Minute, true,
+		func(ctx context.Context) (bool, error) {
 			if len(namespace) == 0 {
 				klog.V(5).Infof("Waiting for ClusterServiceBroker %v condition %#v", name, condition)
-				broker, err = client.ClusterServiceBrokers().Get(context.Background(), name, metav1.GetOptions{})
+				broker, err = client.ClusterServiceBrokers().Get(ctx, name, metav1.GetOptions{})
 			} else {
 				klog.V(5).Infof("Waiting for ServiceBroker %v in namespace %v to have condition %#v", name, namespace[0], condition)
-				broker, err = client.ServiceBrokers(namespace[0]).Get(context.Background(), name, metav1.GetOptions{})
+				broker, err = client.ServiceBrokers(namespace[0]).Get(ctx, name, metav1.GetOptions{})
 			}
 			if nil != err {
 				return false, fmt.Errorf("error getting Broker %v: %v", name, err)
@@ -81,14 +81,14 @@ func WaitForBrokerCondition(client v1beta1servicecatalog.ServicecatalogV1beta1In
 // if a namespace is provided
 func WaitForBrokerToNotExist(client v1beta1servicecatalog.ServicecatalogV1beta1Interface, name string, namespace ...string) error {
 	var err error
-	return wait.PollImmediate(500*time.Millisecond, wait.ForeverTestTimeout,
-		func() (bool, error) {
+	return wait.PollUntilContextTimeout(context.Background(), 500*time.Millisecond, wait.ForeverTestTimeout, true,
+		func(ctx context.Context) (bool, error) {
 			if len(namespace) == 0 {
 				klog.V(5).Infof("Waiting for ClusterServiceBroker %v to not exist", name)
-				_, err = client.ClusterServiceBrokers().Get(context.Background(), name, metav1.GetOptions{})
+				_, err = client.ClusterServiceBrokers().Get(ctx, name, metav1.GetOptions{})
 			} else {
 				klog.V(5).Infof("Waiting for ServiceBroker %v in namespace %v to not exist", name, namespace[0])
-				_, err = client.ServiceBrokers(namespace[0]).Get(context.Background(), name, metav1.GetOptions{})
+				_, err = client.ServiceBrokers(namespace[0]).Get(ctx, name, metav1.GetOptions{})
 			}
 			if nil == err {
 				return false, nil
@@ -107,15 +107,15 @@ func WaitForBrokerToNotExist(client v1beta1servicecatalog.ServicecatalogV1beta1I
 // to exist. Checks for a ClusterServiceClass by default, a ServiceClass if
 // a namespace is provided
 func WaitForServiceClassToExist(client v1beta1servicecatalog.ServicecatalogV1beta1Interface, name string, namespace ...string) error {
-	return wait.PollImmediate(500*time.Millisecond, wait.ForeverTestTimeout,
-		func() (bool, error) {
+	return wait.PollUntilContextTimeout(context.Background(), 500*time.Millisecond, wait.ForeverTestTimeout, true,
+		func(ctx context.Context) (bool, error) {
 			var err error
 			if len(namespace) == 0 {
 				klog.V(5).Infof("Waiting for ClusterServiceClass %v to exist", name)
-				_, err = client.ClusterServiceClasses().Get(context.Background(), name, metav1.GetOptions{})
+				_, err = client.ClusterServiceClasses().Get(ctx, name, metav1.GetOptions{})
 			} else {
 				klog.V(5).Infof("Waiting for ServiceClass %v in namespace %v to exist", name, namespace[0])
-				_, err = client.ServiceClasses(namespace[0]).Get(context.Background(), name, metav1.GetOptions{})
+				_, err = client.ServiceClasses(namespace[0]).Get(ctx, name, metav1.GetOptions{})
 			}
 			if nil == err {
 				return true, nil
@@ -130,15 +130,15 @@ func WaitForServiceClassToExist(client v1beta1servicecatalog.ServicecatalogV1bet
 // with the given name to exist. Checks for ClusterServicePlans
 // by default, ServicePlans if a namespace is provided
 func WaitForServicePlanToExist(client v1beta1servicecatalog.ServicecatalogV1beta1Interface, name string, namespace ...string) error {
-	return wait.PollImmediate(500*time.Millisecond, wait.ForeverTestTimeout,
-		func() (bool, error) {
+	return wait.PollUntilContextTimeout(context.Background(), 500*time.Millisecond, wait.ForeverTestTimeout, true,
+		func(ctx context.Context) (bool, error) {
 			var err error
 			if len(namespace) == 0 {
 				klog.V(5).Infof("Waiting for ClusterServicePlan %v to exist", name)
-				_, err = client.ClusterServicePlans().Get(context.Background(), name, metav1.GetOptions{})
+				_, err = client.ClusterServicePlans().Get(ctx, name, metav1.GetOptions{})
 			} else {
 				klog.V(5).Infof("Waiting for ServicePlan %v in namespace %v to exist", name, namespace[0])
-				_, err = client.ServicePlans(namespace[0]).Get(context.Background(), name, metav1.GetOptions{})
+				_, err = client.ServicePlans(namespace[0]).Get(ctx, name, metav1.GetOptions{})
 			}
 			if nil == err {
 				return true, nil
@@ -153,15 +153,15 @@ func WaitForServicePlanToExist(client v1beta1servicecatalog.ServicecatalogV1beta
 // to not exist. Looks for ClusterServicePlans by default, ServicePlans if a
 // namespace is provided
 func WaitForServicePlanToNotExist(client v1beta1servicecatalog.ServicecatalogV1beta1Interface, name string, namespace ...string) error {
-	return wait.PollImmediate(500*time.Millisecond, wait.ForeverTestTimeout,
-		func() (bool, error) {
+	return wait.PollUntilContextTimeout(context.Background(), 500*time.Millisecond, wait.ForeverTestTimeout, true,
+		func(ctx context.Context) (bool, error) {
 			var err error
 			if len(namespace) == 0 {
 				klog.V(5).Infof("Waiting for ClusterServicePlan %q to not exist", name)
-				_, err = client.ClusterServicePlans().Get(context.Background(), name, metav1.GetOptions{})
+				_, err = client.ClusterServicePlans().Get(ctx, name, metav1.GetOptions{})
 			} else {
 				klog.V(5).Infof("Waiting for ServicePlan %q in namespace %v to not exist", name, namespace[0])
-				_, err = client.ServicePlans(namespace[0]).Get(context.Background(), name, metav1.GetOptions{})
+				_, err = client.ServicePlans(namespace[0]).Get(ctx, name, metav1.GetOptions{})
 			}
 			if nil == err {
 				return false, nil
@@ -180,15 +180,15 @@ func WaitForServicePlanToNotExist(client v1beta1servicecatalog.ServicecatalogV1b
 // name to no longer exist. Looks for ClusterServiceClasses by default,
 // ServiceClasses if a namespace is provided
 func WaitForServiceClassToNotExist(client v1beta1servicecatalog.ServicecatalogV1beta1Interface, name string, namespace ...string) error {
-	return wait.PollImmediate(500*time.Millisecond, wait.ForeverTestTimeout,
-		func() (bool, error) {
+	return wait.PollUntilContextTimeout(context.Background(), 500*time.Millisecond, wait.ForeverTestTimeout, true,
+		func(ctx context.Context) (bool, error) {
 			var err error
 			if len(namespace) == 0 {
 				klog.V(5).Infof("Waiting for ClusterServiceClass %v to not exist", name)
-				_, err = client.ClusterServiceClasses().Get(context.Background(), name, metav1.GetOptions{})
+				_, err = client.ClusterServiceClasses().Get(ctx, name, metav1.GetOptions{})
 			} else {
 				klog.V(5).Infof("Waiting for ServiceClass %v in namespace %v to not exist", name, namespace[0])
-				_, err = client.ServiceClasses(namespace[0]).Get(context.Background(), name, metav1.GetOptions{})
+				_, err = client.ServiceClasses(namespace[0]).Get(ctx, name, metav1.GetOptions{})
 			}
 			if nil == err {
 				return false, nil
@@ -206,10 +206,10 @@ func WaitForServiceClassToNotExist(client v1beta1servicecatalog.ServicecatalogV1
 // WaitForInstanceCondition waits for the status of the named instance to
 // contain a condition whose type and status matches the supplied one.
 func WaitForInstanceCondition(client v1beta1servicecatalog.ServicecatalogV1beta1Interface, namespace, name string, condition v1beta1.ServiceInstanceCondition) error {
-	return wait.PollImmediate(500*time.Millisecond, wait.ForeverTestTimeout,
-		func() (bool, error) {
+	return wait.PollUntilContextTimeout(context.Background(), 500*time.Millisecond, wait.ForeverTestTimeout, true,
+		func(ctx context.Context) (bool, error) {
 			klog.V(5).Infof("Waiting for instance %v/%v condition %#v", namespace, name, condition)
-			instance, err := client.ServiceInstances(namespace).Get(context.Background(), name, metav1.GetOptions{})
+			instance, err := client.ServiceInstances(namespace).Get(ctx, name, metav1.GetOptions{})
 			if nil != err {
 				return false, fmt.Errorf("error getting Instance %v/%v: %v", namespace, name, err)
 			}
@@ -236,11 +236,11 @@ func WaitForInstanceCondition(client v1beta1servicecatalog.ServicecatalogV1beta1
 // WaitForInstanceToNotExist waits for the Instance with the given name to no
 // longer exist.
 func WaitForInstanceToNotExist(client v1beta1servicecatalog.ServicecatalogV1beta1Interface, namespace, name string) error {
-	return wait.PollImmediate(500*time.Millisecond, wait.ForeverTestTimeout,
-		func() (bool, error) {
+	return wait.PollUntilContextTimeout(context.Background(), 500*time.Millisecond, wait.ForeverTestTimeout, true,
+		func(ctx context.Context) (bool, error) {
 			klog.V(5).Infof("Waiting for instance %v/%v to not exist", namespace, name)
 
-			_, err := client.ServiceInstances(namespace).Get(context.Background(), name, metav1.GetOptions{})
+			_, err := client.ServiceInstances(namespace).Get(ctx, name, metav1.GetOptions{})
 			if nil == err {
 				return false, nil
 			}
@@ -257,10 +257,10 @@ func WaitForInstanceToNotExist(client v1beta1servicecatalog.ServicecatalogV1beta
 // WaitForInstanceProcessedGeneration waits for the status of the named instance to
 // have the specified reconciled generation.
 func WaitForInstanceProcessedGeneration(client v1beta1servicecatalog.ServicecatalogV1beta1Interface, namespace, name string, processedGeneration int64) error {
-	return wait.PollImmediate(500*time.Millisecond, wait.ForeverTestTimeout,
-		func() (bool, error) {
+	return wait.PollUntilContextTimeout(context.Background(), 500*time.Millisecond, wait.ForeverTestTimeout, true,
+		func(ctx context.Context) (bool, error) {
 			klog.V(5).Infof("Waiting for instance %v/%v to have processed generation of %v", namespace, name, processedGeneration)
-			instance, err := client.ServiceInstances(namespace).Get(context.Background(), name, metav1.GetOptions{})
+			instance, err := client.ServiceInstances(namespace).Get(ctx, name, metav1.GetOptions{})
 			if nil != err {
 				return false, fmt.Errorf("error getting Instance %v/%v: %v", namespace, name, err)
 			}
@@ -305,11 +305,11 @@ func isServiceInstanceFailed(instance *v1beta1.ServiceInstance) bool {
 // back the last binding condition of the same type requested during polling if found.
 func WaitForBindingCondition(client v1beta1servicecatalog.ServicecatalogV1beta1Interface, namespace, name string, condition v1beta1.ServiceBindingCondition) (*v1beta1.ServiceBindingCondition, error) {
 	var lastSeenCondition *v1beta1.ServiceBindingCondition
-	return lastSeenCondition, wait.PollImmediate(500*time.Millisecond, wait.ForeverTestTimeout,
-		func() (bool, error) {
+	return lastSeenCondition, wait.PollUntilContextTimeout(context.Background(), 500*time.Millisecond, wait.ForeverTestTimeout, true,
+		func(ctx context.Context) (bool, error) {
 			klog.V(5).Infof("Waiting for binding %v/%v condition %#v", namespace, name, condition)
 
-			binding, err := client.ServiceBindings(namespace).Get(context.Background(), name, metav1.GetOptions{})
+			binding, err := client.ServiceBindings(namespace).Get(ctx, name, metav1.GetOptions{})
 			if nil != err {
 				return false, fmt.Errorf("error getting Binding %v/%v: %v", namespace, name, err)
 			}
@@ -339,11 +339,11 @@ func WaitForBindingCondition(client v1beta1servicecatalog.ServicecatalogV1beta1I
 // WaitForBindingToNotExist waits for the Binding with the given name to no
 // longer exist.
 func WaitForBindingToNotExist(client v1beta1servicecatalog.ServicecatalogV1beta1Interface, namespace, name string) error {
-	return wait.PollImmediate(500*time.Millisecond, wait.ForeverTestTimeout,
-		func() (bool, error) {
+	return wait.PollUntilContextTimeout(context.Background(), 500*time.Millisecond, wait.ForeverTestTimeout, true,
+		func(ctx context.Context) (bool, error) {
 			klog.V(5).Infof("Waiting for binding %v/%v to not exist", namespace, name)
 
-			_, err := client.ServiceBindings(namespace).Get(context.Background(), name, metav1.GetOptions{})
+			_, err := client.ServiceBindings(namespace).Get(ctx, name, metav1.GetOptions{})
 			if nil == err {
 				return false, nil
 			}
@@ -360,10 +360,10 @@ func WaitForBindingToNotExist(client v1beta1servicecatalog.ServicecatalogV1beta1
 // WaitForBindingReconciledGeneration waits for the status of the named binding to
 // have the specified reconciled generation.
 func WaitForBindingReconciledGeneration(client v1beta1servicecatalog.ServicecatalogV1beta1Interface, namespace, name string, reconciledGeneration int64) error {
-	return wait.PollImmediate(500*time.Millisecond, wait.ForeverTestTimeout,
-		func() (bool, error) {
+	return wait.PollUntilContextTimeout(context.Background(), 500*time.Millisecond, wait.ForeverTestTimeout, true,
+		func(ctx context.Context) (bool, error) {
 			klog.V(5).Infof("Waiting for binding %v/%v to have reconciled generation of %v", namespace, name, reconciledGeneration)
-			binding, err := client.ServiceBindings(namespace).Get(context.Background(), name, metav1.GetOptions{})
+			binding, err := client.ServiceBindings(namespace).Get(ctx, name, metav1.GetOptions{})
 			if nil != err {
 				return false, fmt.Errorf("error getting ServiceBinding %v/%v: %v", namespace, name, err)
 			}

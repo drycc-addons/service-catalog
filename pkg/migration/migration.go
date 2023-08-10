@@ -150,7 +150,7 @@ func (m *Service) AssertWebhookServerIsUp() error {
 		protocol = "https"
 	}
 
-	return wait.Poll(1*time.Second, 60*time.Second, func() (done bool, err error) {
+	return wait.PollUntilContextTimeout(context.Background(), 1*time.Second, 60*time.Second, false, func(context.Context) (done bool, err error) {
 		url := fmt.Sprintf("%s://%s.%s.svc:%s/mutating-clusterserviceclasses", protocol, m.webhookServiceName, m.releaseNamespace, m.webhookServicePort)
 		response, err := client.Get(url)
 		if err != nil {

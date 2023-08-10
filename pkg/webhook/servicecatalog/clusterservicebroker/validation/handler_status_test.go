@@ -23,7 +23,6 @@ import (
 	sc "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	"github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/clusterservicebroker/validation"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	admissionv1 "k8s.io/api/admission/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -71,8 +70,7 @@ func TestHandlerStatusValidate(t *testing.T) {
 		t.Run(tn, func(t *testing.T) {
 			// given
 			sc.AddToScheme(scheme.Scheme)
-			decoder, err := admission.NewDecoder(scheme.Scheme)
-			require.NoError(t, err)
+			decoder := admission.NewDecoder(scheme.Scheme)
 			handler := &validation.StatusValidationHandler{}
 			handler.InjectDecoder(decoder)
 

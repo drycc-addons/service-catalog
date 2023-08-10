@@ -67,7 +67,7 @@ func (t *tester) execute() error {
 }
 
 func (t *tester) assertClusterServiceBrokerIsReady() error {
-	return wait.Poll(waitInterval, timeoutInterval, func() (done bool, err error) {
+	return wait.PollUntilContextTimeout(context.Background(), waitInterval, timeoutInterval, false, func(context.Context) (done bool, err error) {
 		broker, err := t.sc.ClusterServiceBrokers().Get(context.Background(), clusterServiceBrokerName, metav1.GetOptions{})
 		if apiErr.IsNotFound(err) {
 			klog.Infof("ClusterServiceBroker %q not exist", clusterServiceBrokerName)
@@ -162,7 +162,7 @@ func (t *tester) deleteServiceBinding() error {
 }
 
 func (t *tester) assertServiceBindingIsRemoved() error {
-	return wait.Poll(waitInterval, timeoutInterval, func() (done bool, err error) {
+	return wait.PollUntilContextTimeout(context.Background(), waitInterval, timeoutInterval, false, func(context.Context) (done bool, err error) {
 		_, err = t.sc.ServiceBindings(t.namespace).Get(context.Background(), serviceBindingName, metav1.GetOptions{})
 		if apiErr.IsNotFound(err) {
 			return true, nil
@@ -212,7 +212,7 @@ func (t *tester) deleteServiceInstance() error {
 }
 
 func (t *tester) assertServiceInstanceIsRemoved() error {
-	return wait.Poll(waitInterval, timeoutInterval, func() (done bool, err error) {
+	return wait.PollUntilContextTimeout(context.Background(), waitInterval, timeoutInterval, false, func(context.Context) (done bool, err error) {
 		_, err = t.sc.ServiceInstances(t.namespace).Get(context.Background(), serviceInstanceName, metav1.GetOptions{})
 		if apiErr.IsNotFound(err) {
 			return true, nil

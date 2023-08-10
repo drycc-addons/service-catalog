@@ -36,10 +36,6 @@ type StaticUpdate struct {
 	decoder *admission.Decoder
 }
 
-var _ Validator = &StaticCreate{}
-var _ Validator = &StaticUpdate{}
-var _ admission.DecoderInjector = &StaticUpdate{}
-
 // Validate validate ServiceBinding instance
 func (v *StaticCreate) Validate(ctx context.Context, req admission.Request, serviceInstance *sc.ServiceInstance, traced *webhookutil.TracedLogger) *webhookutil.WebhookError {
 	err := scv.ValidateServiceInstance(serviceInstance).ToAggregate()

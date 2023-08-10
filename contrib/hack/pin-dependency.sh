@@ -32,8 +32,6 @@ source "${CURRENT_DIR}/ci/lib/utilities.sh" || { echo 'Cannot load CI utilities.
 
 # Explicitly opt into go modules, even though we're inside a GOPATH directory
 export GO111MODULE=on
-# Explicitly clear GOFLAGS, since GOFLAGS=-mod=vendor breaks dependency resolution while rebuilding vendor
-export GOFLAGS=
 # Detect problematic GOPROXY settings that prevent lookup of dependencies
 if [[ "${GOPROXY:-}" == "off" ]]; then
   echo "Cannot run with \$GOPROXY=off"

@@ -75,9 +75,9 @@ func CreateKubeNamespace(c kubernetes.Interface) (*corev1.Namespace, error) {
 
 	// Be robust about making the namespace creation call.
 	var got *corev1.Namespace
-	err := wait.PollImmediate(poll, defaultTimeout, func() (bool, error) {
+	err := wait.PollUntilContextTimeout(context.Background(), poll, defaultTimeout, true, func(ctx context.Context) (bool, error) {
 		var err error
-		got, err = c.CoreV1().Namespaces().Create(context.Background(), ns, metav1.CreateOptions{})
+		got, err = c.CoreV1().Namespaces().Create(ctx, ns, metav1.CreateOptions{})
 		if err != nil {
 			klog.Errorf("Unexpected error while creating namespace: %v", err)
 			return false, err
@@ -97,12 +97,12 @@ func DeleteKubeNamespace(c kubernetes.Interface, namespace string) error {
 
 // WaitForEndpoint waits for 'defaultTimeout' interval for an endpoint to be available
 func WaitForEndpoint(c kubernetes.Interface, namespace, name string) error {
-	return wait.PollImmediate(poll, defaultTimeout, endpointAvailable(c, namespace, name))
+	return wait.PollUntilContextTimeout(context.Background(), poll, defaultTimeout, true, endpointAvailable(c, namespace, name))
 }
 
-func endpointAvailable(c kubernetes.Interface, namespace, name string) wait.ConditionFunc {
-	return func() (bool, error) {
-		endpoint, err := c.CoreV1().Endpoints(namespace).Get(context.Background(), name, metav1.GetOptions{})
+func endpointAvailable(c kubernetes.Interface, namespace, name string) wait.ConditionWithContextFunc {
+	return func(ctx context.Context) (bool, error) {
+		endpoint, err := c.CoreV1().Endpoints(namespace).Get(ctx, name, metav1.GetOptions{})
 		if err != nil {
 			if apierrs.IsNotFound(err) {
 				return false, nil

@@ -15,7 +15,6 @@
 all: build test verify
 
 # Some env vars that devs might find useful:
-#  GOFLAGS      : extra "go build" flags to use - e.g. -v   (for verbose)
 #  NO_DOCKER=1  : execute each step natively, not in a Docker container
 #  TEST_DIRS=   : only run the unit tests from the specified dirs
 #  UNIT_TESTS=  : only run the unit tests matching the specified regexp
@@ -60,13 +59,6 @@ TYPES_FILES    = $(shell find pkg/apis -name types.go)
 GO_VERSION    ?= 1.20
 
 # Preserve also user values
-ifeq ($(GOFLAGS),)
-GOFLAGS := -mod=vendor
-else
-GOFLAGS := $(GOFLAGS) -mod=vendor
-endif
-
-export GOFLAGS
 export GO111MODULE=on
 
 ALL_ARCH=amd64 arm arm64 ppc64le s390x

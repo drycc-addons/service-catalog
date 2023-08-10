@@ -19,12 +19,12 @@ package validation
 import (
 	"context"
 	"fmt"
+	"net/http"
+
 	sc "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	"github.com/kubernetes-sigs/service-catalog/pkg/webhookutil"
 	"k8s.io/apimachinery/pkg/types"
-	"net/http"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/runtime/inject"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
@@ -33,9 +33,6 @@ type ReferenceDeletion struct {
 	decoder *admission.Decoder
 	client  client.Client
 }
-
-var _ admission.DecoderInjector = &ReferenceDeletion{}
-var _ inject.Client = &ReferenceDeletion{}
 
 // InjectDecoder injects the decoder
 func (h *ReferenceDeletion) InjectDecoder(d *admission.Decoder) error {

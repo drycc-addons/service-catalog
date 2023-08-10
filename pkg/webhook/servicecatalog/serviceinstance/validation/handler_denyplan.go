@@ -25,7 +25,6 @@ import (
 	"github.com/kubernetes-sigs/service-catalog/pkg/webhookutil"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/runtime/inject"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
@@ -34,9 +33,6 @@ type DenyPlanChangeIfNotUpdatable struct {
 	decoder *admission.Decoder
 	client  client.Client
 }
-
-var _ admission.DecoderInjector = &DenyPlanChangeIfNotUpdatable{}
-var _ inject.Client = &DenyPlanChangeIfNotUpdatable{}
 
 // Validate checks if Plan can be changed
 func (h *DenyPlanChangeIfNotUpdatable) Validate(ctx context.Context, req admission.Request, si *sc.ServiceInstance, traced *webhookutil.TracedLogger) *webhookutil.WebhookError {

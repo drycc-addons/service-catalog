@@ -221,8 +221,8 @@ func (sdk *SDK) WaitForBinding(ns, name string, interval time.Duration, timeout 
 		timeout = &notimeout
 	}
 
-	err = wait.PollImmediate(interval, *timeout,
-		func() (bool, error) {
+	err = wait.PollUntilContextTimeout(context.Background(), interval, *timeout, true,
+		func(context.Context) (bool, error) {
 			binding, err = sdk.RetrieveBinding(ns, name)
 			if err != nil {
 				return true, err

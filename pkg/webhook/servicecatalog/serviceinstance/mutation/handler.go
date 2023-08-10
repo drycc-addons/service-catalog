@@ -28,9 +28,9 @@ import (
 	admissionTypes "k8s.io/api/admission/v1"
 	utilfeature "k8s.io/apiserver/pkg/util/feature"
 
+	"github.com/kubernetes-sigs/service-catalog/pkg/webhook/inject"
 	apiequality "k8s.io/apimachinery/pkg/api/equality"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/runtime/inject"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
@@ -47,9 +47,6 @@ func NewCreateUpdateHandler() *CreateUpdateHandler {
 		defaultServicePlan: &DefaultServicePlan{},
 	}
 }
-
-var _ admission.Handler = &CreateUpdateHandler{}
-var _ admission.DecoderInjector = &CreateUpdateHandler{}
 
 // Handle handles admission requests.
 func (h *CreateUpdateHandler) Handle(ctx context.Context, req admission.Request) admission.Response {

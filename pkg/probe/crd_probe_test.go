@@ -17,6 +17,7 @@ limitations under the License.
 package probe
 
 import (
+	"context"
 	"net/http"
 	"testing"
 
@@ -46,7 +47,7 @@ func TestCRDProbe_IsReady(t *testing.T) {
 	probe := NewCRDProbe(fakeClient, 0)
 
 	// Then
-	ready, err := probe.IsReady()
+	ready, err := probe.IsReady(context.Background())
 	assert.NoError(t, err)
 	assert.True(t, ready)
 }

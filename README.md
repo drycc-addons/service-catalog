@@ -16,11 +16,9 @@ brokers to the Kubernetes ecosystem via the [Open Service Broker API](https://gi
 
 ### About
 
-It seems that the original [drycc-addons/service-catalog](https://github.com/drycc-addons/service-catalog) is no longer active.
+It seems that the original [kubernetes-sigs/service-catalog](https://github.com/kubernetes-sigs/service-catalog) is no longer active.
 
 However, we use a lot of service-catalog related components in drycc, so we decided to establish a branch.
-
-If the service-catalog is reactivated at some point in the future, we expect that the changes of this branch can be finally merged into [drycc-addons/service-catalog](https://github.com/drycc-addons/service-catalog).
 
 Now our main goal is to upgrade some outdated APIs, including charts and source code. Then consider adding some new features.
 

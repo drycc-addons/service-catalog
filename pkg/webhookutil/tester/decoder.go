@@ -28,7 +28,6 @@ import (
 
 	sc "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	admissionv1 "k8s.io/api/admission/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -46,8 +45,7 @@ type TestDecoderHandler interface {
 func AssertHandlerReturnErrorIfReqObjIsMalformed(t *testing.T, handler TestDecoderHandler, kind string) {
 	// given
 	sc.AddToScheme(scheme.Scheme)
-	decoder, err := admission.NewDecoder(scheme.Scheme)
-	require.NoError(t, err)
+	decoder := admission.NewDecoder(scheme.Scheme)
 
 	fixReq := admission.Request{
 		AdmissionRequest: admissionv1.AdmissionRequest{
@@ -82,8 +80,7 @@ func AssertHandlerReturnErrorIfReqObjIsMalformed(t *testing.T, handler TestDecod
 func AssertHandlerReturnErrorIfGVKMismatch(t *testing.T, handler TestDecoderHandler, kind string) {
 	// given
 	sc.AddToScheme(scheme.Scheme)
-	decoder, err := admission.NewDecoder(scheme.Scheme)
-	require.NoError(t, err)
+	decoder := admission.NewDecoder(scheme.Scheme)
 
 	fixReq := admission.Request{
 		AdmissionRequest: admissionv1.AdmissionRequest{

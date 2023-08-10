@@ -79,8 +79,7 @@ func TestSpecValidationHandlerAccessToBrokerAllowed(t *testing.T) {
 		},
 	}
 
-	decoder, err := admission.NewDecoder(scheme.Scheme)
-	require.NoError(t, err)
+	decoder := admission.NewDecoder(scheme.Scheme)
 
 	tests := map[string]struct {
 		operation admissionv1.Operation
@@ -209,8 +208,7 @@ func TestSpecValidationHandlerAccessToBrokerDenied(t *testing.T) {
 
 	sch := scheme.Scheme
 
-	decoder, err := admission.NewDecoder(sch)
-	require.NoError(t, err)
+	decoder := admission.NewDecoder(sch)
 
 	tests := map[string]struct {
 		operation admissionv1.Operation

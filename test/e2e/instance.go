@@ -62,8 +62,8 @@ func deleteInstance(c clientset.Interface, namespace, name string) error {
 
 // waitForInstanceToBeDeleted waits for the instance to be removed.
 func waitForInstanceToBeDeleted(c clientset.Interface, namespace, name string) error {
-	return wait.Poll(framework.Poll, instanceDeleteTimeout, func() (bool, error) {
-		_, err := c.ServicecatalogV1beta1().ServiceInstances(namespace).Get(context.Background(), name, metav1.GetOptions{})
+	return wait.PollUntilContextTimeout(context.Background(), framework.Poll, instanceDeleteTimeout, false, func(ctx context.Context) (bool, error) {
+		_, err := c.ServicecatalogV1beta1().ServiceInstances(namespace).Get(ctx, name, metav1.GetOptions{})
 		if err == nil {
 			framework.Logf("waiting for service instance %s to be deleted", name)
 			return false, nil

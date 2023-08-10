@@ -719,7 +719,7 @@ var _ = Describe("Instances", func() {
 		It("Times out if the instance never goes away", func() {
 			instance, err := sdk.WaitForInstanceToNotExist(si.Namespace, si.Name, interval, &timeout)
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(ContainSubstring("timed out"))
+			Expect(err.Error()).To(ContainSubstring("context deadline exceeded"))
 			Expect(instance).ToNot(BeNil())
 			actions := waitClient.Actions()
 			for _, v := range actions {

@@ -24,7 +24,6 @@ import (
 	v1alpha1 "github.com/kubernetes-sigs/service-catalog/pkg/apis/settings/v1alpha1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	labels "k8s.io/apimachinery/pkg/labels"
-	schema "k8s.io/apimachinery/pkg/runtime/schema"
 	types "k8s.io/apimachinery/pkg/types"
 	watch "k8s.io/apimachinery/pkg/watch"
 	testing "k8s.io/client-go/testing"
@@ -36,9 +35,9 @@ type FakePodPresets struct {
 	ns   string
 }
 
-var podpresetsResource = schema.GroupVersionResource{Group: "settings.servicecatalog.k8s.io", Version: "v1alpha1", Resource: "podpresets"}
+var podpresetsResource = v1alpha1.SchemeGroupVersion.WithResource("podpresets")
 
-var podpresetsKind = schema.GroupVersionKind{Group: "settings.servicecatalog.k8s.io", Version: "v1alpha1", Kind: "PodPreset"}
+var podpresetsKind = v1alpha1.SchemeGroupVersion.WithKind("PodPreset")
 
 // Get takes name of the podPreset, and returns the corresponding podPreset object, and an error if there is any.
 func (c *FakePodPresets) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.PodPreset, err error) {

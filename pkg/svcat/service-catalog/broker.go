@@ -315,8 +315,8 @@ func (sdk *SDK) WaitForBroker(name string, opts *ScopeOptions, interval time.Dur
 		notimeout := time.Duration(math.MaxInt64)
 		timeout = &notimeout
 	}
-	err = wait.PollImmediate(interval, *timeout,
-		func() (bool, error) {
+	err = wait.PollUntilContextTimeout(context.Background(), interval, *timeout, true,
+		func(context.Context) (bool, error) {
 			broker, err = sdk.RetrieveBrokerByID(name, *opts)
 			if err != nil {
 				if apierrors.IsNotFound(err) {

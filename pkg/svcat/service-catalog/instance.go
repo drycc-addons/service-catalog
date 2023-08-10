@@ -248,9 +248,9 @@ func (sdk *SDK) WaitForInstanceToNotExist(ns, name string, interval time.Duratio
 		timeout = &notimeout
 	}
 
-	err = wait.PollImmediate(interval, *timeout,
-		func() (bool, error) {
-			instance, err = sdk.ServiceCatalog().ServiceInstances(ns).Get(context.Background(), name, v1.GetOptions{})
+	err = wait.PollUntilContextTimeout(context.Background(), interval, *timeout, true,
+		func(ctx context.Context) (bool, error) {
+			instance, err = sdk.ServiceCatalog().ServiceInstances(ns).Get(ctx, name, v1.GetOptions{})
 			if err != nil {
 				if apierrors.IsNotFound(err) {
 					err = nil
@@ -269,8 +269,8 @@ func (sdk *SDK) WaitForInstance(ns, name string, interval time.Duration, timeout
 		timeout = &notimeout
 	}
 
-	err = wait.PollImmediate(interval, *timeout,
-		func() (bool, error) {
+	err = wait.PollUntilContextTimeout(context.Background(), interval, *timeout, true,
+		func(context.Context) (bool, error) {
 			instance, err = sdk.RetrieveInstance(ns, name)
 			if nil != err {
 				return false, err

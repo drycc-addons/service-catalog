@@ -24,7 +24,6 @@ import (
 	v1beta1 "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	labels "k8s.io/apimachinery/pkg/labels"
-	schema "k8s.io/apimachinery/pkg/runtime/schema"
 	types "k8s.io/apimachinery/pkg/types"
 	watch "k8s.io/apimachinery/pkg/watch"
 	testing "k8s.io/client-go/testing"
@@ -35,9 +34,9 @@ type FakeClusterServicePlans struct {
 	Fake *FakeServicecatalogV1beta1
 }
 
-var clusterserviceplansResource = schema.GroupVersionResource{Group: "servicecatalog.k8s.io", Version: "v1beta1", Resource: "clusterserviceplans"}
+var clusterserviceplansResource = v1beta1.SchemeGroupVersion.WithResource("clusterserviceplans")
 
-var clusterserviceplansKind = schema.GroupVersionKind{Group: "servicecatalog.k8s.io", Version: "v1beta1", Kind: "ClusterServicePlan"}
+var clusterserviceplansKind = v1beta1.SchemeGroupVersion.WithKind("ClusterServicePlan")
 
 // Get takes name of the clusterServicePlan, and returns the corresponding clusterServicePlan object, and an error if there is any.
 func (c *FakeClusterServicePlans) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1beta1.ClusterServicePlan, err error) {

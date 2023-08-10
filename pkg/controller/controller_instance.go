@@ -1899,16 +1899,16 @@ func (c *controller) updateServiceInstanceWithRetries(
 	var updatedInstance *v1beta1.ServiceInstance
 
 	instanceToUpdate := instance
-	err := wait.PollImmediate(interval, timeout, func() (bool, error) {
+	err := wait.PollUntilContextTimeout(context.Background(), interval, timeout, true, func(ctx context.Context) (bool, error) {
 		klog.V(4).Info(pcb.Message("Updating instance"))
-		upd, err := c.serviceCatalogClient.ServiceInstances(instanceToUpdate.Namespace).Update(context.Background(), instanceToUpdate, metav1.UpdateOptions{})
+		upd, err := c.serviceCatalogClient.ServiceInstances(instanceToUpdate.Namespace).Update(ctx, instanceToUpdate, metav1.UpdateOptions{})
 		if err != nil {
 			if !apierrors.IsConflict(err) {
 				return false, err
 			}
 			klog.V(4).Info(pcb.Message("Couldn't update instance because the resource was stale"))
 			// Fetch a fresh instance to resolve the update conflict and retry
-			instanceToUpdate, err = c.serviceCatalogClient.ServiceInstances(instance.Namespace).Get(context.Background(), instance.Name, metav1.GetOptions{})
+			instanceToUpdate, err = c.serviceCatalogClient.ServiceInstances(instance.Namespace).Get(ctx, instance.Name, metav1.GetOptions{})
 			if err != nil {
 				return false, err
 			}
@@ -1955,16 +1955,16 @@ func (c *controller) updateServiceInstanceStatusWithRetries(
 	instance.RecalculatePrinterColumnStatusFields()
 
 	instanceToUpdate := instance
-	err := wait.PollImmediate(interval, timeout, func() (bool, error) {
+	err := wait.PollUntilContextTimeout(context.Background(), interval, timeout, true, func(ctx context.Context) (bool, error) {
 		klog.V(4).Info(pcb.Message("Updating status"))
-		upd, err := c.serviceCatalogClient.ServiceInstances(instanceToUpdate.Namespace).UpdateStatus(context.Background(), instanceToUpdate, metav1.UpdateOptions{})
+		upd, err := c.serviceCatalogClient.ServiceInstances(instanceToUpdate.Namespace).UpdateStatus(ctx, instanceToUpdate, metav1.UpdateOptions{})
 		if err != nil {
 			if !apierrors.IsConflict(err) {
 				return false, err
 			}
 			klog.V(4).Info(pcb.Message("Couldn't update status because the resource was stale"))
 			// Fetch a fresh instance to resolve the update conflict and retry
-			instanceToUpdate, err = c.serviceCatalogClient.ServiceInstances(instance.Namespace).Get(context.Background(), instance.Name, metav1.GetOptions{})
+			instanceToUpdate, err = c.serviceCatalogClient.ServiceInstances(instance.Namespace).Get(ctx, instance.Name, metav1.GetOptions{})
 			if err != nil {
 				return false, err
 			}

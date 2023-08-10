@@ -19,14 +19,14 @@ package validation
 import (
 	"context"
 	"fmt"
+	"net/http"
+
 	sc "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	"github.com/kubernetes-sigs/service-catalog/pkg/webhookutil"
 	authenticationapi "k8s.io/api/authentication/v1"
 	authorizationapi "k8s.io/api/authorization/v1"
 	corev1 "k8s.io/api/core/v1"
-	"net/http"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/runtime/inject"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
@@ -35,9 +35,6 @@ type AccessToBroker struct {
 	decoder *admission.Decoder
 	client  client.Client
 }
-
-var _ admission.DecoderInjector = &AccessToBroker{}
-var _ inject.Client = &AccessToBroker{}
 
 // Validate checks if client has access to service broker if broker requires authentication
 // This feature was copied from Service Catalog admission plugin https://github.com/kubernetes-sigs/service-catalog/blob/v0.1.41/plugin/pkg/admission/broker/authsarcheck/admission.go

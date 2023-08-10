@@ -110,10 +110,9 @@ func TestCreateUpdateHandlerHandleCreateSuccess(t *testing.T) {
 		t.Run(tn, func(t *testing.T) {
 			// given
 			sc.AddToScheme(scheme.Scheme)
-			decoder, err := admission.NewDecoder(scheme.Scheme)
-			require.NoError(t, err)
+			decoder := admission.NewDecoder(scheme.Scheme)
 
-			err = utilfeature.DefaultMutableFeatureGate.Set(fmt.Sprintf("%v=false", scfeatures.OriginatingIdentity))
+			err := utilfeature.DefaultMutableFeatureGate.Set(fmt.Sprintf("%v=false", scfeatures.OriginatingIdentity))
 			require.NoError(t, err, "cannot disable OriginatingIdentity feature")
 			// restore default state
 			defer utilfeature.DefaultMutableFeatureGate.Set(fmt.Sprintf("%v=true", scfeatures.OriginatingIdentity))
@@ -206,10 +205,9 @@ func TestCreateUpdateHandlerHandleUpdateSuccess(t *testing.T) {
 		t.Run(tn, func(t *testing.T) {
 			// given
 			sc.AddToScheme(scheme.Scheme)
-			decoder, err := admission.NewDecoder(scheme.Scheme)
-			require.NoError(t, err)
+			decoder := admission.NewDecoder(scheme.Scheme)
 
-			err = utilfeature.DefaultMutableFeatureGate.Set(fmt.Sprintf("%v=false", scfeatures.OriginatingIdentity))
+			err := utilfeature.DefaultMutableFeatureGate.Set(fmt.Sprintf("%v=false", scfeatures.OriginatingIdentity))
 			require.NoError(t, err, "cannot disable OriginatingIdentity feature")
 			// restore default state
 			defer utilfeature.DefaultMutableFeatureGate.Set(fmt.Sprintf("%v=true", scfeatures.OriginatingIdentity))
@@ -256,8 +254,7 @@ func TestCreateUpdateHandlerHandleUpdateSuccess(t *testing.T) {
 func TestCreateUpdateHandlerHandleSetUserInfoIfOriginatingIdentityIsEnabled(t *testing.T) {
 	// given
 	sc.AddToScheme(scheme.Scheme)
-	decoder, err := admission.NewDecoder(scheme.Scheme)
-	require.NoError(t, err)
+	decoder := admission.NewDecoder(scheme.Scheme)
 
 	// assumption that OriginatingIdentity is enabled by default
 

@@ -76,8 +76,7 @@ func TestSpecValidationHandlerServiceInstanceReferenceUpToDate(t *testing.T) {
 	sch, err := sc.SchemeBuilderRuntime.Build()
 	require.NoError(t, err)
 
-	decoder, err := admission.NewDecoder(sch)
-	require.NoError(t, err)
+	decoder := admission.NewDecoder(sch)
 
 	tests := map[string]struct {
 		operation admissionv1.Operation
@@ -154,8 +153,7 @@ func TestSpecValidationHandlerServiceInstanceReferenceOutOfDate(t *testing.T) {
 	sch, err := sc.SchemeBuilderRuntime.Build()
 	require.NoError(t, err)
 
-	decoder, err := admission.NewDecoder(sch)
-	require.NoError(t, err)
+	decoder := admission.NewDecoder(sch)
 
 	tests := map[string]struct {
 		operation admissionv1.Operation
@@ -176,6 +174,7 @@ func TestSpecValidationHandlerServiceInstanceReferenceOutOfDate(t *testing.T) {
 					Name:              OutOfDateInstance,
 					Namespace:         namespace,
 					DeletionTimestamp: &metav1.Time{Time: time.Now()},
+					Finalizers:        []string{sc.FinalizerServiceCatalog},
 				},
 			})
 

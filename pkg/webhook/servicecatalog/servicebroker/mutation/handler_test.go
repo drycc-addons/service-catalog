@@ -97,8 +97,7 @@ func TestCreateUpdateHandlerHandleCreateSuccess(t *testing.T) {
 		t.Run(tn, func(t *testing.T) {
 			// given
 			sc.AddToScheme(scheme.Scheme)
-			decoder, err := admission.NewDecoder(scheme.Scheme)
-			require.NoError(t, err)
+			decoder := admission.NewDecoder(scheme.Scheme)
 
 			fixReq := admission.Request{
 				AdmissionRequest: admissionv1.AdmissionRequest{
@@ -186,8 +185,7 @@ func TestCreateUpdateHandlerHandleUpdateSuccess(t *testing.T) {
 		t.Run(tn, func(t *testing.T) {
 			// given
 			sc.AddToScheme(scheme.Scheme)
-			decoder, err := admission.NewDecoder(scheme.Scheme)
-			require.NoError(t, err)
+			decoder := admission.NewDecoder(scheme.Scheme)
 
 			fixReq := admission.Request{
 				AdmissionRequest: admissionv1.AdmissionRequest{

@@ -773,7 +773,7 @@ var _ = Describe("Broker", func() {
 			broker, err := sdk.WaitForBroker(csb.Name, opts, interval, &timeout)
 
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(ContainSubstring("timed out"))
+			Expect(err.Error()).To(ContainSubstring("context deadline exceeded"))
 			Expect(broker).To(Equal(notReadyBroker))
 			actions := waitClient.Actions()
 			Expect(len(actions)).Should(BeNumerically(">", 1))

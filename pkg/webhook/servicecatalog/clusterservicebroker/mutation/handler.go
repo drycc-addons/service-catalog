@@ -34,9 +34,6 @@ type CreateUpdateHandler struct {
 	decoder *admission.Decoder
 }
 
-var _ admission.Handler = &CreateUpdateHandler{}
-var _ admission.DecoderInjector = &CreateUpdateHandler{}
-
 // Handle handles admission requests.
 func (h *CreateUpdateHandler) Handle(ctx context.Context, req admission.Request) admission.Response {
 	traced := webhookutil.NewTracedLogger(req.UID)

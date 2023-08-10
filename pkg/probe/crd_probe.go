@@ -101,8 +101,8 @@ func (r *CRDProbe) Check(req *http.Request) error {
 }
 
 // IsReady returns true if all required CRDs are ready
-func (r *CRDProbe) IsReady() (bool, error) {
-	return r.check(context.Background())
+func (r *CRDProbe) IsReady(ctx context.Context) (bool, error) {
+	return r.check(ctx)
 }
 
 func (r *CRDProbe) check(ctx context.Context) (bool, error) {

@@ -22,9 +22,10 @@ import (
 	"github.com/kubernetes-sigs/service-catalog/pkg/webhookutil"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 
+	"net/http"
+
 	sc "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	scv "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/validation"
-	"net/http"
 )
 
 // StaticCreate performs basic ClusterServicePlan validation for a Create operation.
@@ -35,10 +36,6 @@ type StaticCreate struct {
 type StaticUpdate struct {
 	decoder *admission.Decoder
 }
-
-var _ Validator = &StaticCreate{}
-var _ Validator = &StaticUpdate{}
-var _ admission.DecoderInjector = &StaticUpdate{}
 
 // Validate validates ClusterServicePlan instance
 func (v *StaticCreate) Validate(ctx context.Context, req admission.Request, clusterServicePlan *sc.ClusterServicePlan, traced *webhookutil.TracedLogger) *webhookutil.WebhookError {

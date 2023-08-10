@@ -70,8 +70,8 @@ func (s *ScalingService) scaleTo(v int) error {
 		return err
 	}
 
-	err = wait.Poll(time.Second, time.Second*45, func() (bool, error) {
-		deploy, err := s.appInterface.Deployments(s.namespace).Get(context.Background(), s.deploymentName, metav1.GetOptions{})
+	err = wait.PollUntilContextTimeout(context.Background(), time.Second, time.Second*45, false, func(ctx context.Context) (bool, error) {
+		deploy, err := s.appInterface.Deployments(s.namespace).Get(ctx, s.deploymentName, metav1.GetOptions{})
 		if err != nil {
 			return false, err
 		}

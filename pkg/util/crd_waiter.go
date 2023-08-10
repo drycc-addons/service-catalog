@@ -17,6 +17,7 @@ limitations under the License.
 package util
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -38,12 +39,5 @@ func WaitForServiceCatalogCRDs(restConfig *restclient.Config) error {
 	readinessProbe := probe.NewCRDProbe(apiextensionsClient, 0)
 
 	// Attempt to get resources every 10 seconds and quit after 3 minutes if unsuccessful.
-	err = wait.PollImmediate(10*time.Second, 3*time.Minute, readinessProbe.IsReady)
-	if err != nil {
-		if err == wait.ErrWaitTimeout {
-			return fmt.Errorf("CRDs are not available")
-		}
-		return err
-	}
-	return nil
+	return wait.PollUntilContextTimeout(context.Background(), 10*time.Second, 3*time.Minute, true, readinessProbe.IsReady)
 }

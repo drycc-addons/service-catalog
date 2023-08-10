@@ -67,8 +67,7 @@ func TestSpecValidationHandlerDenyPlanChangeIfNotUpdatableSimpleScenarios(t *tes
 	sch, err := sc.SchemeBuilderRuntime.Build()
 	require.NoError(t, err)
 
-	decoder, err := admission.NewDecoder(sch)
-	require.NoError(t, err)
+	decoder := admission.NewDecoder(sch)
 
 	tests := map[string]struct {
 		operation               admissionv1.Operation
@@ -127,7 +126,7 @@ func TestSpecValidationHandlerDenyPlanChangeIfNotUpdatableSimpleScenarios(t *tes
 
 			// then
 			assert.Equal(t, response.AdmissionResponse.Allowed, test.responseAllowed)
-			assert.Contains(t, response.AdmissionResponse.Result.Reason, test.responseReason)
+			assert.Contains(t, response.AdmissionResponse.Result.Message, test.responseReason)
 		})
 	}
 }
@@ -178,8 +177,7 @@ func TestSpecValidationHandlerDenyPlanChangeIfNotUpdatablePlanNameChanged(t *tes
 	sch, err := sc.SchemeBuilderRuntime.Build()
 	require.NoError(t, err)
 
-	decoder, err := admission.NewDecoder(sch)
-	require.NoError(t, err)
+	decoder := admission.NewDecoder(sch)
 
 	tests := map[string]struct {
 		serviceClassName        string
@@ -222,7 +220,7 @@ func TestSpecValidationHandlerDenyPlanChangeIfNotUpdatablePlanNameChanged(t *tes
 
 			// then
 			assert.Equal(t, response.AdmissionResponse.Allowed, test.responseAllowed)
-			assert.Contains(t, response.AdmissionResponse.Result.Reason, test.responseReason)
+			assert.Contains(t, response.AdmissionResponse.Result.Message, test.responseReason)
 		})
 	}
 }

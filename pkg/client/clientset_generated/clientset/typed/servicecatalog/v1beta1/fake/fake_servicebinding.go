@@ -24,7 +24,6 @@ import (
 	v1beta1 "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	labels "k8s.io/apimachinery/pkg/labels"
-	schema "k8s.io/apimachinery/pkg/runtime/schema"
 	types "k8s.io/apimachinery/pkg/types"
 	watch "k8s.io/apimachinery/pkg/watch"
 	testing "k8s.io/client-go/testing"
@@ -36,9 +35,9 @@ type FakeServiceBindings struct {
 	ns   string
 }
 
-var servicebindingsResource = schema.GroupVersionResource{Group: "servicecatalog.k8s.io", Version: "v1beta1", Resource: "servicebindings"}
+var servicebindingsResource = v1beta1.SchemeGroupVersion.WithResource("servicebindings")
 
-var servicebindingsKind = schema.GroupVersionKind{Group: "servicecatalog.k8s.io", Version: "v1beta1", Kind: "ServiceBinding"}
+var servicebindingsKind = v1beta1.SchemeGroupVersion.WithKind("ServiceBinding")
 
 // Get takes name of the serviceBinding, and returns the corresponding serviceBinding object, and an error if there is any.
 func (c *FakeServiceBindings) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1beta1.ServiceBinding, err error) {
