@@ -13,7 +13,7 @@
 # limitations under the License.
 
 ARG GO_VERSION
-FROM golang:${GO_VERSION}
+FROM docker.io/library/golang:${GO_VERSION}
 
 RUN go install golang.org/x/lint/golint@latest
 

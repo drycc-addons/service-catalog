@@ -41,12 +41,12 @@ document.
 
 At a minimum you will need:
 
-* [Docker](https://www.docker.com) 17.05+ installed locally (configured with 4+ GB RAM)
+* [Podman](https://podman.io/) 4.7.0+ installed locally (configured with 4+ GB RAM)
 * GNU Make
 * [git](https://git-scm.com)
 
 These will allow you to build and test service catalog components within a
-Docker container.
+container.
 
 If you want to deploy service catalog components built from source, you will
 also need:
@@ -57,11 +57,11 @@ also need:
   versions of `kubectl`
 * [Helm](https://helm.sh) (Tiller) installed in your Kubernetes cluster and the
   `helm` binary in your `PATH`
-* To be pre-authenticated to a Docker registry (if using a remote cluster)
+* To be pre-authenticated to a Container registry (if using a remote cluster)
 
 **Note:** It is not generally useful to run service catalog components outside
 a Kubernetes cluster. As such, our build process only supports compilation of
-linux/amd64 binaries suitable for execution within a Docker container.
+linux/amd64 binaries suitable for execution within a container.
 
 ## Workflow
 We can set up the repo by following a process similar to the [dev guide for k8s]( https://github.com/kubernetes/community/blob/master/contributors/devel/development.md#1-fork-in-the-cloud)
@@ -135,7 +135,7 @@ To build the service-catalog server components:
     $ make build
 
 The above will build all executables and place them in the `bin` directory. This
-is done within a Docker container-- meaning you do not need to have all of the
+is done within a container-- meaning you do not need to have all of the
 necessary tooling installed on your host (such as a golang compiler or dep).
 Building outside the container is possible, but not officially supported.
 
@@ -171,7 +171,7 @@ To deploy to Kubernetes, see the
   `git checkout --`) the state of any generated files in the repo.
 * Running `make purge-generated` will _remove_ those generated files from the
   repo.
-* A Docker Image called "scbuildimage" will be used. The image isn't pre-built
+* A Container Image called "scbuildimage" will be used. The image isn't pre-built
   and pulled from a public registry. Instead, it is built from source contained
   within the service catalog repository.
 * While many people have utilities, such as editor hooks, that auto-format
@@ -200,7 +200,7 @@ e.g.:
 
 The integration tests require the Kubernetes client (`kubectl`) so there is a
 script called `contrib/hack/kubectl` that will run it from within a
-Docker container. This avoids the need for you to download, or install it,
+container. This avoids the need for you to download, or install it,
 youself. You may find it useful to add `contrib/hack` to your `PATH`.
 
 ### E2E Tests
@@ -227,7 +227,7 @@ Ran 5 of 5 Specs in 49.761 seconds
 SUCCESS! -- 5 Passed | 0 Failed | 0 Pending | 0 Skipped --- PASS: TestE2E (49.76s)
 ```
 
-> **NOTE:** Docker is required for running e2e tests locally.
+> **NOTE:** Podman is required for running e2e tests locally.
 
 Under the hood, the script executes such flow:
 
@@ -386,7 +386,7 @@ if you do not have status in the service-catalog project.
 
 ## Advanced Build Steps
 
-You can build the service catalog executables into Docker images yourself. By
+You can build the service catalog executables into Container images yourself. By
 default, image names are `quay.io/kubernetes-service-catalog/<component>`. Since
 most contributors who hack on service catalog components will wish to produce
 custom-built images, but will be unable to push to this location, it can be
@@ -405,13 +405,13 @@ With `REGISTRY` set appropriately:
 
     $ make images push
 
-This will build Docker images for all service catalog components. The images are
+This will build Container images for all service catalog components. The images are
 also pushed to the registry specified by the `REGISTRY` environment variable, so
 they can be accessed by your Kubernetes cluster.
 
 The images are tagged with the current Git commit SHA:
 
-    $ docker images
+    $ podman images
 
 ### svcat targets
 These are targets for the service-catalog client, `svcat`:
@@ -426,9 +426,9 @@ e.g. v1.2.3 for official releases and v1.2.3-2-gabc123 for untagged commits.
 
 ### Deploying Releases
 
-* Merge to master - A docker image for the server is pushed to [quay.io/kubernetes-service-catalog/service-catalog](http://quay.io/kubernetes-service-catalog/service-catalog),
+* Merge to master - A container image for the server is pushed to [quay.io/kubernetes-service-catalog/service-catalog](http://quay.io/kubernetes-service-catalog/service-catalog),
   tagged with the abbreviated commit hash. Nothing is deployed for the client, `svcat`.
-* Tag a commit on master with vX.Y.Z - A docker image for the server is pushed,
+* Tag a commit on master with vX.Y.Z - A container image for the server is pushed,
   tagged with the version, e.g. vX.Y.Z. The client binaries are published to
   https://download.svcat.sh/cli/latest/OS/ARCH/svcat and https://download.svcat.sh/cli/VERSION/OS/ARCH/svcat.
 

@@ -18,7 +18,7 @@
 
 # This script switches to the preferred version for specified module.
 # Usage: `./contrib/hack/pin-dependency.sh $MODULE $SHA-OR-TAG`.
-# Example: `./contrib/hack/pin-dependency.sh github.com/docker/docker 501cb131a7b7`.
+# Example: `./contrib/hack/pin-dependency.sh github.com/containers/podman 501cb131a7b7`.
 
 # standard bash error handling
 set -o nounset # treat unset variables as an error and exit immediately.
@@ -48,7 +48,7 @@ if [[ -z "${dep}" || -z "${sha}" ]]; then
   echo "  ./contrib/hack/pin-dependency.sh \$MODULE \$SHA-OR-TAG"
   echo ""
   echo "Example:"
-  echo "  ./contrib/hack/pin-dependency.sh github.com/docker/docker 501cb131a7b7"
+  echo "  ./contrib/hack/pin-dependency.sh github.com/containers/podman 501cb131a7b7"
   echo ""
   exit 1
 fi

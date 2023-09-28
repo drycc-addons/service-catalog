@@ -14,10 +14,10 @@
 # limitations under the License.
 
 
-# This script provisions testing environment using 'kind'(kubernetes-in-docker)
+# This script provisions testing environment using 'kind'(kubernetes-in-container)
 # and execute end-to-end Service Catalog tests.
 #
-# It requires Docker to be installed.
+# It requires Podman to be installed.
 
 # standard bash error handling
 set -o nounset # treat unset variables as an error and exit immediately.
@@ -56,16 +56,15 @@ trap cleanup EXIT
 install::cluster::service_catalog_latest() {
     pushd "${REPO_ROOT_DIR}"
     shout "- Building Service Catalog image from sources..."
-    env REGISTRY="" VERSION=canary ARCH=amd64 \
-        make service-catalog-image
+    make service-catalog-image
 
     shout "- Loading Service Catalog image into cluster..."
-    kind::load_image service-catalog:canary
+    kind::load_image registry.drycc.cc/drycc-addons/service-catalog:canary
 
     shout "- Installing Service Catalog via helm chart from sources..."
     helm install ${SC_CHART_NAME} charts/catalog \
         --set imagePullPolicy=IfNotPresent \
-        --set image=service-catalog:canary \
+        --set image=registry.drycc.cc/drycc-addons/service-catalog:canary \
         --namespace=${SC_NAMESPACE} \
         --create-namespace \
         --wait
@@ -75,19 +74,18 @@ install::cluster::service_catalog_latest() {
 test::prepare_data() {
     shout "- Building User Broker image from sources..."
     pushd "${REPO_ROOT_DIR}"
-    env REGISTRY="" VERSION=canary ARCH=amd64 \
-        make user-broker-image
+    make user-broker-image
     popd
 
     shout "- Load User Broker image into cluster..."
-    kind::load_image user-broker:canary
+    kind::load_image registry.drycc.cc/drycc-addons/user-broker:canary
 }
 
 test::execute() {
     shout "- Executing e2e test..."
     pushd "${REPO_ROOT_DIR}/test/e2e/"
     unset GOPATH
-    env SERVICECATALOGCONFIG="${KUBECONFIG}" PATH="${PATH}:/usr/local/go/bin" go test -v ./... -broker-image="user-broker:canary"
+    env SERVICECATALOGCONFIG="${KUBECONFIG}" PATH="${PATH}:/usr/local/go/bin" go test -v ./... -broker-image="registry.drycc.cc/drycc-addons/user-broker:canary"
     popd
 }
 

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # Build a Debian-based image to copy root CA certificates from it
-# to a scratch-based image using Docker multi-stage builds
+# to a scratch-based image using Container multi-stage builds
 FROM BASEIMAGE as base
 
 RUN export DEBIAN_FRONTEND=noninteractive && \

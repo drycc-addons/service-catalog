@@ -27,7 +27,7 @@ source "${CURRENT_DIR}/lib/utilities.sh" || { echo 'Cannot load CI utilities.'; 
 
 export REGISTRY=${REGISTRY:-registry.drycc.cc/drycc-addons/}
 
-echo "${DOCKER_PASSWORD}" | docker login "${DRYCC_REGISTRY}" --username "${DOCKER_USERNAME}" --password-stdin
+echo "${CONTAINER_PASSWORD}" | podman login "${DRYCC_REGISTRY}" --username "${CONTAINER_USERNAME}" --password-stdin
 
 usage() {
   echo "${0} [-a arch] [-h]"

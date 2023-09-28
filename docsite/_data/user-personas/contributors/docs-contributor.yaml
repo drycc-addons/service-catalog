@@ -24,7 +24,7 @@ intermediate:
     url: "/docs/home/contribute/write-new-topic/"
   - label: "Stage documentation changes locally"
     icon: fa-cloud-download
-    url: "/docs/home/contribute/stage-documentation-changes/#staging-locally-using-docker"
+    url: "/docs/home/contribute/stage-documentation-changes/#staging-locally-using-podman"
   - label: "Apply page templates"
     icon: fa-clone
     url: "/docs/home/contribute/page-templates/"

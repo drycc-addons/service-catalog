@@ -32,11 +32,11 @@ clean() {
 preview() {
   clean
 
-  docker run --rm \
+  podman run --rm \
     -v $DOCSITE:/srv/jekyll \
     -v $REPO_ROOT/docs:/srv/docs \
     -v $DOCSITE/.bundler:/usr/local/bundle \
-    -p 4000:4000 jekyll/jekyll:4.0 jekyll serve
+    -p 4000:4000 docker.io/jekyll/jekyll:4.0 jekyll serve
 }
 
 # Generate the static site's content
@@ -44,11 +44,11 @@ generate() {
   clean
 
   echo "Generating site..."
-  docker run --rm \
+  podman run --rm \
     -v $DOCSITE:/srv/jekyll \
     -v $REPO_ROOT/docs:/srv/docs \
     -v $DOCSITE/.bundler:/usr/local/bundle \
-    jekyll/jekyll:4.0.1 /bin/bash -c "bundle install; jekyll build"
+    docker.io/jekyll/jekyll:4.0.1 /bin/bash -c "bundle install; jekyll build"
 }
 
 "$@"

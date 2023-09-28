@@ -145,7 +145,7 @@ YAML/JSON structure supported as an input (YAML format gets translated into
 equivalent JSON structure to be passed to the broker).
 
 Let's have a look at the broker for 
-[Spring Cloud Config Server](https://docs.pivotal.io/spring-cloud-services/1-4/common/config-server/configuring-with-vault.html),
+[Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/current/reference/html/#_spring_cloud_config_server),
 as an example.
 
 It requires JSON configuration like this:

@@ -163,7 +163,7 @@ install::local::helm() {
 }
 
 #
-# 'kind'(kubernetes-in-docker) functions
+# 'kind'(kubernetes-in-container) functions
 #
 readonly KIND_CLUSTER_NAME="kind-ci"
 
@@ -179,5 +179,8 @@ kind::delete_cluster() {
 # Arguments:
 #   $1 - image name to copy into cluster nodes
 kind::load_image() {
-    kind load docker-image $1 --name=${KIND_CLUSTER_NAME}-${CI_COMMIT_SHA:-"latest"}
+    image_archive=$(mktemp -u)
+    $KIND_EXPERIMENTAL_PROVIDER save > $image_archive $1
+    kind load image-archive $image_archive --name=${KIND_CLUSTER_NAME}-${CI_COMMIT_SHA:-"latest"}
+    rm -rf $image_archive
 }

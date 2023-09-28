@@ -169,7 +169,7 @@ kube::util::find-binary-for-platform() {
   local -r platform="$2"
   local locations=(
     "${KUBE_ROOT}/_output/bin/${lookfor}"
-    "${KUBE_ROOT}/_output/dockerized/bin/${platform}/${lookfor}"
+    "${KUBE_ROOT}/_output/containerized/bin/${platform}/${lookfor}"
     "${KUBE_ROOT}/_output/local/bin/${platform}/${lookfor}"
     "${KUBE_ROOT}/platforms/${platform}/${lookfor}"
   )
@@ -738,25 +738,25 @@ EOF
 EOF
 }
 
-# Determines if docker can be run, failures may simply require that the user be added to the docker group.
-function kube::util::ensure_docker_daemon_connectivity {
-  DOCKER=(docker ${DOCKER_OPTS})
-  if ! "${DOCKER[@]}" info > /dev/null 2>&1 ; then
+# Determines if podman can be run, failures may simply require that the user be added to the podman group.
+function kube::util::ensure_podman_daemon_connectivity {
+  PODMAN=(podman ${PODMAN_OPTS})
+  if ! "${PODMAN[@]}" info > /dev/null 2>&1 ; then
     cat <<'EOF' >&2
-Can't connect to 'docker' daemon.  please fix and retry.
+Can't connect to 'podman' daemon.  please fix and retry.
 
 Possible causes:
-  - Docker Daemon not started
+  - Podman Daemon not started
     - Linux: confirm via your init system
-    - macOS w/ docker-machine: run `docker-machine ls` and `docker-machine start <name>`
-    - macOS w/ Docker for Mac: Check the menu bar and start the Docker application
-  - DOCKER_HOST hasn't been set or is set incorrectly
-    - Linux: domain socket is used, DOCKER_* should be unset. In Bash run `unset ${!DOCKER_*}`
-    - macOS w/ docker-machine: run `eval "$(docker-machine env <name>)"`
-    - macOS w/ Docker for Mac: domain socket is used, DOCKER_* should be unset. In Bash run `unset ${!DOCKER_*}`
+    - macOS w/ podman-machine: run `podman-machine ls` and `podman-machine start <name>`
+    - macOS w/ Podman for Mac: Check the menu bar and start the Podman application
+  - PODMAN_HOST hasn't been set or is set incorrectly
+    - Linux: domain socket is used, PODMAN_* should be unset. In Bash run `unset ${!PODMAN_*}`
+    - macOS w/ podman-machine: run `eval "$(podman-machine env <name>)"`
+    - macOS w/ Podman for Mac: domain socket is used, PODMAN_* should be unset. In Bash run `unset ${!PODMAN_*}`
   - Other things to check:
-    - Linux: User isn't in 'docker' group.  Add and relogin.
-      - Something like 'sudo usermod -a -G docker ${USER}'
+    - Linux: User isn't in 'podman' group.  Add and relogin.
+      - Something like 'sudo usermod -a -G podman ${USER}'
       - RHEL7 bug and workaround: https://bugzilla.redhat.com/show_bug.cgi?id=1119282#c8
 EOF
     return 1
@@ -839,18 +839,6 @@ function kube::util::ensure-cfssl {
       exit 1
     fi
   popd > /dev/null
-}
-
-# kube::util::ensure_dockerized
-# Confirms that the script is being run inside a kube-build image
-#
-function kube::util::ensure_dockerized {
-  if [[ -f /kube-build-image ]]; then
-    return 0
-  else
-    echo "ERROR: This script is designed to be run inside a kube-build container"
-    exit 1
-  fi
 }
 
 # Some useful colors.
@@ -1033,7 +1021,7 @@ kube::util::find-binary-for-platform() {
   local -r platform="$2"
   local locations=(
     "${KUBE_ROOT}/_output/bin/${lookfor}"
-    "${KUBE_ROOT}/_output/dockerized/bin/${platform}/${lookfor}"
+    "${KUBE_ROOT}/_output/containerized/bin/${platform}/${lookfor}"
     "${KUBE_ROOT}/_output/local/bin/${platform}/${lookfor}"
     "${KUBE_ROOT}/platforms/${platform}/${lookfor}"
   )
@@ -1602,25 +1590,25 @@ EOF
 EOF
 }
 
-# Determines if docker can be run, failures may simply require that the user be added to the docker group.
-function kube::util::ensure_docker_daemon_connectivity {
-  DOCKER=(docker ${DOCKER_OPTS})
-  if ! "${DOCKER[@]}" info > /dev/null 2>&1 ; then
+# Determines if podman can be run, failures may simply require that the user be added to the podman group.
+function kube::util::ensure_podman_daemon_connectivity {
+  PODMAN=(podman ${PODMAN_OPTS})
+  if ! "${PODMAN[@]}" info > /dev/null 2>&1 ; then
     cat <<'EOF' >&2
-Can't connect to 'docker' daemon.  please fix and retry.
+Can't connect to 'podman' daemon.  please fix and retry.
 
 Possible causes:
-  - Docker Daemon not started
+  - Podman Daemon not started
     - Linux: confirm via your init system
-    - macOS w/ docker-machine: run `docker-machine ls` and `docker-machine start <name>`
-    - macOS w/ Docker for Mac: Check the menu bar and start the Docker application
-  - DOCKER_HOST hasn't been set or is set incorrectly
-    - Linux: domain socket is used, DOCKER_* should be unset. In Bash run `unset ${!DOCKER_*}`
-    - macOS w/ docker-machine: run `eval "$(docker-machine env <name>)"`
-    - macOS w/ Docker for Mac: domain socket is used, DOCKER_* should be unset. In Bash run `unset ${!DOCKER_*}`
+    - macOS w/ podman-machine: run `podman-machine ls` and `podman-machine start <name>`
+    - macOS w/ Podman for Mac: Check the menu bar and start the Podman application
+  - PODMAN_HOST hasn't been set or is set incorrectly
+    - Linux: domain socket is used, PODMAN_* should be unset. In Bash run `unset ${!PODMAN_*}`
+    - macOS w/ podman-machine: run `eval "$(podman-machine env <name>)"`
+    - macOS w/ Podman for Mac: domain socket is used, PODMAN_* should be unset. In Bash run `unset ${!PODMAN_*}`
   - Other things to check:
-    - Linux: User isn't in 'docker' group.  Add and relogin.
-      - Something like 'sudo usermod -a -G docker ${USER}'
+    - Linux: User isn't in 'podman' group.  Add and relogin.
+      - Something like 'sudo usermod -a -G podman ${USER}'
       - RHEL7 bug and workaround: https://bugzilla.redhat.com/show_bug.cgi?id=1119282#c8
 EOF
     return 1
@@ -1703,18 +1691,6 @@ function kube::util::ensure-cfssl {
       exit 1
     fi
   popd > /dev/null
-}
-
-# kube::util::ensure_dockerized
-# Confirms that the script is being run inside a kube-build image
-#
-function kube::util::ensure_dockerized {
-  if [[ -f /kube-build-image ]]; then
-    return 0
-  else
-    echo "ERROR: This script is designed to be run inside a kube-build container"
-    exit 1
-  fi
 }
 
 # Some useful colors.

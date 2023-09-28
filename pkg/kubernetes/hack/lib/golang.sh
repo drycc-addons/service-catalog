@@ -607,7 +607,7 @@ kube::golang::get_physmem() {
 
   # OS X, in bytes. Note that get_physmem, as used, should only ever
   # run in a Linux container (because it's only used in the multiple
-  # platform case, which is a Dockerized build), but this is provided
+  # platform case, which is a Container build), but this is provided
   # for completeness.
   if mem=$(sysctl -n hw.memsize 2>/dev/null); then
     echo $(( ${mem} / 1073741824 ))
