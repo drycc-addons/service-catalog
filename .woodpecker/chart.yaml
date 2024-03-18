@@ -1,11 +1,9 @@
-platform: linux/amd64
-
 labels:
   type: exec
+  platform: linux/amd64
 
-pipeline:
+steps:
 - name: generate-chart
-  type: local
   image: bash
   commands:
   - export VERSION=$(sed 's#v##' <<< $CI_COMMIT_TAG)

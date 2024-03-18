@@ -56,7 +56,7 @@ STAT           = stat -c '%Y %n'
 endif
 
 TYPES_FILES    = $(shell find pkg/apis -name types.go)
-GO_VERSION    ?= 1.20
+GO_VERSION    ?= 1.22
 
 # Preserve also user values
 export GO111MODULE=on
@@ -120,7 +120,7 @@ endif
 ifdef NO_PODMAN
 	PODMAN_CMD =
 	scBuildImageTarget =
-	.initGoModVendorResult:=$(shell go mod vendor)
+	.initGoModVendorResult:=$(shell go work vendor)
 else
 	# Mount .pkg as pkg so that we save our cached "go build" output files
 	PODMAN_CMD = podman run --security-opt label=disable --rm \
@@ -140,7 +140,7 @@ bootstrap:
 	  -w /go/src/$(SC_PKG) \
 	  -v $(CURDIR):/go/src/$(SC_PKG):delegated \
 	  ${DEV_REGISTRY}/drycc/go-dev \
-	  go mod vendor
+	  go work vendor
 
 build: .init .generate_files \
 	$(BINDIR)/service-catalog \

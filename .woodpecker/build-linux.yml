@@ -3,12 +3,11 @@ matrix:
     - linux/amd64
     - linux/arm64
 
-platform: ${platform}
-
 labels:
   type: exec
+  platform: ${platform}
 
-pipeline:
+steps:
 - name: publish-linux
   image: bash
   commands:
