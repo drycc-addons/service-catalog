@@ -25,7 +25,7 @@ ROOT           = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 BINDIR        ?= bin
 BUILD_DIR     ?= build
 COVERAGE      ?= $(CURDIR)/coverage.html
-SC_PKG         = github.com/kubernetes-sigs/service-catalog
+SC_PKG         = github.com/drycc-addons/service-catalog
 TOP_SRC_DIRS   = cmd contrib pkg
 SRC_DIRS       = $(shell sh -c "find $(TOP_SRC_DIRS) -name \\*.go \
                    -exec dirname {} \\; | sort | uniq")
@@ -59,8 +59,6 @@ TYPES_FILES    = $(shell find pkg/apis -name types.go)
 GO_VERSION    ?= 1.22
 
 # Preserve also user values
-export GO111MODULE=on
-
 ALL_ARCH=amd64 arm arm64 ppc64le s390x
 ALL_CLIENT_PLATFORM=darwin linux windows
 ALL_CLIENT_ARCHS=amd64 s390x
@@ -83,7 +81,7 @@ GO_BUILD       = env CGO_ENABLED=0 GOOS=$(PLATFORM) GOARCH=$(ARCH) \
                   go build -a -tags netgo -installsuffix netgo \
                   -ldflags '-s -w -X $(SC_PKG)/pkg.VERSION=$(VERSION) $(BUILD_LDFLAGS)'
 
-BASE_PATH      = $(ROOT:/src/github.com/kubernetes-sigs/service-catalog/=)
+BASE_PATH      = $(ROOT:/src/github.com/drycc-addons/service-catalog/=)
 ORIG_GOPATH   ?= $(shell go env GOPATH)
 
 DRYCC_REGISTRY ?= $(DEV_REGISTRY)
@@ -120,7 +118,7 @@ endif
 ifdef NO_PODMAN
 	PODMAN_CMD =
 	scBuildImageTarget =
-	.initGoModVendorResult:=$(shell go work vendor)
+	.initGoModVendorResult:=$(shell go mod vendor)
 else
 	# Mount .pkg as pkg so that we save our cached "go build" output files
 	PODMAN_CMD = podman run --security-opt label=disable --rm \
@@ -140,7 +138,7 @@ bootstrap:
 	  -w /go/src/$(SC_PKG) \
 	  -v $(CURDIR):/go/src/$(SC_PKG):delegated \
 	  ${DEV_REGISTRY}/drycc/go-dev \
-	  go work vendor
+	  go mod vendor
 
 build: .init .generate_files \
 	$(BINDIR)/service-catalog \
@@ -252,7 +250,7 @@ verify: .init verify-generated verify-client-gen verify-docs verify-modules
 	@echo Running tag verification:
 	@$(PODMAN_CMD) build/verify-tags.sh
 	@echo Validating golden file flag is defined:
-	@$(PODMAN_CMD) go test -run DRYRUN ./cmd/svcat/... -update || printf "\n\nmake test-update-goldenfiles is broken. For each failed package above, add the following empty import to one of the test files to define the -update flag:\n_ \"github.com/kubernetes-sigs/service-catalog/internal/test\""
+	@$(PODMAN_CMD) go test -run DRYRUN ./cmd/svcat/... -update || printf "\n\nmake test-update-goldenfiles is broken. For each failed package above, add the following empty import to one of the test files to define the -update flag:\n_ \"github.com/drycc-addons/service-catalog/internal/test\""
 
 verify-docs: .init
 	@echo Running href checker$(SKIP_COMMENT):
@@ -297,7 +295,7 @@ test-update-goldenfiles: .init
 	$(PODMAN_CMD) go test ./cmd/svcat/... -update
 
 build-integration: .generate_files
-	$(PODMAN_CMD) go test --tags="integration" -race github.com/kubernetes-sigs/service-catalog/pkg/controller/... -c
+	$(PODMAN_CMD) go test --tags="integration" -race github.com/drycc-addons/service-catalog/pkg/controller/... -c
 
 test-integration: .init $(scBuildImageTarget) build build-integration
 	$(PODMAN_CMD) ./controller.test

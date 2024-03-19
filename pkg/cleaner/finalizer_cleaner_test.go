@@ -18,8 +18,8 @@ package cleaner
 
 import (
 	"context"
-	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	scfake "github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset/fake"
+	"github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	scfake "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset/fake"
 	"github.com/stretchr/testify/assert"
 	v1 "k8s.io/api/core/v1"
 	apimachinaryv1 "k8s.io/apimachinery/pkg/apis/meta/v1"

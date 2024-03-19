@@ -24,8 +24,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	"github.com/hashicorp/go-multierror"
-	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/sets"

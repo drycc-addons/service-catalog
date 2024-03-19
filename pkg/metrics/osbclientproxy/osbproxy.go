@@ -21,9 +21,9 @@ package osbclientproxy
 import (
 	"fmt"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/metrics"
+	osb "github.com/drycc-addons/go-open-service-broker-client/v2"
+	"github.com/drycc-addons/service-catalog/pkg/metrics"
 	"k8s.io/klog/v2"
-	osb "sigs.k8s.io/go-open-service-broker-client/v2"
 )
 
 // proxyclient provides a functional implementation of the OSB V2 Client

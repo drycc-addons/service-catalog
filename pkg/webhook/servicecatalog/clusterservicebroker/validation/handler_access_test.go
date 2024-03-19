@@ -21,8 +21,8 @@ import (
 	"errors"
 	"testing"
 
-	sc "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/clusterservicebroker/validation"
+	sc "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	"github.com/drycc-addons/service-catalog/pkg/webhook/servicecatalog/clusterservicebroker/validation"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	admissionv1 "k8s.io/api/admission/v1"
@@ -269,7 +269,7 @@ func TestSpecValidationHandlerAccessToBrokerDenied(t *testing.T) {
 			handler.CreateValidators = []validation.Validator{&validation.AccessToBroker{}}
 			handler.UpdateValidators = []validation.Validator{&validation.AccessToBroker{}}
 
-			fakeClient := fake.NewFakeClientWithScheme(sch, &sc.ClusterServiceBroker{})
+			fakeClient := fake.NewClientBuilder().WithScheme(sch).WithObjects(&sc.ClusterServiceBroker{}).Build()
 
 			err := handler.InjectDecoder(decoder)
 			require.NoError(t, err)

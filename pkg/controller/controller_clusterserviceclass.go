@@ -25,8 +25,8 @@ import (
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/klog/v2"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"github.com/kubernetes-sigs/service-catalog/pkg/util"
+	"github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	"github.com/drycc-addons/service-catalog/pkg/util"
 )
 
 // Service class handlers and control-loop

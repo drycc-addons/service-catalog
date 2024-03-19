@@ -17,8 +17,8 @@ limitations under the License.
 package server
 
 import (
-	"github.com/kubernetes-sigs/service-catalog/cmd/webhook/server"
-	"github.com/kubernetes-sigs/service-catalog/pkg/hyperkube"
+	"github.com/drycc-addons/service-catalog/cmd/webhook/server"
+	"github.com/drycc-addons/service-catalog/pkg/hyperkube"
 )
 
 // NewWebhookServer creates a new hyperkube Server object that includes the

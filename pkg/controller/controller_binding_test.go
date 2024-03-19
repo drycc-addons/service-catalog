@@ -26,13 +26,13 @@ import (
 	"testing"
 	"time"
 
-	scmeta "github.com/kubernetes-sigs/service-catalog/pkg/api/meta"
-	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	v1beta1informers "github.com/kubernetes-sigs/service-catalog/pkg/client/informers_generated/externalversions/servicecatalog/v1beta1"
-	sctestutil "github.com/kubernetes-sigs/service-catalog/test/util"
+	osb "github.com/drycc-addons/go-open-service-broker-client/v2"
+	fakeosb "github.com/drycc-addons/go-open-service-broker-client/v2/fake"
+	scmeta "github.com/drycc-addons/service-catalog/pkg/api/meta"
+	"github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	v1beta1informers "github.com/drycc-addons/service-catalog/pkg/client/informers_generated/externalversions/servicecatalog/v1beta1"
+	sctestutil "github.com/drycc-addons/service-catalog/test/util"
 	corev1 "k8s.io/api/core/v1"
-	osb "sigs.k8s.io/go-open-service-broker-client/v2"
-	fakeosb "sigs.k8s.io/go-open-service-broker-client/v2/fake"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -40,8 +40,8 @@ import (
 	"k8s.io/apimachinery/pkg/util/diff"
 	utilfeature "k8s.io/apiserver/pkg/util/feature"
 
-	scfeatures "github.com/kubernetes-sigs/service-catalog/pkg/features"
-	"github.com/kubernetes-sigs/service-catalog/test/fake"
+	scfeatures "github.com/drycc-addons/service-catalog/pkg/features"
+	"github.com/drycc-addons/service-catalog/test/fake"
 	clientgofake "k8s.io/client-go/kubernetes/fake"
 	clientgotesting "k8s.io/client-go/testing"
 )

@@ -21,7 +21,7 @@ import (
 
 	"k8s.io/client-go/tools/clientcmd"
 
-	"github.com/kubernetes-sigs/service-catalog/test/e2e/framework"
+	"github.com/drycc-addons/service-catalog/test/e2e/framework"
 	"k8s.io/klog/v2"
 )
 

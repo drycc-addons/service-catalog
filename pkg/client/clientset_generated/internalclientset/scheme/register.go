@@ -19,7 +19,7 @@ limitations under the License.
 package scheme
 
 import (
-	settings "github.com/kubernetes-sigs/service-catalog/pkg/apis/settings/install"
+	settings "github.com/drycc-addons/service-catalog/pkg/apis/settings/install"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"

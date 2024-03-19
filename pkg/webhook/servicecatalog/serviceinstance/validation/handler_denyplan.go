@@ -21,8 +21,8 @@ import (
 	"fmt"
 	"net/http"
 
-	sc "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"github.com/kubernetes-sigs/service-catalog/pkg/webhookutil"
+	sc "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	"github.com/drycc-addons/service-catalog/pkg/webhookutil"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"

@@ -19,9 +19,9 @@ limitations under the License.
 package fake
 
 import (
-	clientset "github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/internalclientset"
-	settingsinternalversion "github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/internalclientset/typed/settings/internalversion"
-	fakesettingsinternalversion "github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/internalclientset/typed/settings/internalversion/fake"
+	clientset "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/internalclientset"
+	settingsinternalversion "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/internalclientset/typed/settings/internalversion"
+	fakesettingsinternalversion "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/internalclientset/typed/settings/internalversion/fake"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/discovery"

@@ -23,8 +23,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/kubernetes-sigs/service-catalog/contrib/pkg/broker/controller"
-	"github.com/kubernetes-sigs/service-catalog/contrib/pkg/brokerapi"
+	"github.com/drycc-addons/service-catalog/contrib/pkg/broker/controller"
+	"github.com/drycc-addons/service-catalog/contrib/pkg/brokerapi"
 )
 
 //

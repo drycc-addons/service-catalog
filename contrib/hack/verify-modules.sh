@@ -28,8 +28,6 @@ readonly TMP_DIR=$(mktemp -d)
 
 source "${CURRENT_DIR}/ci/lib/utilities.sh" || { echo 'Cannot load CI utilities.'; exit 1; }
 
-# Explicitly opt into go modules, even though we're inside a GOPATH directory
-export GO111MODULE=on
 # Detect problematic GOPROXY settings that prevent lookup of dependencies
 if [[ "${GOPROXY:-}" == "off" ]]; then
   echo "Cannot run with \$GOPROXY=off"
@@ -39,7 +37,7 @@ fi
 golang::verify_go_version
 require-jq
 
-outdated=$(go list -m -json all | jq -r "
+outdated=$(go list -mod=readonly -m -json all | jq -r "
   select(.Replace.Version != null) |
   select(.Version != .Replace.Version) |
   select(.Path) |
@@ -61,11 +59,11 @@ fi
 
 unused=$(comm -23 \
   <(go mod edit -json | jq -r '.Replace[] | select(.New.Version != null) | .Old.Path' | sort) \
-  <(go list -m -json all | jq -r .Path | sort))
+  <(go list -m -json -mod=readonly all | jq -r .Path | sort))
 if [[ -n "${unused}" ]]; then
   echo ""
   echo "Use the given commands to remove pinned module versions that aren't actually used:"
-  echo "${unused}" | xargs -L 1 echo 'GO111MODULE=on go mod edit -dropreplace'
+  echo "${unused}" | xargs -L 1 echo 'go mod edit -dropreplace'
 fi
 
 "${CURRENT_DIR}/update-vendor.sh"

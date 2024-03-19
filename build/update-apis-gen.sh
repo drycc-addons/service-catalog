@@ -23,14 +23,14 @@ set -o xtrace
 
 REPO_ROOT=$(realpath $(dirname "${BASH_SOURCE}")/..)
 BINDIR=${REPO_ROOT}/bin
-SC_PKG='github.com/kubernetes-sigs/service-catalog'
+SC_PKG='github.com/drycc-addons/service-catalog'
 
 # Generate deep copies
 ${BINDIR}/deepcopy-gen "$@" \
 	 --v 1 --logtostderr \
 	 --go-header-file "contrib/hack/boilerplate.go.txt" \
 	 --input-dirs "${SC_PKG}/pkg/apis/servicecatalog/v1beta1" \
-	 --bounding-dirs "github.com/kubernetes-sigs/service-catalog" \
+	 --bounding-dirs "github.com/drycc-addons/service-catalog" \
 	 --output-file-base zz_generated.deepcopy
 
 #
@@ -52,7 +52,7 @@ ${BINDIR}/deepcopy-gen "$@" \
 	--go-header-file "contrib/hack/boilerplate.go.txt" \
 	--input-dirs "${SC_PKG}/pkg/apis/settings" \
 	--input-dirs "${SC_PKG}/pkg/apis/settings/v1alpha1" \
-	--bounding-dirs "github.com/kubernetes-sigs/service-catalog" \
+	--bounding-dirs "github.com/drycc-addons/service-catalog" \
 	--output-file-base zz_generated.deepcopy
 # Generate conversions
 ${BINDIR}/conversion-gen "$@" \
@@ -74,11 +74,19 @@ for var in "$@"; do
   fi;
 done
 
-${BINDIR}/openapi-gen "$@" \
+${BINDIR}/openapi-gen \
 	--v 3 --logtostderr \
 	--go-header-file "contrib/hack/boilerplate.go.txt" \
-	--input-dirs "${SC_PKG}/pkg/apis/servicecatalog/v1beta1,k8s.io/api/core/v1,k8s.io/apimachinery/pkg/api/resource,k8s.io/apimachinery/pkg/apis/meta/v1,k8s.io/apimachinery/pkg/version,k8s.io/apimachinery/pkg/runtime" \
-	--input-dirs "${SC_PKG}/pkg/apis/settings/v1alpha1" \
-	--output-package "${SC_PKG}/pkg/openapi" \
-	--report-filename "${REPORT_FILENAME}" || true
+	--output-pkg "${SC_PKG}/pkg/openapi" \
+	--output-dir pkg/openapi \
+	--output-file openapi_generated.go \
+	--report-filename "${REPORT_FILENAME}" \
+	"k8s.io/api/core/v1" \
+	"k8s.io/apimachinery/pkg/api/resource" \
+	"k8s.io/apimachinery/pkg/apis/meta/v1" \
+	"k8s.io/apimachinery/pkg/version" \
+	"k8s.io/apimachinery/pkg/runtime" \
+	"${SC_PKG}/pkg/apis/servicecatalog/v1beta1" \
+	"${SC_PKG}/pkg/apis/settings/v1alpha1" || true
+
 diff -u "${REPORT_FILENAME}" "${KNOWN_VIOLATION_FILENAME}" || (echo ${API_RULE_CHECK_FAILURE_MESSAGE}; exit 1)

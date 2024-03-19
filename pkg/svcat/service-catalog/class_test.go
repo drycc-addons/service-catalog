@@ -20,17 +20,17 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset/fake"
-	"github.com/kubernetes-sigs/service-catalog/pkg/util"
+	"github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	"github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset/fake"
+	"github.com/drycc-addons/service-catalog/pkg/util"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/testing"
 
-	. "github.com/kubernetes-sigs/service-catalog/pkg/svcat/service-catalog"
+	. "github.com/drycc-addons/service-catalog/pkg/svcat/service-catalog"
 
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 

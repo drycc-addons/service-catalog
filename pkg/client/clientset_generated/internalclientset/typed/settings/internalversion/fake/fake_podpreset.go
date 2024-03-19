@@ -21,7 +21,7 @@ package fake
 import (
 	"context"
 
-	settings "github.com/kubernetes-sigs/service-catalog/pkg/apis/settings"
+	settings "github.com/drycc-addons/service-catalog/pkg/apis/settings"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	labels "k8s.io/apimachinery/pkg/labels"
 	types "k8s.io/apimachinery/pkg/types"

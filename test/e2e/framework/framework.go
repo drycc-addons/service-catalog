@@ -20,11 +20,11 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes"
 
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset"
-	"github.com/kubernetes-sigs/service-catalog/pkg/util/kube"
+	"github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset"
+	"github.com/drycc-addons/service-catalog/pkg/util/kube"
 )
 
 // Framework supports common operations used by e2e tests; it will keep a client & a namespace for you.

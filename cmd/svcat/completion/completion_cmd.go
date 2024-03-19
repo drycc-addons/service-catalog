@@ -19,7 +19,7 @@ package completion
 import (
 	"bytes"
 	"fmt"
-	"github.com/kubernetes-sigs/service-catalog/cmd/svcat/command"
+	"github.com/drycc-addons/service-catalog/cmd/svcat/command"
 	"github.com/spf13/cobra"
 	"io"
 )

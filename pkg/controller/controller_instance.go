@@ -25,11 +25,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	scfeatures "github.com/kubernetes-sigs/service-catalog/pkg/features"
-	"github.com/kubernetes-sigs/service-catalog/pkg/pretty"
-	"github.com/kubernetes-sigs/service-catalog/pkg/util"
-	osb "sigs.k8s.io/go-open-service-broker-client/v2"
+	osb "github.com/drycc-addons/go-open-service-broker-client/v2"
+	"github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	scfeatures "github.com/drycc-addons/service-catalog/pkg/features"
+	"github.com/drycc-addons/service-catalog/pkg/pretty"
+	"github.com/drycc-addons/service-catalog/pkg/util"
 
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -353,7 +353,7 @@ func (c *controller) initObservedGeneration(instance *v1beta1.ServiceInstance) (
 	if instance.Status.ObservedGeneration == 0 && instance.Status.ReconciledGeneration != 0 {
 		instance = instance.DeepCopy()
 		instance.Status.ObservedGeneration = instance.Status.ReconciledGeneration
-		// Before we implement https://github.com/kubernetes-sigs/service-catalog/issues/1715
+		// Before we implement https://github.com/drycc-addons/service-catalog/issues/1715
 		// and switch to non-terminal errors, the "Failed":"True" is a sign that the provisioning failed
 		provisioned := !isServiceInstanceFailed(instance)
 		if provisioned {

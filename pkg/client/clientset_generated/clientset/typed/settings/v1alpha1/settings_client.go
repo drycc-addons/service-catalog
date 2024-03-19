@@ -21,8 +21,8 @@ package v1alpha1
 import (
 	"net/http"
 
-	v1alpha1 "github.com/kubernetes-sigs/service-catalog/pkg/apis/settings/v1alpha1"
-	"github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset/scheme"
+	v1alpha1 "github.com/drycc-addons/service-catalog/pkg/apis/settings/v1alpha1"
+	"github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset/scheme"
 	rest "k8s.io/client-go/rest"
 )
 

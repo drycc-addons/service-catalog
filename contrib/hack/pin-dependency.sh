@@ -30,8 +30,6 @@ readonly TMP_DIR=$(mktemp -d)
 
 source "${CURRENT_DIR}/ci/lib/utilities.sh" || { echo 'Cannot load CI utilities.'; exit 1; }
 
-# Explicitly opt into go modules, even though we're inside a GOPATH directory
-export GO111MODULE=on
 # Detect problematic GOPROXY settings that prevent lookup of dependencies
 if [[ "${GOPROXY:-}" == "off" ]]; then
   echo "Cannot run with \$GOPROXY=off"

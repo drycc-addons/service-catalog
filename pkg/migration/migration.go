@@ -24,9 +24,9 @@ import (
 	"strings"
 	"time"
 
+	sc "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	"github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset/typed/servicecatalog/v1beta1"
 	"github.com/hashicorp/go-multierror"
-	sc "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset/typed/servicecatalog/v1beta1"
 	"golang.org/x/net/context"
 	v1 "k8s.io/api/core/v1"
 	apiErrors "k8s.io/apimachinery/pkg/api/errors"

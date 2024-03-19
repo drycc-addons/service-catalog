@@ -22,18 +22,19 @@ import (
 	"net/http"
 	"testing"
 
-	sc "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/serviceinstance/mutation"
+	sc "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	"github.com/drycc-addons/service-catalog/pkg/webhook/servicecatalog/serviceinstance/mutation"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/util"
-	"github.com/kubernetes-sigs/service-catalog/pkg/webhookutil"
+	"github.com/drycc-addons/service-catalog/pkg/util"
+	"github.com/drycc-addons/service-catalog/pkg/webhookutil"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/uuid"
 	"k8s.io/client-go/kubernetes/scheme"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 )
 
@@ -49,7 +50,7 @@ func TestClusterServiceClassSpecified(t *testing.T) {
 
 	for tn, tc := range map[string]struct {
 		instance *sc.ServiceInstance
-		objects  []runtime.Object
+		objects  []client.Object
 		err      *webhookutil.WebhookError
 	}{
 		"SuccessWithClusterServiceClassName": {
@@ -61,7 +62,7 @@ func TestClusterServiceClassSpecified(t *testing.T) {
 					},
 				},
 			},
-			objects: []runtime.Object{
+			objects: []client.Object{
 				newClusterServiceClass(className, className),
 				newClusterServicePlans(className, 1, false)[0],
 			},
@@ -75,7 +76,7 @@ func TestClusterServiceClassSpecified(t *testing.T) {
 					},
 				},
 			},
-			objects: []runtime.Object{
+			objects: []client.Object{
 				newClusterServiceClass(className, className),
 				newClusterServicePlans(className, 1, false)[0],
 			},
@@ -89,7 +90,7 @@ func TestClusterServiceClassSpecified(t *testing.T) {
 					},
 				},
 			},
-			objects: []runtime.Object{
+			objects: []client.Object{
 				newClusterServiceClass(className, className),
 				newClusterServicePlans(className, 2, true)[0],
 				newClusterServicePlans(className, 2, true)[1],
@@ -104,7 +105,7 @@ func TestClusterServiceClassSpecified(t *testing.T) {
 					},
 				},
 			},
-			objects: []runtime.Object{
+			objects: []client.Object{
 				newClusterServiceClass(className, className),
 			},
 			err: webhookutil.NewWebhookError(fmt.Sprintf("no ClusterServicePlans found at all for ClusterServiceClass %q", className), http.StatusForbidden),
@@ -118,7 +119,7 @@ func TestClusterServiceClassSpecified(t *testing.T) {
 					},
 				},
 			},
-			objects: []runtime.Object{
+			objects: []client.Object{
 				newClusterServiceClass(className, className),
 				newClusterServicePlans(className, 2, false)[0],
 				newClusterServicePlans(className, 2, false)[1],
@@ -127,7 +128,7 @@ func TestClusterServiceClassSpecified(t *testing.T) {
 		},
 	} {
 		t.Run(tn, func(t *testing.T) {
-			fakeClient := fake.NewFakeClientWithScheme(newTestScheme(t), tc.objects...)
+			fakeClient := fake.NewClientBuilder().WithScheme(newTestScheme(t)).WithObjects(tc.objects...).Build()
 			traced := webhookutil.NewTracedLogger(uuid.NewUUID())
 
 			dsp := mutation.DefaultServicePlan{}
@@ -150,7 +151,7 @@ func TestServiceClassSpecified(t *testing.T) {
 
 	for tn, tc := range map[string]struct {
 		instance *sc.ServiceInstance
-		objects  []runtime.Object
+		objects  []client.Object
 		err      *webhookutil.WebhookError
 	}{
 		"SuccessWithServiceClassName": {
@@ -162,7 +163,7 @@ func TestServiceClassSpecified(t *testing.T) {
 					},
 				},
 			},
-			objects: []runtime.Object{
+			objects: []client.Object{
 				newServiceClass(className, className, namespace),
 				newServicePlans(className, namespace, 1, false)[0],
 			},
@@ -176,7 +177,7 @@ func TestServiceClassSpecified(t *testing.T) {
 					},
 				},
 			},
-			objects: []runtime.Object{
+			objects: []client.Object{
 				newServiceClass(className, className, namespace),
 				newServicePlans(className, namespace, 1, false)[0],
 			},
@@ -190,7 +191,7 @@ func TestServiceClassSpecified(t *testing.T) {
 					},
 				},
 			},
-			objects: []runtime.Object{
+			objects: []client.Object{
 				newServiceClass(className, className, namespace),
 				newServicePlans(className, namespace, 2, true)[0],
 				newServicePlans(className, namespace, 2, true)[1],
@@ -205,7 +206,7 @@ func TestServiceClassSpecified(t *testing.T) {
 					},
 				},
 			},
-			objects: []runtime.Object{
+			objects: []client.Object{
 				newServiceClass(className, className, namespace),
 				newServiceClass(className, className, "otherNamespace"),
 				newServicePlans(className, namespace, 1, true)[0],
@@ -221,7 +222,7 @@ func TestServiceClassSpecified(t *testing.T) {
 					},
 				},
 			},
-			objects: []runtime.Object{
+			objects: []client.Object{
 				newServiceClass(className, className, namespace),
 			},
 			err: webhookutil.NewWebhookError(fmt.Sprintf("no ServicePlans found at all for ServiceClass %q", className), http.StatusForbidden),
@@ -235,7 +236,7 @@ func TestServiceClassSpecified(t *testing.T) {
 					},
 				},
 			},
-			objects: []runtime.Object{
+			objects: []client.Object{
 				newServiceClass(className, className, namespace),
 				newServicePlans(className, namespace, 2, false)[0],
 				newServicePlans(className, namespace, 2, false)[1],
@@ -244,7 +245,7 @@ func TestServiceClassSpecified(t *testing.T) {
 		},
 	} {
 		t.Run(tn, func(t *testing.T) {
-			fakeClient := fake.NewFakeClientWithScheme(newTestScheme(t), tc.objects...)
+			fakeClient := fake.NewClientBuilder().WithScheme(newTestScheme(t)).WithObjects(tc.objects...).Build()
 			traced := webhookutil.NewTracedLogger(uuid.NewUUID())
 
 			dsp := mutation.DefaultServicePlan{}

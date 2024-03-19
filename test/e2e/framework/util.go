@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"time"
 
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
@@ -119,7 +119,7 @@ func WaitForPodRunningInNamespace(c kubernetes.Interface, pod *corev1.Pod) error
 }
 
 func waitTimeoutForPodRunningInNamespace(c kubernetes.Interface, podName, namespace string, timeout time.Duration) error {
-	return wait.PollUntilContextTimeout(context.Background(), Poll, defaultTimeout, true, podRunning(c, podName, namespace))
+	return wait.PollUntilContextTimeout(context.Background(), Poll, timeout, true, podRunning(c, podName, namespace))
 }
 
 func WaitForEndpoint(c kubernetes.Interface, namespace, name string) error {

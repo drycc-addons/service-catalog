@@ -22,8 +22,8 @@ import (
 	"log"
 	"time"
 
-	sc "github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset"
-	"github.com/kubernetes-sigs/service-catalog/pkg/probe"
+	sc "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset"
+	"github.com/drycc-addons/service-catalog/pkg/probe"
 	apiextensionsclientset "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"

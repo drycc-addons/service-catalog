@@ -27,8 +27,6 @@ readonly TMP_DIR=$(mktemp -d)
 
 source "${CURRENT_DIR}/ci/lib/utilities.sh" || { echo 'Cannot load CI utilities.'; exit 1; }
 
-# Explicitly opt into go modules, even though we're inside a GOPATH directory
-export GO111MODULE=on
 # Ensure sort order doesn't depend on locale
 export LANG=C
 export LC_ALL=C
@@ -40,34 +38,6 @@ fi
 
 golang::verify_go_version
 require-jq
-
-function group_replace_directives() {
-  local local_tmp_dir
-  local_tmp_dir=$(mktemp -d "${TMP_DIR}/group_replace.XXXX")
-  local go_mod_replace="${local_tmp_dir}/go.mod.replace.tmp"
-  local go_mod_noreplace="${local_tmp_dir}/go.mod.noreplace.tmp"
-  # separate replace and non-replace directives
-  awk "
-     # print lines between 'replace (' ... ')' lines
-     /^replace [(]/      { inreplace=1; next                   }
-     inreplace && /^[)]/ { inreplace=0; next                   }
-     inreplace           { print > \"${go_mod_replace}\"; next }
-
-     # print ungrouped replace directives with the replace directive trimmed
-     /^replace [^(]/ { sub(/^replace /,\"\"); print > \"${go_mod_replace}\"; next }
-
-     # otherwise print to the noreplace file
-     { print > \"${go_mod_noreplace}\" }
-  " < go.mod
-  {
-    cat "${go_mod_noreplace}";
-    echo "replace (";
-    cat "${go_mod_replace}";
-    echo ")";
-  } > go.mod
-
-  go mod edit -fmt
-}
 
 function add_generated_comments() {
   local local_tmp_dir
@@ -97,8 +67,6 @@ function add_generated_comments() {
 shout "Phase 1: tidying and grouping replace directives"
 # resolves/expands references in the root go.mod (if needed)
 go mod tidy
-# group replace directives
-group_replace_directives
 
 shout "Phase 2: adding generated comments"
 add_generated_comments "
@@ -109,4 +77,3 @@ add_generated_comments "
 
 shout "Phase 3: rebuild vendor directory"
 go mod vendor
-

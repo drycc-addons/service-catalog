@@ -15,6 +15,7 @@
 #
 # Library of useful utilities for CI purposes.
 #
+KIND_EXPERIMENTAL_PROVIDER=${KIND_EXPERIMENTAL_PROVIDER:-podman}
 
 readonly LIB_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 

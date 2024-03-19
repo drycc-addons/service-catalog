@@ -22,8 +22,8 @@ import (
 
 	"fmt"
 
+	servicecatalog "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	"github.com/google/gofuzz"
-	servicecatalog "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
 
 	"k8s.io/apimachinery/pkg/api/apitesting/fuzzer"
 	genericfuzzer "k8s.io/apimachinery/pkg/apis/meta/fuzzer"

@@ -17,12 +17,12 @@ limitations under the License.
 package plan_test
 
 import (
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
 	"testing"
 
-	_ "github.com/kubernetes-sigs/service-catalog/internal/test"
+	_ "github.com/drycc-addons/service-catalog/internal/test"
 )
 
 func TestPlan(t *testing.T) {

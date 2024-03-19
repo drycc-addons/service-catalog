@@ -24,9 +24,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/kubernetes-sigs/service-catalog/contrib/pkg/broker/controller"
-	"github.com/kubernetes-sigs/service-catalog/contrib/pkg/brokerapi"
-	"github.com/kubernetes-sigs/service-catalog/pkg/util"
+	"github.com/drycc-addons/service-catalog/contrib/pkg/broker/controller"
+	"github.com/drycc-addons/service-catalog/contrib/pkg/brokerapi"
+	"github.com/drycc-addons/service-catalog/pkg/util"
 	"k8s.io/klog/v2"
 
 	"github.com/gorilla/mux"

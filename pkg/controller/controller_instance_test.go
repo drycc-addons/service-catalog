@@ -27,11 +27,11 @@ import (
 	"testing"
 	"time"
 
-	osb "sigs.k8s.io/go-open-service-broker-client/v2"
-	fakeosb "sigs.k8s.io/go-open-service-broker-client/v2/fake"
+	osb "github.com/drycc-addons/go-open-service-broker-client/v2"
+	fakeosb "github.com/drycc-addons/go-open-service-broker-client/v2/fake"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"github.com/kubernetes-sigs/service-catalog/pkg/util"
+	"github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	"github.com/drycc-addons/service-catalog/pkg/util"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -41,9 +41,9 @@ import (
 	"k8s.io/apimachinery/pkg/util/diff"
 	utilfeature "k8s.io/apiserver/pkg/util/feature"
 
-	scfeatures "github.com/kubernetes-sigs/service-catalog/pkg/features"
-	"github.com/kubernetes-sigs/service-catalog/test/fake"
-	sctestutil "github.com/kubernetes-sigs/service-catalog/test/util"
+	scfeatures "github.com/drycc-addons/service-catalog/pkg/features"
+	"github.com/drycc-addons/service-catalog/test/fake"
+	sctestutil "github.com/drycc-addons/service-catalog/test/util"
 	corev1 "k8s.io/api/core/v1"
 	clientgotesting "k8s.io/client-go/testing"
 )

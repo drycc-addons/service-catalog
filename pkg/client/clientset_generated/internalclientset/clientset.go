@@ -22,7 +22,7 @@ import (
 	"fmt"
 	"net/http"
 
-	settingsinternalversion "github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/internalclientset/typed/settings/internalversion"
+	settingsinternalversion "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/internalclientset/typed/settings/internalversion"
 	discovery "k8s.io/client-go/discovery"
 	rest "k8s.io/client-go/rest"
 	flowcontrol "k8s.io/client-go/util/flowcontrol"

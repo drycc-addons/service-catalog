@@ -21,7 +21,7 @@ package internalversion
 import (
 	"fmt"
 
-	settings "github.com/kubernetes-sigs/service-catalog/pkg/apis/settings"
+	settings "github.com/drycc-addons/service-catalog/pkg/apis/settings"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
 	cache "k8s.io/client-go/tools/cache"
 )

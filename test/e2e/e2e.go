@@ -17,18 +17,15 @@ limitations under the License.
 package e2e
 
 import (
-	"strings"
 	"testing"
 
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 	"k8s.io/component-base/logs"
-
-	"github.com/kubernetes-sigs/service-catalog/test/e2e/framework"
-
-	"github.com/onsi/ginkgo"
-	"github.com/onsi/ginkgo/config"
-	"github.com/onsi/gomega"
 	"k8s.io/klog/v2"
+
+	"github.com/drycc-addons/service-catalog/test/e2e/framework"
+	"github.com/onsi/ginkgo/v2"
+	"github.com/onsi/gomega"
 )
 
 // RunE2ETests checks configuration parameters (specified through flags) and then runs
@@ -39,14 +36,15 @@ func RunE2ETests(t *testing.T) {
 
 	gomega.RegisterFailHandler(ginkgo.Fail)
 
-	// Disable skipped tests unless they are explicitly requested.
-	focusString := strings.Join(config.GinkgoConfig.FocusStrings, "|")
-	skipString := strings.Join(config.GinkgoConfig.SkipStrings, "|")
-	if focusString == "" && skipString == "" {
-		config.GinkgoConfig.SkipStrings = []string{`\[Flaky\]`, `\[Feature:.+\]`}
-	}
+	suiteConfig, reporterConfig := ginkgo.GinkgoConfiguration()
+	// adjust it
+	suiteConfig.EmitSpecProgress = true
+	suiteConfig.RandomizeAllSpecs = true
+	suiteConfig.SkipStrings = []string{`\[Flaky\]`, `\[Feature:.+\]`}
 
-	klog.Infof("Starting e2e run %q on Ginkgo node %d", framework.RunId, config.GinkgoConfig.ParallelNode)
-	ginkgo.RunSpecs(t, "Service Catalog e2e suite")
+	reporterConfig.Verbose = true
+	reporterConfig.FullTrace = true
+
+	klog.Infof("Starting e2e run %q on Ginkgo host %s", framework.RunId, suiteConfig.ParallelHost)
+	ginkgo.RunSpecs(t, "Service Catalog e2e suite", suiteConfig, reporterConfig)
 }
-

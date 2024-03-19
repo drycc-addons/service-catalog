@@ -23,8 +23,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/kubernetes-sigs/service-catalog/cmd/svcat/command"
-	"github.com/kubernetes-sigs/service-catalog/cmd/svcat/output"
+	"github.com/drycc-addons/service-catalog/cmd/svcat/command"
+	"github.com/drycc-addons/service-catalog/cmd/svcat/output"
 	"github.com/spf13/cobra"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"

@@ -19,8 +19,8 @@ limitations under the License.
 package main
 
 import (
-	"github.com/kubernetes-sigs/service-catalog/cmd/service-catalog/server"
-	"github.com/kubernetes-sigs/service-catalog/pkg/hyperkube"
+	"github.com/drycc-addons/service-catalog/cmd/service-catalog/server"
+	"github.com/drycc-addons/service-catalog/pkg/hyperkube"
 	"k8s.io/klog/v2"
 	"os"
 )

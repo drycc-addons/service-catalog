@@ -20,7 +20,7 @@ import (
 	"io"
 	"strings"
 
-	utiltemplate "github.com/kubernetes-sigs/service-catalog/pkg/kubernetes/pkg/util/template"
+	utiltemplate "github.com/drycc-addons/service-catalog/pkg/kubernetes/pkg/util/template"
 	"k8s.io/component-base/cli/flag"
 
 	"github.com/spf13/pflag"

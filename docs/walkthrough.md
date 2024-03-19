@@ -23,7 +23,7 @@ We plan on using the helmbroker for demo purposes. The codebase for that broker 
 
 But it seems that installing helmbroker alone is a little troublesome. It needs rabbitmq message queue. 
 We strongly recommend using drycc one click installation script to experience it. This script comes with a k3s and drycc workflow installed. You can find details about the install drycc.
-[README](https://www.drycc.cc/quickstart/install-workflow/).
+[README](https://www.drycc.cc/docs/quickstart/install-workflow/).
 
 # Step 2 - Viewing ClusterServiceClasses and ClusterServicePlans
 

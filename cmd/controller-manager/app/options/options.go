@@ -26,12 +26,12 @@ import (
 	"github.com/spf13/pflag"
 	utilfeature "k8s.io/apiserver/pkg/util/feature"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/apis/componentconfig"
-	"github.com/kubernetes-sigs/service-catalog/pkg/controller"
-	k8scomponentconfig "github.com/kubernetes-sigs/service-catalog/pkg/kubernetes/pkg/apis/componentconfig"
-	"github.com/kubernetes-sigs/service-catalog/pkg/kubernetes/pkg/client/leaderelectionconfig"
+	osb "github.com/drycc-addons/go-open-service-broker-client/v2"
+	"github.com/drycc-addons/service-catalog/pkg/apis/componentconfig"
+	"github.com/drycc-addons/service-catalog/pkg/controller"
+	k8scomponentconfig "github.com/drycc-addons/service-catalog/pkg/kubernetes/pkg/apis/componentconfig"
+	"github.com/drycc-addons/service-catalog/pkg/kubernetes/pkg/client/leaderelectionconfig"
 	genericoptions "k8s.io/apiserver/pkg/server/options"
-	osb "sigs.k8s.io/go-open-service-broker-client/v2"
 )
 
 const (

@@ -19,8 +19,8 @@ package instance
 import (
 	"fmt"
 
-	"github.com/kubernetes-sigs/service-catalog/cmd/svcat/command"
-	"github.com/kubernetes-sigs/service-catalog/cmd/svcat/output"
+	"github.com/drycc-addons/service-catalog/cmd/svcat/command"
+	"github.com/drycc-addons/service-catalog/cmd/svcat/output"
 	"github.com/spf13/cobra"
 )
 

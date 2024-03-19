@@ -21,8 +21,8 @@ import (
 
 	"strings"
 
-	"github.com/kubernetes-sigs/service-catalog/cmd/svcat/command"
-	"github.com/kubernetes-sigs/service-catalog/pkg/svcat"
+	"github.com/drycc-addons/service-catalog/cmd/svcat/command"
+	"github.com/drycc-addons/service-catalog/pkg/svcat"
 	"github.com/spf13/viper"
 )
 

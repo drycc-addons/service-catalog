@@ -20,7 +20,7 @@ import (
 	"bytes"
 	"testing"
 
-	_ "github.com/kubernetes-sigs/service-catalog/internal/test"
+	_ "github.com/drycc-addons/service-catalog/internal/test"
 	"k8s.io/apimachinery/pkg/runtime"
 )
 

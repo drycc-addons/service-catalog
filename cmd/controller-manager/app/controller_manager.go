@@ -26,7 +26,7 @@ import (
 	goruntime "runtime"
 	"strconv"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/util"
+	"github.com/drycc-addons/service-catalog/pkg/util"
 	"k8s.io/client-go/kubernetes"
 	v1coordination "k8s.io/client-go/kubernetes/typed/coordination/v1"
 	v1core "k8s.io/client-go/kubernetes/typed/core/v1"
@@ -36,9 +36,9 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/tools/record"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/kubernetes/pkg/util/configz"
-	"github.com/kubernetes-sigs/service-catalog/pkg/metrics"
-	"github.com/kubernetes-sigs/service-catalog/pkg/metrics/osbclientproxy"
+	"github.com/drycc-addons/service-catalog/pkg/kubernetes/pkg/util/configz"
+	"github.com/drycc-addons/service-catalog/pkg/metrics"
+	"github.com/drycc-addons/service-catalog/pkg/metrics/osbclientproxy"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -46,12 +46,12 @@ import (
 	"k8s.io/client-go/tools/leaderelection"
 	"k8s.io/client-go/tools/leaderelection/resourcelock"
 
-	"github.com/kubernetes-sigs/service-catalog/cmd/controller-manager/app/options"
-	servicecatalogv1beta1 "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	settingsv1alpha1 "github.com/kubernetes-sigs/service-catalog/pkg/apis/settings/v1alpha1"
-	servicecataloginformers "github.com/kubernetes-sigs/service-catalog/pkg/client/informers_generated/externalversions"
-	"github.com/kubernetes-sigs/service-catalog/pkg/controller"
-	"github.com/kubernetes-sigs/service-catalog/pkg/probe"
+	"github.com/drycc-addons/service-catalog/cmd/controller-manager/app/options"
+	servicecatalogv1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	settingsv1alpha1 "github.com/drycc-addons/service-catalog/pkg/apis/settings/v1alpha1"
+	servicecataloginformers "github.com/drycc-addons/service-catalog/pkg/client/informers_generated/externalversions"
+	"github.com/drycc-addons/service-catalog/pkg/controller"
+	"github.com/drycc-addons/service-catalog/pkg/probe"
 	apiextensionsclientset "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 
 	"context"

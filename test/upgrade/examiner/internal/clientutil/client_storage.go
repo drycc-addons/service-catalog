@@ -18,7 +18,7 @@ package clientutil
 
 import (
 	"fmt"
-	sc "github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset"
+	sc "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 )

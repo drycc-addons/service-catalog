@@ -21,8 +21,8 @@ import (
 	"testing"
 	"time"
 
-	sc "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/servicebinding/validation"
+	sc "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	"github.com/drycc-addons/service-catalog/pkg/webhook/servicecatalog/servicebinding/validation"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	admissionv1 "k8s.io/api/admission/v1"
@@ -91,13 +91,12 @@ func TestSpecValidationHandlerServiceInstanceReferenceUpToDate(t *testing.T) {
 			// given
 			handler := validation.SpecValidationHandler{}
 			handler.CreateValidators = []validation.Validator{&validation.ReferenceDeletion{}}
-
-			fakeClient := fake.NewFakeClientWithScheme(sch, &sc.ServiceInstance{
+			fakeClient := fake.NewClientBuilder().WithScheme(sch).WithObjects(&sc.ServiceInstance{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      UpToDateInstance,
 					Namespace: namespace,
 				},
-			})
+			}).Build()
 
 			err := handler.InjectDecoder(decoder)
 			require.NoError(t, err)
@@ -169,14 +168,14 @@ func TestSpecValidationHandlerServiceInstanceReferenceOutOfDate(t *testing.T) {
 			handler := validation.SpecValidationHandler{}
 			handler.CreateValidators = []validation.Validator{&validation.ReferenceDeletion{}}
 
-			fakeClient := fake.NewFakeClientWithScheme(sch, &sc.ServiceInstance{
+			fakeClient := fake.NewClientBuilder().WithScheme(sch).WithObjects(&sc.ServiceInstance{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:              OutOfDateInstance,
 					Namespace:         namespace,
 					DeletionTimestamp: &metav1.Time{Time: time.Now()},
 					Finalizers:        []string{sc.FinalizerServiceCatalog},
 				},
-			})
+			}).Build()
 
 			err := handler.InjectDecoder(decoder)
 			require.NoError(t, err)

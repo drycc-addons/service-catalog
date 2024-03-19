@@ -19,9 +19,9 @@ package main
 import (
 	"fmt"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/svcat"
-	"github.com/kubernetes-sigs/service-catalog/pkg/svcat/service-catalog"
-	"k8s.io/klog"
+	"github.com/drycc-addons/service-catalog/pkg/svcat"
+	servicecatalog "github.com/drycc-addons/service-catalog/pkg/svcat/service-catalog"
+	"k8s.io/klog/v2"
 )
 
 func main() {

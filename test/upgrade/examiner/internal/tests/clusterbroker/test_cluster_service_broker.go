@@ -19,7 +19,7 @@ package clusterbroker
 import (
 	"time"
 
-	sc "github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset"
+	sc "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset"
 	"k8s.io/klog/v2"
 )
 

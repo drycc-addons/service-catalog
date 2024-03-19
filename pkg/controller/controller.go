@@ -27,8 +27,8 @@ import (
 	"sync"
 	"time"
 
+	osb "github.com/drycc-addons/go-open-service-broker-client/v2"
 	"k8s.io/klog/v2"
-	osb "sigs.k8s.io/go-open-service-broker-client/v2"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -45,13 +45,13 @@ import (
 	"k8s.io/client-go/tools/record"
 	"k8s.io/client-go/util/workqueue"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	servicecatalogclientset "github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset/typed/servicecatalog/v1beta1"
-	informers "github.com/kubernetes-sigs/service-catalog/pkg/client/informers_generated/externalversions/servicecatalog/v1beta1"
-	listers "github.com/kubernetes-sigs/service-catalog/pkg/client/listers_generated/servicecatalog/v1beta1"
-	scfeatures "github.com/kubernetes-sigs/service-catalog/pkg/features"
-	"github.com/kubernetes-sigs/service-catalog/pkg/filter"
-	"github.com/kubernetes-sigs/service-catalog/pkg/pretty"
+	"github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	servicecatalogclientset "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset/typed/servicecatalog/v1beta1"
+	informers "github.com/drycc-addons/service-catalog/pkg/client/informers_generated/externalversions/servicecatalog/v1beta1"
+	listers "github.com/drycc-addons/service-catalog/pkg/client/listers_generated/servicecatalog/v1beta1"
+	scfeatures "github.com/drycc-addons/service-catalog/pkg/features"
+	"github.com/drycc-addons/service-catalog/pkg/filter"
+	"github.com/drycc-addons/service-catalog/pkg/pretty"
 )
 
 const (

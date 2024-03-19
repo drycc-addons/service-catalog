@@ -31,11 +31,11 @@ import (
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/client-go/tools/cache"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"github.com/kubernetes-sigs/service-catalog/pkg/metrics"
-	"github.com/kubernetes-sigs/service-catalog/pkg/pretty"
-	"github.com/kubernetes-sigs/service-catalog/pkg/util"
-	osb "sigs.k8s.io/go-open-service-broker-client/v2"
+	osb "github.com/drycc-addons/go-open-service-broker-client/v2"
+	"github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	"github.com/drycc-addons/service-catalog/pkg/metrics"
+	"github.com/drycc-addons/service-catalog/pkg/pretty"
+	"github.com/drycc-addons/service-catalog/pkg/util"
 )
 
 // the Message strings have a terminating period and space so they can

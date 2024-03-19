@@ -20,9 +20,9 @@ import (
 	"context"
 	"testing"
 
-	sc "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/serviceinstance/validation"
-	"github.com/kubernetes-sigs/service-catalog/pkg/webhookutil/tester"
+	sc "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	"github.com/drycc-addons/service-catalog/pkg/webhook/servicecatalog/serviceinstance/validation"
+	"github.com/drycc-addons/service-catalog/pkg/webhookutil/tester"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	admissionv1 "k8s.io/api/admission/v1"
@@ -104,7 +104,7 @@ func TestSpecValidationHandlerDenyPlanChangeIfNotUpdatableSimpleScenarios(t *tes
 			// given
 			handler := validation.SpecValidationHandler{}
 			handler.UpdateValidators = []validation.Validator{&validation.DenyPlanChangeIfNotUpdatable{}}
-			fakeClient := fake.NewFakeClientWithScheme(sch, &sc.ClusterServiceClass{
+			fakeClient := fake.NewClientBuilder().WithScheme(sch).WithObjects(&sc.ClusterServiceClass{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      test.serviceClassName,
 					Namespace: "",
@@ -114,7 +114,7 @@ func TestSpecValidationHandlerDenyPlanChangeIfNotUpdatableSimpleScenarios(t *tes
 						PlanUpdatable: test.serviceClassIsUpdatable,
 					},
 				},
-			})
+			}).Build()
 			err := handler.InjectDecoder(decoder)
 			require.NoError(t, err)
 			err = handler.InjectClient(fakeClient)
@@ -198,7 +198,7 @@ func TestSpecValidationHandlerDenyPlanChangeIfNotUpdatablePlanNameChanged(t *tes
 			// given
 			handler := validation.SpecValidationHandler{}
 			handler.UpdateValidators = []validation.Validator{&validation.DenyPlanChangeIfNotUpdatable{}}
-			fakeClient := fake.NewFakeClientWithScheme(sch, &sc.ClusterServiceClass{
+			fakeClient := fake.NewClientBuilder().WithScheme(sch).WithObjects(&sc.ClusterServiceClass{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      test.serviceClassName,
 					Namespace: "",
@@ -208,7 +208,7 @@ func TestSpecValidationHandlerDenyPlanChangeIfNotUpdatablePlanNameChanged(t *tes
 						PlanUpdatable: test.serviceClassIsUpdatable,
 					},
 				},
-			})
+			}).Build()
 			err := handler.InjectDecoder(decoder)
 			require.NoError(t, err)
 			err = handler.InjectClient(fakeClient)

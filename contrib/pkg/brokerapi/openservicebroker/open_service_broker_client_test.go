@@ -23,9 +23,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/kubernetes-sigs/service-catalog/contrib/pkg/brokerapi"
-	"github.com/kubernetes-sigs/service-catalog/contrib/pkg/brokerapi/openservicebroker/util"
-	servicecatalog "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	"github.com/drycc-addons/service-catalog/contrib/pkg/brokerapi"
+	"github.com/drycc-addons/service-catalog/contrib/pkg/brokerapi/openservicebroker/util"
+	servicecatalog "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
 )
 
 const (

@@ -31,13 +31,15 @@ import (
 
 	"sync"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	fakesc "github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset/fake"
-	scinterface "github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset/typed/servicecatalog/v1beta1"
-	scinformers "github.com/kubernetes-sigs/service-catalog/pkg/client/informers_generated/externalversions"
-	"github.com/kubernetes-sigs/service-catalog/pkg/controller"
-	scfeatures "github.com/kubernetes-sigs/service-catalog/pkg/features"
-	"github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/clusterserviceclass/mutation"
+	osb "github.com/drycc-addons/go-open-service-broker-client/v2"
+	fakeosb "github.com/drycc-addons/go-open-service-broker-client/v2/fake"
+	"github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	fakesc "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset/fake"
+	scinterface "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset/typed/servicecatalog/v1beta1"
+	scinformers "github.com/drycc-addons/service-catalog/pkg/client/informers_generated/externalversions"
+	"github.com/drycc-addons/service-catalog/pkg/controller"
+	scfeatures "github.com/drycc-addons/service-catalog/pkg/features"
+	"github.com/drycc-addons/service-catalog/pkg/webhook/servicecatalog/clusterserviceclass/mutation"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
@@ -49,8 +51,6 @@ import (
 	utilfeature "k8s.io/apiserver/pkg/util/feature"
 	fakek8s "k8s.io/client-go/kubernetes/fake"
 	"k8s.io/client-go/tools/record"
-	osb "sigs.k8s.io/go-open-service-broker-client/v2"
-	fakeosb "sigs.k8s.io/go-open-service-broker-client/v2/fake"
 )
 
 const (

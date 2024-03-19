@@ -20,8 +20,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	scClientset "github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset/typed/servicecatalog/v1beta1"
+	"github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	scClientset "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset/typed/servicecatalog/v1beta1"
 	apiErr "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
@@ -122,7 +122,7 @@ func (t *tester) removeServiceInstance() error {
 	// remove `removeServiceInstanceFinalizer` method if TestBroker will be fixed and
 	// will handle ServiceInstance delete operation
 	// for now BrokerTest failed and ServiceInstance has deprovisioning false status
-	// service patch is available on https://github.com/kubernetes-sigs/service-catalog/pull/2656
+	// service patch is available on https://github.com/drycc-addons/service-catalog/pull/2656
 	// method can be removed when PR will be merged and TestBroker will be in version > 0.2.1
 	if err := t.removeServiceInstanceFinalizer(); err != nil {
 		return fmt.Errorf("failed during removing ServiceInstance finalizers: %w", err)

@@ -26,9 +26,9 @@ import (
 	"strconv"
 	"syscall"
 
-	"github.com/kubernetes-sigs/service-catalog/contrib/pkg/broker/server"
-	"github.com/kubernetes-sigs/service-catalog/contrib/pkg/broker/test_broker/controller"
-	"github.com/kubernetes-sigs/service-catalog/pkg"
+	"github.com/drycc-addons/service-catalog/contrib/pkg/broker/server"
+	"github.com/drycc-addons/service-catalog/contrib/pkg/broker/test_broker/controller"
+	"github.com/drycc-addons/service-catalog/pkg"
 	"k8s.io/klog/v2"
 )
 

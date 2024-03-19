@@ -22,17 +22,17 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	v1beta1informers "github.com/kubernetes-sigs/service-catalog/pkg/client/informers_generated/externalversions/servicecatalog/v1beta1"
-	scfeatures "github.com/kubernetes-sigs/service-catalog/pkg/features"
+	osb "github.com/drycc-addons/go-open-service-broker-client/v2"
+	fakeosb "github.com/drycc-addons/go-open-service-broker-client/v2/fake"
+	"github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	v1beta1informers "github.com/drycc-addons/service-catalog/pkg/client/informers_generated/externalversions/servicecatalog/v1beta1"
+	scfeatures "github.com/drycc-addons/service-catalog/pkg/features"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilfeature "k8s.io/apiserver/pkg/util/feature"
 	clientgofake "k8s.io/client-go/kubernetes/fake"
 	clientgotesting "k8s.io/client-go/testing"
-	osb "sigs.k8s.io/go-open-service-broker-client/v2"
-	fakeosb "sigs.k8s.io/go-open-service-broker-client/v2/fake"
 )
 
 // TestReconcileBindingWithParametersNamespacedRefs tests reconcileBinding to ensure a

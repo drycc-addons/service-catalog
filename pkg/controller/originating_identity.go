@@ -19,8 +19,8 @@ package controller
 import (
 	"encoding/json"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	osb "sigs.k8s.io/go-open-service-broker-client/v2"
+	osb "github.com/drycc-addons/go-open-service-broker-client/v2"
+	"github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
 )
 
 const (

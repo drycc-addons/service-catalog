@@ -20,10 +20,10 @@ import (
 	"context"
 	"net/http"
 
-	sc "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"github.com/kubernetes-sigs/service-catalog/pkg/webhookutil"
+	sc "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	"github.com/drycc-addons/service-catalog/pkg/webhookutil"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/webhook/inject"
+	"github.com/drycc-addons/service-catalog/pkg/webhook/inject"
 	admissionTypes "k8s.io/api/admission/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"

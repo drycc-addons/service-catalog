@@ -28,8 +28,8 @@ import (
 
 	"k8s.io/apimachinery/pkg/util/wait"
 
-	"github.com/kubernetes-sigs/service-catalog/cmd/webhook/server"
-	"github.com/kubernetes-sigs/service-catalog/test/util"
+	"github.com/drycc-addons/service-catalog/cmd/webhook/server"
+	"github.com/drycc-addons/service-catalog/test/util"
 )
 
 type result struct {

@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 /*
-This feature was copied from Service Catalog admission plugin https://github.com/kubernetes-sigs/service-catalog/blob/v0.1.41/plugin/pkg/admission/serviceplan/defaultserviceplan/admission.go
+This feature was copied from Service Catalog admission plugin https://github.com/drycc-addons/service-catalog/blob/v0.1.41/plugin/pkg/admission/serviceplan/defaultserviceplan/admission.go
 If you want to track previous changes please check there.
 */
 
@@ -27,11 +27,11 @@ import (
 	"fmt"
 	"net/http"
 
-	sc "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"github.com/kubernetes-sigs/service-catalog/pkg/util"
+	sc "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	"github.com/drycc-addons/service-catalog/pkg/util"
 	apiErrors "k8s.io/apimachinery/pkg/api/errors"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/webhookutil"
+	"github.com/drycc-addons/service-catalog/pkg/webhookutil"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 

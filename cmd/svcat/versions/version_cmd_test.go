@@ -21,13 +21,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/kubernetes-sigs/service-catalog/cmd/svcat/command"
-	"github.com/kubernetes-sigs/service-catalog/pkg"
-	svcatfake "github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/clientset/fake"
-	"github.com/kubernetes-sigs/service-catalog/pkg/svcat"
+	"github.com/drycc-addons/service-catalog/cmd/svcat/command"
+	"github.com/drycc-addons/service-catalog/pkg"
+	svcatfake "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset/fake"
+	"github.com/drycc-addons/service-catalog/pkg/svcat"
 	k8sfake "k8s.io/client-go/kubernetes/fake"
 
-	_ "github.com/kubernetes-sigs/service-catalog/internal/test"
+	_ "github.com/drycc-addons/service-catalog/internal/test"
 )
 
 func TestVersionCommand(t *testing.T) {

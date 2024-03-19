@@ -21,7 +21,7 @@ import (
 
 	"errors"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/svcat/service-catalog"
+	"github.com/drycc-addons/service-catalog/pkg/svcat/service-catalog"
 	"github.com/spf13/pflag"
 )
 

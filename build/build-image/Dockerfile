@@ -21,7 +21,7 @@ RUN apt-get update && \
     apt-get install jq etcd-server -y
 
 # Create the full dir tree that we'll mount our src into when we run the image
-RUN mkdir -p /go/src/github.com/kubernetes-sigs/service-catalog
+RUN mkdir -p /go/src/github.com/drycc-addons/service-catalog
 
 # Default to our src dir
-WORKDIR /go/src/github.com/kubernetes-sigs/service-catalog
+WORKDIR /go/src/github.com/drycc-addons/service-catalog

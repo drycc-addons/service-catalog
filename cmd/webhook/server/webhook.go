@@ -21,34 +21,35 @@ import (
 	"fmt"
 	"net/http"
 
-	scTypes "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"github.com/kubernetes-sigs/service-catalog/pkg/probe"
-	"github.com/kubernetes-sigs/service-catalog/pkg/util"
-	"github.com/kubernetes-sigs/service-catalog/pkg/webhook/inject"
-	csbmutation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/clusterservicebroker/mutation"
-	cscmutation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/clusterserviceclass/mutation"
-	cspmutation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/clusterserviceplan/mutation"
+	scTypes "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	"github.com/drycc-addons/service-catalog/pkg/probe"
+	"github.com/drycc-addons/service-catalog/pkg/util"
+	"github.com/drycc-addons/service-catalog/pkg/webhook/inject"
+	csbmutation "github.com/drycc-addons/service-catalog/pkg/webhook/servicecatalog/clusterservicebroker/mutation"
+	cscmutation "github.com/drycc-addons/service-catalog/pkg/webhook/servicecatalog/clusterserviceclass/mutation"
+	cspmutation "github.com/drycc-addons/service-catalog/pkg/webhook/servicecatalog/clusterserviceplan/mutation"
 
-	sbmutation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/servicebinding/mutation"
-	brmutation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/servicebroker/mutation"
-	scmutation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/serviceclass/mutation"
-	simutation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/serviceinstance/mutation"
-	spmutation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/serviceplan/mutation"
+	sbmutation "github.com/drycc-addons/service-catalog/pkg/webhook/servicecatalog/servicebinding/mutation"
+	brmutation "github.com/drycc-addons/service-catalog/pkg/webhook/servicecatalog/servicebroker/mutation"
+	scmutation "github.com/drycc-addons/service-catalog/pkg/webhook/servicecatalog/serviceclass/mutation"
+	simutation "github.com/drycc-addons/service-catalog/pkg/webhook/servicecatalog/serviceinstance/mutation"
+	spmutation "github.com/drycc-addons/service-catalog/pkg/webhook/servicecatalog/serviceplan/mutation"
 
-	csbrvalidation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/clusterservicebroker/validation"
-	cscvalidation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/clusterserviceclass/validation"
-	cspvalidation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/clusterserviceplan/validation"
-	sbvalidation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/servicebinding/validation"
-	sbrvalidation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/servicebroker/validation"
-	scvalidation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/serviceclass/validation"
-	sivalidation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/serviceinstance/validation"
-	spvalidation "github.com/kubernetes-sigs/service-catalog/pkg/webhook/servicecatalog/serviceplan/validation"
+	csbrvalidation "github.com/drycc-addons/service-catalog/pkg/webhook/servicecatalog/clusterservicebroker/validation"
+	cscvalidation "github.com/drycc-addons/service-catalog/pkg/webhook/servicecatalog/clusterserviceclass/validation"
+	cspvalidation "github.com/drycc-addons/service-catalog/pkg/webhook/servicecatalog/clusterserviceplan/validation"
+	sbvalidation "github.com/drycc-addons/service-catalog/pkg/webhook/servicecatalog/servicebinding/validation"
+	sbrvalidation "github.com/drycc-addons/service-catalog/pkg/webhook/servicecatalog/servicebroker/validation"
+	scvalidation "github.com/drycc-addons/service-catalog/pkg/webhook/servicecatalog/serviceclass/validation"
+	sivalidation "github.com/drycc-addons/service-catalog/pkg/webhook/servicecatalog/serviceinstance/validation"
+	spvalidation "github.com/drycc-addons/service-catalog/pkg/webhook/servicecatalog/serviceplan/validation"
 
 	apiextensionsclientset "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	"k8s.io/apiserver/pkg/server/healthz"
 	"k8s.io/client-go/kubernetes/scheme"
 	"sigs.k8s.io/controller-runtime/pkg/client/config"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
+	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
@@ -99,7 +100,10 @@ func run(opts *WebhookServerOptions, stopCh <-chan struct{}) error {
 	}
 
 	mgr, err := manager.New(cfg, manager.Options{
-		MetricsBindAddress: fmt.Sprintf(":%d", opts.ControllerManagerMetricsPort)})
+		Metrics: metricsserver.Options{
+			BindAddress: fmt.Sprintf(":%d", opts.ControllerManagerMetricsPort),
+		},
+	})
 	if err != nil {
 		return fmt.Errorf("while set up overall controller manager for webhook server: %w", err)
 	}

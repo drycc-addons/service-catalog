@@ -20,15 +20,15 @@ import (
 	"fmt"
 	"testing"
 
-	osb "sigs.k8s.io/go-open-service-broker-client/v2"
-	fakeosb "sigs.k8s.io/go-open-service-broker-client/v2/fake"
+	osb "github.com/drycc-addons/go-open-service-broker-client/v2"
+	fakeosb "github.com/drycc-addons/go-open-service-broker-client/v2/fake"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"github.com/kubernetes-sigs/service-catalog/pkg/util"
+	"github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	"github.com/drycc-addons/service-catalog/pkg/util"
 
 	utilfeature "k8s.io/apiserver/pkg/util/feature"
 
-	scfeatures "github.com/kubernetes-sigs/service-catalog/pkg/features"
+	scfeatures "github.com/drycc-addons/service-catalog/pkg/features"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/apimachinery/pkg/labels"

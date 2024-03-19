@@ -141,7 +141,7 @@ kube::golang::test_targets() {
     cmd/genswaggertypedocs
     cmd/linkcheck
     federation/cmd/genfeddocs
-    vendor/github.com/onsi/ginkgo/ginkgo
+    vendor/github.com/onsi/ginkgo/v2/ginkgo
     test/e2e/e2e.test
   )
   echo "${targets[@]}"
@@ -169,7 +169,7 @@ readonly KUBE_TEST_PORTABLE=(
 kube::golang::server_test_targets() {
   local targets=(
     cmd/kubemark
-    vendor/github.com/onsi/ginkgo/ginkgo
+    vendor/github.com/onsi/ginkgo/v2/ginkgo
   )
 
   if [[ "${OSTYPE:-}" == "linux"* ]]; then

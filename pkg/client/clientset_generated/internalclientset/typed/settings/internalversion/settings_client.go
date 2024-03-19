@@ -21,7 +21,7 @@ package internalversion
 import (
 	"net/http"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/client/clientset_generated/internalclientset/scheme"
+	"github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/internalclientset/scheme"
 	rest "k8s.io/client-go/rest"
 )
 

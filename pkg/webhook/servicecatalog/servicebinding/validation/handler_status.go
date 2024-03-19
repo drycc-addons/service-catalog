@@ -23,9 +23,9 @@ import (
 	admissionTypes "k8s.io/api/admission/v1"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 
-	sc "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	scv "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/validation"
-	webhookutil "github.com/kubernetes-sigs/service-catalog/pkg/webhookutil"
+	sc "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	scv "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/validation"
+	webhookutil "github.com/drycc-addons/service-catalog/pkg/webhookutil"
 )
 
 // StatusValidationHandler provides status resource validation

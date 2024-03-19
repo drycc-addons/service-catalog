@@ -17,9 +17,9 @@ limitations under the License.
 package browsing
 
 import (
-	"github.com/kubernetes-sigs/service-catalog/cmd/svcat/command"
-	"github.com/kubernetes-sigs/service-catalog/cmd/svcat/output"
-	servicecatalog "github.com/kubernetes-sigs/service-catalog/pkg/svcat/service-catalog"
+	"github.com/drycc-addons/service-catalog/cmd/svcat/command"
+	"github.com/drycc-addons/service-catalog/cmd/svcat/output"
+	servicecatalog "github.com/drycc-addons/service-catalog/pkg/svcat/service-catalog"
 	"github.com/spf13/cobra"
 )
 

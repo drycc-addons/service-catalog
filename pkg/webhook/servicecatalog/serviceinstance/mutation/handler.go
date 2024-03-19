@@ -21,14 +21,14 @@ import (
 	"encoding/json"
 	"net/http"
 
-	sc "github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	scfeatures "github.com/kubernetes-sigs/service-catalog/pkg/features"
-	"github.com/kubernetes-sigs/service-catalog/pkg/util"
-	"github.com/kubernetes-sigs/service-catalog/pkg/webhookutil"
+	sc "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	scfeatures "github.com/drycc-addons/service-catalog/pkg/features"
+	"github.com/drycc-addons/service-catalog/pkg/util"
+	"github.com/drycc-addons/service-catalog/pkg/webhookutil"
 	admissionTypes "k8s.io/api/admission/v1"
 	utilfeature "k8s.io/apiserver/pkg/util/feature"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/webhook/inject"
+	"github.com/drycc-addons/service-catalog/pkg/webhook/inject"
 	apiequality "k8s.io/apimachinery/pkg/api/equality"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
@@ -108,7 +108,7 @@ func (h *CreateUpdateHandler) InjectDecoder(d *admission.Decoder) error {
 }
 
 func (h *CreateUpdateHandler) mutateOnCreate(ctx context.Context, req admission.Request, instance *sc.ServiceInstance) {
-	// This feature was copied from Service Catalog registry: https://github.com/kubernetes-sigs/service-catalog/blob/master/pkg/registry/servicecatalog/instance/strategy.go
+	// This feature was copied from Service Catalog registry: https://github.com/drycc-addons/service-catalog/blob/master/pkg/registry/servicecatalog/instance/strategy.go
 	// If you want to track previous changes please check there.
 
 	if instance.Spec.ExternalID == "" {

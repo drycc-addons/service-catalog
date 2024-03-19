@@ -19,15 +19,15 @@ package class
 import (
 	"bytes"
 
-	"github.com/kubernetes-sigs/service-catalog/cmd/svcat/command"
-	"github.com/kubernetes-sigs/service-catalog/cmd/svcat/test"
-	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"github.com/kubernetes-sigs/service-catalog/pkg/svcat"
-	servicecatalog "github.com/kubernetes-sigs/service-catalog/pkg/svcat/service-catalog"
-	servicecatalogfakes "github.com/kubernetes-sigs/service-catalog/pkg/svcat/service-catalog/service-catalogfakes"
-	. "github.com/onsi/ginkgo"
+	"github.com/drycc-addons/service-catalog/cmd/svcat/command"
+	svcattest "github.com/drycc-addons/service-catalog/cmd/svcat/test"
+	"github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	"github.com/drycc-addons/service-catalog/pkg/svcat"
+	servicecatalog "github.com/drycc-addons/service-catalog/pkg/svcat/service-catalog"
+	servicecatalogfakes "github.com/drycc-addons/service-catalog/pkg/svcat/service-catalog/service-catalogfakes"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"k8s.io/apimachinery/pkg/apis/meta/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 var _ = Describe("Create Command", func() {

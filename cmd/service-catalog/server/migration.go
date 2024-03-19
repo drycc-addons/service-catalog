@@ -17,8 +17,8 @@ limitations under the License.
 package server
 
 import (
-	"github.com/kubernetes-sigs/service-catalog/cmd/migration"
-	"github.com/kubernetes-sigs/service-catalog/pkg/hyperkube"
+	"github.com/drycc-addons/service-catalog/cmd/migration"
+	"github.com/drycc-addons/service-catalog/pkg/hyperkube"
 )
 
 // NewMigration creates a new hyperkube Server object that includes the

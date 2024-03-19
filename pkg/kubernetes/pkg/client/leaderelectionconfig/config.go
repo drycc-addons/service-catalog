@@ -19,7 +19,7 @@ package leaderelectionconfig
 import (
 	"time"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/kubernetes/pkg/apis/componentconfig"
+	"github.com/drycc-addons/service-catalog/pkg/kubernetes/pkg/apis/componentconfig"
 	"github.com/spf13/pflag"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	rl "k8s.io/client-go/tools/leaderelection/resourcelock"
@@ -37,7 +37,7 @@ func DefaultLeaderElectionConfiguration() componentconfig.LeaderElectionConfigur
 		LeaseDuration: metav1.Duration{Duration: DefaultLeaseDuration},
 		RenewDeadline: metav1.Duration{Duration: DefaultRenewDeadline},
 		RetryPeriod:   metav1.Duration{Duration: DefaultRetryPeriod},
-		ResourceLock:  rl.EndpointsLeasesResourceLock,
+		ResourceLock:  rl.LeasesResourceLock,
 	}
 }
 

@@ -19,8 +19,8 @@ package output
 import (
 	"io"
 
-	"github.com/kubernetes-sigs/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"github.com/kubernetes-sigs/service-catalog/pkg/svcat/service-catalog"
+	"github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	"github.com/drycc-addons/service-catalog/pkg/svcat/service-catalog"
 )
 
 func getBrokerScope(broker servicecatalog.Broker) string {
