@@ -18,7 +18,6 @@ package servicecatalog_test
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	"github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset/fake"
@@ -133,7 +132,7 @@ var _ = Describe("Class", func() {
 			badClient := fake.NewSimpleClientset()
 			errorMessage := "error retrieving list"
 			badClient.PrependReactor("list", "clusterserviceclasses", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk = &SDK{
 				ServiceCatalogClient: badClient,

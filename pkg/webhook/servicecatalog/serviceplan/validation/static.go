@@ -34,7 +34,7 @@ type StaticCreate struct {
 
 // StaticUpdate runs basic ServicePlan validation for Update operation.
 type StaticUpdate struct {
-	decoder *admission.Decoder
+	decoder admission.Decoder
 }
 
 // Validate validate ServiceBinding instance
@@ -60,7 +60,7 @@ func (v *StaticUpdate) Validate(ctx context.Context, req admission.Request, serv
 }
 
 // InjectDecoder injects the decoder
-func (v *StaticUpdate) InjectDecoder(d *admission.Decoder) error {
+func (v *StaticUpdate) InjectDecoder(d admission.Decoder) error {
 	v.decoder = d
 	return nil
 }

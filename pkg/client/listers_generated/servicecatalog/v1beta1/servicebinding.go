@@ -20,8 +20,8 @@ package v1beta1
 
 import (
 	v1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/client-go/listers"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -38,25 +38,17 @@ type ServiceBindingLister interface {
 
 // serviceBindingLister implements the ServiceBindingLister interface.
 type serviceBindingLister struct {
-	indexer cache.Indexer
+	listers.ResourceIndexer[*v1beta1.ServiceBinding]
 }
 
 // NewServiceBindingLister returns a new ServiceBindingLister.
 func NewServiceBindingLister(indexer cache.Indexer) ServiceBindingLister {
-	return &serviceBindingLister{indexer: indexer}
-}
-
-// List lists all ServiceBindings in the indexer.
-func (s *serviceBindingLister) List(selector labels.Selector) (ret []*v1beta1.ServiceBinding, err error) {
-	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1beta1.ServiceBinding))
-	})
-	return ret, err
+	return &serviceBindingLister{listers.New[*v1beta1.ServiceBinding](indexer, v1beta1.Resource("servicebinding"))}
 }
 
 // ServiceBindings returns an object that can list and get ServiceBindings.
 func (s *serviceBindingLister) ServiceBindings(namespace string) ServiceBindingNamespaceLister {
-	return serviceBindingNamespaceLister{indexer: s.indexer, namespace: namespace}
+	return serviceBindingNamespaceLister{listers.NewNamespaced[*v1beta1.ServiceBinding](s.ResourceIndexer, namespace)}
 }
 
 // ServiceBindingNamespaceLister helps list and get ServiceBindings.
@@ -74,26 +66,5 @@ type ServiceBindingNamespaceLister interface {
 // serviceBindingNamespaceLister implements the ServiceBindingNamespaceLister
 // interface.
 type serviceBindingNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all ServiceBindings in the indexer for a given namespace.
-func (s serviceBindingNamespaceLister) List(selector labels.Selector) (ret []*v1beta1.ServiceBinding, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1beta1.ServiceBinding))
-	})
-	return ret, err
-}
-
-// Get retrieves the ServiceBinding from the indexer for a given namespace and name.
-func (s serviceBindingNamespaceLister) Get(name string) (*v1beta1.ServiceBinding, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, errors.NewNotFound(v1beta1.Resource("servicebinding"), name)
-	}
-	return obj.(*v1beta1.ServiceBinding), nil
+	listers.ResourceIndexer[*v1beta1.ServiceBinding]
 }

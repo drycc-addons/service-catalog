@@ -37,7 +37,7 @@ import (
 
 // TestDecoderHandler represents a handler with a decoder
 type TestDecoderHandler interface {
-	InjectDecoder(d *admission.Decoder) error
+	InjectDecoder(d admission.Decoder) error
 	Handle(ctx context.Context, req admission.Request) admission.Response
 }
 

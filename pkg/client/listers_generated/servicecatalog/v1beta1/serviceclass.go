@@ -20,8 +20,8 @@ package v1beta1
 
 import (
 	v1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/client-go/listers"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -38,25 +38,17 @@ type ServiceClassLister interface {
 
 // serviceClassLister implements the ServiceClassLister interface.
 type serviceClassLister struct {
-	indexer cache.Indexer
+	listers.ResourceIndexer[*v1beta1.ServiceClass]
 }
 
 // NewServiceClassLister returns a new ServiceClassLister.
 func NewServiceClassLister(indexer cache.Indexer) ServiceClassLister {
-	return &serviceClassLister{indexer: indexer}
-}
-
-// List lists all ServiceClasses in the indexer.
-func (s *serviceClassLister) List(selector labels.Selector) (ret []*v1beta1.ServiceClass, err error) {
-	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1beta1.ServiceClass))
-	})
-	return ret, err
+	return &serviceClassLister{listers.New[*v1beta1.ServiceClass](indexer, v1beta1.Resource("serviceclass"))}
 }
 
 // ServiceClasses returns an object that can list and get ServiceClasses.
 func (s *serviceClassLister) ServiceClasses(namespace string) ServiceClassNamespaceLister {
-	return serviceClassNamespaceLister{indexer: s.indexer, namespace: namespace}
+	return serviceClassNamespaceLister{listers.NewNamespaced[*v1beta1.ServiceClass](s.ResourceIndexer, namespace)}
 }
 
 // ServiceClassNamespaceLister helps list and get ServiceClasses.
@@ -74,26 +66,5 @@ type ServiceClassNamespaceLister interface {
 // serviceClassNamespaceLister implements the ServiceClassNamespaceLister
 // interface.
 type serviceClassNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all ServiceClasses in the indexer for a given namespace.
-func (s serviceClassNamespaceLister) List(selector labels.Selector) (ret []*v1beta1.ServiceClass, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1beta1.ServiceClass))
-	})
-	return ret, err
-}
-
-// Get retrieves the ServiceClass from the indexer for a given namespace and name.
-func (s serviceClassNamespaceLister) Get(name string) (*v1beta1.ServiceClass, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, errors.NewNotFound(v1beta1.Resource("serviceclass"), name)
-	}
-	return obj.(*v1beta1.ServiceClass), nil
+	listers.ResourceIndexer[*v1beta1.ServiceClass]
 }

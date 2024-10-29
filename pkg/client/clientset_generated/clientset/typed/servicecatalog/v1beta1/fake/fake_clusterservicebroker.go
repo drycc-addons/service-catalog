@@ -40,20 +40,22 @@ var clusterservicebrokersKind = v1beta1.SchemeGroupVersion.WithKind("ClusterServ
 
 // Get takes name of the clusterServiceBroker, and returns the corresponding clusterServiceBroker object, and an error if there is any.
 func (c *FakeClusterServiceBrokers) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1beta1.ClusterServiceBroker, err error) {
+	emptyResult := &v1beta1.ClusterServiceBroker{}
 	obj, err := c.Fake.
-		Invokes(testing.NewRootGetAction(clusterservicebrokersResource, name), &v1beta1.ClusterServiceBroker{})
+		Invokes(testing.NewRootGetActionWithOptions(clusterservicebrokersResource, name, options), emptyResult)
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1beta1.ClusterServiceBroker), err
 }
 
 // List takes label and field selectors, and returns the list of ClusterServiceBrokers that match those selectors.
 func (c *FakeClusterServiceBrokers) List(ctx context.Context, opts v1.ListOptions) (result *v1beta1.ClusterServiceBrokerList, err error) {
+	emptyResult := &v1beta1.ClusterServiceBrokerList{}
 	obj, err := c.Fake.
-		Invokes(testing.NewRootListAction(clusterservicebrokersResource, clusterservicebrokersKind, opts), &v1beta1.ClusterServiceBrokerList{})
+		Invokes(testing.NewRootListActionWithOptions(clusterservicebrokersResource, clusterservicebrokersKind, opts), emptyResult)
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 
 	label, _, _ := testing.ExtractFromListOptions(opts)
@@ -72,36 +74,39 @@ func (c *FakeClusterServiceBrokers) List(ctx context.Context, opts v1.ListOption
 // Watch returns a watch.Interface that watches the requested clusterServiceBrokers.
 func (c *FakeClusterServiceBrokers) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewRootWatchAction(clusterservicebrokersResource, opts))
+		InvokesWatch(testing.NewRootWatchActionWithOptions(clusterservicebrokersResource, opts))
 }
 
 // Create takes the representation of a clusterServiceBroker and creates it.  Returns the server's representation of the clusterServiceBroker, and an error, if there is any.
 func (c *FakeClusterServiceBrokers) Create(ctx context.Context, clusterServiceBroker *v1beta1.ClusterServiceBroker, opts v1.CreateOptions) (result *v1beta1.ClusterServiceBroker, err error) {
+	emptyResult := &v1beta1.ClusterServiceBroker{}
 	obj, err := c.Fake.
-		Invokes(testing.NewRootCreateAction(clusterservicebrokersResource, clusterServiceBroker), &v1beta1.ClusterServiceBroker{})
+		Invokes(testing.NewRootCreateActionWithOptions(clusterservicebrokersResource, clusterServiceBroker, opts), emptyResult)
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1beta1.ClusterServiceBroker), err
 }
 
 // Update takes the representation of a clusterServiceBroker and updates it. Returns the server's representation of the clusterServiceBroker, and an error, if there is any.
 func (c *FakeClusterServiceBrokers) Update(ctx context.Context, clusterServiceBroker *v1beta1.ClusterServiceBroker, opts v1.UpdateOptions) (result *v1beta1.ClusterServiceBroker, err error) {
+	emptyResult := &v1beta1.ClusterServiceBroker{}
 	obj, err := c.Fake.
-		Invokes(testing.NewRootUpdateAction(clusterservicebrokersResource, clusterServiceBroker), &v1beta1.ClusterServiceBroker{})
+		Invokes(testing.NewRootUpdateActionWithOptions(clusterservicebrokersResource, clusterServiceBroker, opts), emptyResult)
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1beta1.ClusterServiceBroker), err
 }
 
 // UpdateStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeClusterServiceBrokers) UpdateStatus(ctx context.Context, clusterServiceBroker *v1beta1.ClusterServiceBroker, opts v1.UpdateOptions) (*v1beta1.ClusterServiceBroker, error) {
+func (c *FakeClusterServiceBrokers) UpdateStatus(ctx context.Context, clusterServiceBroker *v1beta1.ClusterServiceBroker, opts v1.UpdateOptions) (result *v1beta1.ClusterServiceBroker, err error) {
+	emptyResult := &v1beta1.ClusterServiceBroker{}
 	obj, err := c.Fake.
-		Invokes(testing.NewRootUpdateSubresourceAction(clusterservicebrokersResource, "status", clusterServiceBroker), &v1beta1.ClusterServiceBroker{})
+		Invokes(testing.NewRootUpdateSubresourceActionWithOptions(clusterservicebrokersResource, "status", clusterServiceBroker, opts), emptyResult)
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1beta1.ClusterServiceBroker), err
 }
@@ -115,7 +120,7 @@ func (c *FakeClusterServiceBrokers) Delete(ctx context.Context, name string, opt
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeClusterServiceBrokers) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewRootDeleteCollectionAction(clusterservicebrokersResource, listOpts)
+	action := testing.NewRootDeleteCollectionActionWithOptions(clusterservicebrokersResource, opts, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1beta1.ClusterServiceBrokerList{})
 	return err
@@ -123,10 +128,11 @@ func (c *FakeClusterServiceBrokers) DeleteCollection(ctx context.Context, opts v
 
 // Patch applies the patch and returns the patched clusterServiceBroker.
 func (c *FakeClusterServiceBrokers) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1beta1.ClusterServiceBroker, err error) {
+	emptyResult := &v1beta1.ClusterServiceBroker{}
 	obj, err := c.Fake.
-		Invokes(testing.NewRootPatchSubresourceAction(clusterservicebrokersResource, name, pt, data, subresources...), &v1beta1.ClusterServiceBroker{})
+		Invokes(testing.NewRootPatchSubresourceActionWithOptions(clusterservicebrokersResource, name, pt, data, opts, subresources...), emptyResult)
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1beta1.ClusterServiceBroker), err
 }

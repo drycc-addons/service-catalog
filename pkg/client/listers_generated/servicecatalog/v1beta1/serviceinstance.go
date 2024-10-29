@@ -20,8 +20,8 @@ package v1beta1
 
 import (
 	v1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/client-go/listers"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -38,25 +38,17 @@ type ServiceInstanceLister interface {
 
 // serviceInstanceLister implements the ServiceInstanceLister interface.
 type serviceInstanceLister struct {
-	indexer cache.Indexer
+	listers.ResourceIndexer[*v1beta1.ServiceInstance]
 }
 
 // NewServiceInstanceLister returns a new ServiceInstanceLister.
 func NewServiceInstanceLister(indexer cache.Indexer) ServiceInstanceLister {
-	return &serviceInstanceLister{indexer: indexer}
-}
-
-// List lists all ServiceInstances in the indexer.
-func (s *serviceInstanceLister) List(selector labels.Selector) (ret []*v1beta1.ServiceInstance, err error) {
-	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1beta1.ServiceInstance))
-	})
-	return ret, err
+	return &serviceInstanceLister{listers.New[*v1beta1.ServiceInstance](indexer, v1beta1.Resource("serviceinstance"))}
 }
 
 // ServiceInstances returns an object that can list and get ServiceInstances.
 func (s *serviceInstanceLister) ServiceInstances(namespace string) ServiceInstanceNamespaceLister {
-	return serviceInstanceNamespaceLister{indexer: s.indexer, namespace: namespace}
+	return serviceInstanceNamespaceLister{listers.NewNamespaced[*v1beta1.ServiceInstance](s.ResourceIndexer, namespace)}
 }
 
 // ServiceInstanceNamespaceLister helps list and get ServiceInstances.
@@ -74,26 +66,5 @@ type ServiceInstanceNamespaceLister interface {
 // serviceInstanceNamespaceLister implements the ServiceInstanceNamespaceLister
 // interface.
 type serviceInstanceNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all ServiceInstances in the indexer for a given namespace.
-func (s serviceInstanceNamespaceLister) List(selector labels.Selector) (ret []*v1beta1.ServiceInstance, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1beta1.ServiceInstance))
-	})
-	return ret, err
-}
-
-// Get retrieves the ServiceInstance from the indexer for a given namespace and name.
-func (s serviceInstanceNamespaceLister) Get(name string) (*v1beta1.ServiceInstance, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, errors.NewNotFound(v1beta1.Resource("serviceinstance"), name)
-	}
-	return obj.(*v1beta1.ServiceInstance), nil
+	listers.ResourceIndexer[*v1beta1.ServiceInstance]
 }

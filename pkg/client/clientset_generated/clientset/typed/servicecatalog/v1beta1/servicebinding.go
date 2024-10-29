@@ -20,14 +20,13 @@ package v1beta1
 
 import (
 	"context"
-	"time"
 
 	v1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	scheme "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
 	watch "k8s.io/apimachinery/pkg/watch"
-	rest "k8s.io/client-go/rest"
+	gentype "k8s.io/client-go/gentype"
 )
 
 // ServiceBindingsGetter has a method to return a ServiceBindingInterface.
@@ -40,6 +39,7 @@ type ServiceBindingsGetter interface {
 type ServiceBindingInterface interface {
 	Create(ctx context.Context, serviceBinding *v1beta1.ServiceBinding, opts v1.CreateOptions) (*v1beta1.ServiceBinding, error)
 	Update(ctx context.Context, serviceBinding *v1beta1.ServiceBinding, opts v1.UpdateOptions) (*v1beta1.ServiceBinding, error)
+	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
 	UpdateStatus(ctx context.Context, serviceBinding *v1beta1.ServiceBinding, opts v1.UpdateOptions) (*v1beta1.ServiceBinding, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
@@ -52,144 +52,18 @@ type ServiceBindingInterface interface {
 
 // serviceBindings implements ServiceBindingInterface
 type serviceBindings struct {
-	client rest.Interface
-	ns     string
+	*gentype.ClientWithList[*v1beta1.ServiceBinding, *v1beta1.ServiceBindingList]
 }
 
 // newServiceBindings returns a ServiceBindings
 func newServiceBindings(c *ServicecatalogV1beta1Client, namespace string) *serviceBindings {
 	return &serviceBindings{
-		client: c.RESTClient(),
-		ns:     namespace,
+		gentype.NewClientWithList[*v1beta1.ServiceBinding, *v1beta1.ServiceBindingList](
+			"servicebindings",
+			c.RESTClient(),
+			scheme.ParameterCodec,
+			namespace,
+			func() *v1beta1.ServiceBinding { return &v1beta1.ServiceBinding{} },
+			func() *v1beta1.ServiceBindingList { return &v1beta1.ServiceBindingList{} }),
 	}
-}
-
-// Get takes name of the serviceBinding, and returns the corresponding serviceBinding object, and an error if there is any.
-func (c *serviceBindings) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1beta1.ServiceBinding, err error) {
-	result = &v1beta1.ServiceBinding{}
-	err = c.client.Get().
-		Namespace(c.ns).
-		Resource("servicebindings").
-		Name(name).
-		VersionedParams(&options, scheme.ParameterCodec).
-		Do(ctx).
-		Into(result)
-	return
-}
-
-// List takes label and field selectors, and returns the list of ServiceBindings that match those selectors.
-func (c *serviceBindings) List(ctx context.Context, opts v1.ListOptions) (result *v1beta1.ServiceBindingList, err error) {
-	var timeout time.Duration
-	if opts.TimeoutSeconds != nil {
-		timeout = time.Duration(*opts.TimeoutSeconds) * time.Second
-	}
-	result = &v1beta1.ServiceBindingList{}
-	err = c.client.Get().
-		Namespace(c.ns).
-		Resource("servicebindings").
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Timeout(timeout).
-		Do(ctx).
-		Into(result)
-	return
-}
-
-// Watch returns a watch.Interface that watches the requested serviceBindings.
-func (c *serviceBindings) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
-	var timeout time.Duration
-	if opts.TimeoutSeconds != nil {
-		timeout = time.Duration(*opts.TimeoutSeconds) * time.Second
-	}
-	opts.Watch = true
-	return c.client.Get().
-		Namespace(c.ns).
-		Resource("servicebindings").
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Timeout(timeout).
-		Watch(ctx)
-}
-
-// Create takes the representation of a serviceBinding and creates it.  Returns the server's representation of the serviceBinding, and an error, if there is any.
-func (c *serviceBindings) Create(ctx context.Context, serviceBinding *v1beta1.ServiceBinding, opts v1.CreateOptions) (result *v1beta1.ServiceBinding, err error) {
-	result = &v1beta1.ServiceBinding{}
-	err = c.client.Post().
-		Namespace(c.ns).
-		Resource("servicebindings").
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Body(serviceBinding).
-		Do(ctx).
-		Into(result)
-	return
-}
-
-// Update takes the representation of a serviceBinding and updates it. Returns the server's representation of the serviceBinding, and an error, if there is any.
-func (c *serviceBindings) Update(ctx context.Context, serviceBinding *v1beta1.ServiceBinding, opts v1.UpdateOptions) (result *v1beta1.ServiceBinding, err error) {
-	result = &v1beta1.ServiceBinding{}
-	err = c.client.Put().
-		Namespace(c.ns).
-		Resource("servicebindings").
-		Name(serviceBinding.Name).
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Body(serviceBinding).
-		Do(ctx).
-		Into(result)
-	return
-}
-
-// UpdateStatus was generated because the type contains a Status member.
-// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *serviceBindings) UpdateStatus(ctx context.Context, serviceBinding *v1beta1.ServiceBinding, opts v1.UpdateOptions) (result *v1beta1.ServiceBinding, err error) {
-	result = &v1beta1.ServiceBinding{}
-	err = c.client.Put().
-		Namespace(c.ns).
-		Resource("servicebindings").
-		Name(serviceBinding.Name).
-		SubResource("status").
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Body(serviceBinding).
-		Do(ctx).
-		Into(result)
-	return
-}
-
-// Delete takes name of the serviceBinding and deletes it. Returns an error if one occurs.
-func (c *serviceBindings) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
-	return c.client.Delete().
-		Namespace(c.ns).
-		Resource("servicebindings").
-		Name(name).
-		Body(&opts).
-		Do(ctx).
-		Error()
-}
-
-// DeleteCollection deletes a collection of objects.
-func (c *serviceBindings) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	var timeout time.Duration
-	if listOpts.TimeoutSeconds != nil {
-		timeout = time.Duration(*listOpts.TimeoutSeconds) * time.Second
-	}
-	return c.client.Delete().
-		Namespace(c.ns).
-		Resource("servicebindings").
-		VersionedParams(&listOpts, scheme.ParameterCodec).
-		Timeout(timeout).
-		Body(&opts).
-		Do(ctx).
-		Error()
-}
-
-// Patch applies the patch and returns the patched serviceBinding.
-func (c *serviceBindings) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1beta1.ServiceBinding, err error) {
-	result = &v1beta1.ServiceBinding{}
-	err = c.client.Patch(pt).
-		Namespace(c.ns).
-		Resource("servicebindings").
-		Name(name).
-		SubResource(subresources...).
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Body(data).
-		Do(ctx).
-		Into(result)
-	return
 }

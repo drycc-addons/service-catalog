@@ -14,8 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# The only argument this script should ever be called with is '--verify-only'
-
 # The contents of this file are in a specific order
 # Listers depend on the base client
 # Informers depend on listers
@@ -34,7 +32,8 @@ ${BINDIR}/client-gen "$@" \
 	      --input settings/ \
 	      --clientset-path "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/" \
 	      --clientset-name internalclientset \
-	      --go-header-file "contrib/hack/boilerplate.go.txt"
+	      --go-header-file "contrib/hack/boilerplate.go.txt" \
+		  --output-dir pkg/client/clientset_generated
 # Generate the versioned clientset (pkg/client/clientset_generated/clientset)
 ${BINDIR}/client-gen "$@" \
         --input-base "github.com/drycc-addons/service-catalog/pkg/apis/" \
@@ -42,21 +41,24 @@ ${BINDIR}/client-gen "$@" \
 	      --input "settings/v1alpha1" \
 	      --clientset-path "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/" \
 	      --clientset-name "clientset" \
-	      --go-header-file "contrib/hack/boilerplate.go.txt"
+	      --go-header-file "contrib/hack/boilerplate.go.txt" \
+		  --output-dir pkg/client/clientset_generated
 # generate listers after having the base client generated, and before informers
 ${BINDIR}/lister-gen "$@" \
-	      --input-dirs="github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1" \
-	      --input-dirs="github.com/drycc-addons/service-catalog/pkg/apis/settings" \
-	      --input-dirs="github.com/drycc-addons/service-catalog/pkg/apis/settings/v1alpha1" \
-	      --output-package "github.com/drycc-addons/service-catalog/pkg/client/listers_generated" \
-	      --go-header-file "contrib/hack/boilerplate.go.txt"
+	      --output-pkg "github.com/drycc-addons/service-catalog/pkg/client/listers_generated" \
+		  --output-dir "pkg/client/listers_generated" \
+	      --go-header-file "contrib/hack/boilerplate.go.txt" \
+	      "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1" \
+	      "github.com/drycc-addons/service-catalog/pkg/apis/settings" \
+	      "github.com/drycc-addons/service-catalog/pkg/apis/settings/v1alpha1"
 # generate informers after the listers have been generated
 ${BINDIR}/informer-gen "$@" \
 	      --go-header-file "contrib/hack/boilerplate.go.txt" \
-	      --input-dirs "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1" \
-	      --input-dirs "github.com/drycc-addons/service-catalog/pkg/apis/settings" \
-	      --input-dirs "github.com/drycc-addons/service-catalog/pkg/apis/settings/v1alpha1" \
 	      --internal-clientset-package "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/internalclientset" \
 	      --versioned-clientset-package "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset" \
 	      --listers-package "github.com/drycc-addons/service-catalog/pkg/client/listers_generated" \
-	      --output-package "github.com/drycc-addons/service-catalog/pkg/client/informers_generated"
+	      --output-pkg "github.com/drycc-addons/service-catalog/pkg/client/informers_generated" \
+		  --output-dir "pkg/client/informers_generated" \
+	      "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1" \
+	      "github.com/drycc-addons/service-catalog/pkg/apis/settings" \
+	      "github.com/drycc-addons/service-catalog/pkg/apis/settings/v1alpha1"

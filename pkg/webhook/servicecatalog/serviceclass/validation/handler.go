@@ -36,7 +36,7 @@ type Validator interface {
 
 // SpecValidationHandler handles ServiceInstance validation
 type SpecValidationHandler struct {
-	decoder *admission.Decoder
+	decoder admission.Decoder
 
 	CreateValidators []Validator
 	UpdateValidators []Validator
@@ -104,7 +104,7 @@ func (h *SpecValidationHandler) Handle(ctx context.Context, req admission.Reques
 }
 
 // InjectDecoder injects the decoder into the handlers
-func (h *SpecValidationHandler) InjectDecoder(d *admission.Decoder) error {
+func (h *SpecValidationHandler) InjectDecoder(d admission.Decoder) error {
 	h.decoder = d
 
 	for _, v := range h.CreateValidators {

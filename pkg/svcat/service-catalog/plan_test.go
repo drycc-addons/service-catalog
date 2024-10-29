@@ -17,7 +17,7 @@ limitations under the License.
 package servicecatalog_test
 
 import (
-	"fmt"
+	"errors"
 
 	"github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	"github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset/fake"
@@ -140,7 +140,7 @@ var _ = Describe("Plan", func() {
 			errorMessage := "error retrieving list"
 			badClient := fake.NewSimpleClientset()
 			badClient.PrependReactor("list", "clusterserviceplans", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk.ServiceCatalogClient = badClient
 			_, err := sdk.RetrievePlans("", ScopeOptions{Scope: AllScope})
@@ -192,7 +192,7 @@ var _ = Describe("Plan", func() {
 			errorMessage := "plan not found"
 			badClient := fake.NewSimpleClientset()
 			badClient.PrependReactor("list", "clusterserviceplans", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk.ServiceCatalogClient = badClient
 
@@ -234,7 +234,7 @@ var _ = Describe("Plan", func() {
 			errorMessage := "plan not found"
 			badClient := fake.NewSimpleClientset(csc)
 			badClient.PrependReactor("list", "clusterserviceplans", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk.ServiceCatalogClient = badClient
 
@@ -319,11 +319,11 @@ var _ = Describe("Plan", func() {
 					return true, &v1beta1.ClusterServicePlanList{Items: []v1beta1.ClusterServicePlan{}}, nil
 				}
 				cspCalled++
-				return true, nil, fmt.Errorf(clusterErrorMessage)
+				return true, nil, errors.New(clusterErrorMessage)
 			})
 			badClient.PrependReactor("list", "serviceplans", func(action testing.Action) (bool, runtime.Object, error) {
 				if cspCalled > 0 {
-					return true, nil, fmt.Errorf(namespacedErrorMessage)
+					return true, nil, errors.New(namespacedErrorMessage)
 				}
 				spCalled++
 				return true, &v1beta1.ServicePlanList{Items: []v1beta1.ServicePlan{}}, nil
@@ -374,7 +374,7 @@ var _ = Describe("Plan", func() {
 			errorMessage := "plan not found"
 			badClient := fake.NewSimpleClientset()
 			badClient.PrependReactor("get", "clusterserviceplans", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk.ServiceCatalogClient = badClient
 

@@ -41,22 +41,24 @@ var serviceplansKind = v1beta1.SchemeGroupVersion.WithKind("ServicePlan")
 
 // Get takes name of the servicePlan, and returns the corresponding servicePlan object, and an error if there is any.
 func (c *FakeServicePlans) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1beta1.ServicePlan, err error) {
+	emptyResult := &v1beta1.ServicePlan{}
 	obj, err := c.Fake.
-		Invokes(testing.NewGetAction(serviceplansResource, c.ns, name), &v1beta1.ServicePlan{})
+		Invokes(testing.NewGetActionWithOptions(serviceplansResource, c.ns, name, options), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1beta1.ServicePlan), err
 }
 
 // List takes label and field selectors, and returns the list of ServicePlans that match those selectors.
 func (c *FakeServicePlans) List(ctx context.Context, opts v1.ListOptions) (result *v1beta1.ServicePlanList, err error) {
+	emptyResult := &v1beta1.ServicePlanList{}
 	obj, err := c.Fake.
-		Invokes(testing.NewListAction(serviceplansResource, serviceplansKind, c.ns, opts), &v1beta1.ServicePlanList{})
+		Invokes(testing.NewListActionWithOptions(serviceplansResource, serviceplansKind, c.ns, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 
 	label, _, _ := testing.ExtractFromListOptions(opts)
@@ -75,40 +77,43 @@ func (c *FakeServicePlans) List(ctx context.Context, opts v1.ListOptions) (resul
 // Watch returns a watch.Interface that watches the requested servicePlans.
 func (c *FakeServicePlans) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
 	return c.Fake.
-		InvokesWatch(testing.NewWatchAction(serviceplansResource, c.ns, opts))
+		InvokesWatch(testing.NewWatchActionWithOptions(serviceplansResource, c.ns, opts))
 
 }
 
 // Create takes the representation of a servicePlan and creates it.  Returns the server's representation of the servicePlan, and an error, if there is any.
 func (c *FakeServicePlans) Create(ctx context.Context, servicePlan *v1beta1.ServicePlan, opts v1.CreateOptions) (result *v1beta1.ServicePlan, err error) {
+	emptyResult := &v1beta1.ServicePlan{}
 	obj, err := c.Fake.
-		Invokes(testing.NewCreateAction(serviceplansResource, c.ns, servicePlan), &v1beta1.ServicePlan{})
+		Invokes(testing.NewCreateActionWithOptions(serviceplansResource, c.ns, servicePlan, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1beta1.ServicePlan), err
 }
 
 // Update takes the representation of a servicePlan and updates it. Returns the server's representation of the servicePlan, and an error, if there is any.
 func (c *FakeServicePlans) Update(ctx context.Context, servicePlan *v1beta1.ServicePlan, opts v1.UpdateOptions) (result *v1beta1.ServicePlan, err error) {
+	emptyResult := &v1beta1.ServicePlan{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateAction(serviceplansResource, c.ns, servicePlan), &v1beta1.ServicePlan{})
+		Invokes(testing.NewUpdateActionWithOptions(serviceplansResource, c.ns, servicePlan, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1beta1.ServicePlan), err
 }
 
 // UpdateStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeServicePlans) UpdateStatus(ctx context.Context, servicePlan *v1beta1.ServicePlan, opts v1.UpdateOptions) (*v1beta1.ServicePlan, error) {
+func (c *FakeServicePlans) UpdateStatus(ctx context.Context, servicePlan *v1beta1.ServicePlan, opts v1.UpdateOptions) (result *v1beta1.ServicePlan, err error) {
+	emptyResult := &v1beta1.ServicePlan{}
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceAction(serviceplansResource, "status", c.ns, servicePlan), &v1beta1.ServicePlan{})
+		Invokes(testing.NewUpdateSubresourceActionWithOptions(serviceplansResource, "status", c.ns, servicePlan, opts), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1beta1.ServicePlan), err
 }
@@ -123,7 +128,7 @@ func (c *FakeServicePlans) Delete(ctx context.Context, name string, opts v1.Dele
 
 // DeleteCollection deletes a collection of objects.
 func (c *FakeServicePlans) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionAction(serviceplansResource, c.ns, listOpts)
+	action := testing.NewDeleteCollectionActionWithOptions(serviceplansResource, c.ns, opts, listOpts)
 
 	_, err := c.Fake.Invokes(action, &v1beta1.ServicePlanList{})
 	return err
@@ -131,11 +136,12 @@ func (c *FakeServicePlans) DeleteCollection(ctx context.Context, opts v1.DeleteO
 
 // Patch applies the patch and returns the patched servicePlan.
 func (c *FakeServicePlans) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1beta1.ServicePlan, err error) {
+	emptyResult := &v1beta1.ServicePlan{}
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(serviceplansResource, c.ns, name, pt, data, subresources...), &v1beta1.ServicePlan{})
+		Invokes(testing.NewPatchSubresourceActionWithOptions(serviceplansResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
 
 	if obj == nil {
-		return nil, err
+		return emptyResult, err
 	}
 	return obj.(*v1beta1.ServicePlan), err
 }

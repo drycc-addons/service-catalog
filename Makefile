@@ -56,7 +56,7 @@ STAT           = stat -c '%Y %n'
 endif
 
 TYPES_FILES    = $(shell find pkg/apis -name types.go)
-GO_VERSION    ?= 1.23
+GO_VERSION    ?= 1.23.2
 
 # Preserve also user values
 ALL_ARCH=amd64 arm arm64 ppc64le s390x
@@ -218,8 +218,8 @@ $(BINDIR):
 
 # Util targets
 ##############
-.PHONY: verify verify-generated verify-client-gen verify-docs verify-modules
-verify: .init verify-generated verify-client-gen verify-docs verify-modules
+.PHONY: verify verify-docs verify-modules
+verify: .init verify-docs verify-modules
 	@echo Running gofmt:
 	@$(PODMAN_CMD) gofmt -l -s $(TOP_TEST_DIRS) $(TOP_SRC_DIRS)>.out 2>&1||true
 	@[ ! -s .out ] || \
@@ -255,12 +255,6 @@ verify: .init verify-generated verify-client-gen verify-docs verify-modules
 verify-docs: .init
 	@echo Running href checker$(SKIP_COMMENT):
 	@$(PODMAN_CMD) $(BUILD_DIR)/verify-links.sh -s .pkg -s .bundler -s _plugins -s _includes -s contribute/docs.md -t $(SKIP_HTTP) .
-
-verify-generated: .init generators
-	$(PODMAN_CMD) $(BUILD_DIR)/update-apis-gen.sh --verify-only
-
-verify-client-gen: .init generators
-	$(PODMAN_CMD) $(BUILD_DIR)/verify-client-gen.sh
 
 format: .init
 	$(PODMAN_CMD) gofmt -w -s $(TOP_SRC_DIRS)

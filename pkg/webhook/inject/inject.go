@@ -40,12 +40,12 @@ func ClientInto(client client.Client, i interface{}) (bool, error) {
 
 // DecoderInjector is used by the ControllerManager to inject decoder into webhook handlers.
 type DecoderInjector interface {
-	InjectDecoder(*admission.Decoder) error
+	InjectDecoder(admission.Decoder) error
 }
 
 // DecoderInto will set decoder on i and return the result if it implements Decoder.  Returns
 // false if i does not implement Decoder.
-func DecoderInto(decoder *admission.Decoder, i interface{}) (bool, error) {
+func DecoderInto(decoder admission.Decoder, i interface{}) (bool, error) {
 	if s, ok := i.(DecoderInjector); ok {
 		return true, s.InjectDecoder(decoder)
 	}

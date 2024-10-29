@@ -20,14 +20,13 @@ package v1beta1
 
 import (
 	"context"
-	"time"
 
 	v1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	scheme "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
 	watch "k8s.io/apimachinery/pkg/watch"
-	rest "k8s.io/client-go/rest"
+	gentype "k8s.io/client-go/gentype"
 )
 
 // ServicePlansGetter has a method to return a ServicePlanInterface.
@@ -40,6 +39,7 @@ type ServicePlansGetter interface {
 type ServicePlanInterface interface {
 	Create(ctx context.Context, servicePlan *v1beta1.ServicePlan, opts v1.CreateOptions) (*v1beta1.ServicePlan, error)
 	Update(ctx context.Context, servicePlan *v1beta1.ServicePlan, opts v1.UpdateOptions) (*v1beta1.ServicePlan, error)
+	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
 	UpdateStatus(ctx context.Context, servicePlan *v1beta1.ServicePlan, opts v1.UpdateOptions) (*v1beta1.ServicePlan, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
@@ -52,144 +52,18 @@ type ServicePlanInterface interface {
 
 // servicePlans implements ServicePlanInterface
 type servicePlans struct {
-	client rest.Interface
-	ns     string
+	*gentype.ClientWithList[*v1beta1.ServicePlan, *v1beta1.ServicePlanList]
 }
 
 // newServicePlans returns a ServicePlans
 func newServicePlans(c *ServicecatalogV1beta1Client, namespace string) *servicePlans {
 	return &servicePlans{
-		client: c.RESTClient(),
-		ns:     namespace,
+		gentype.NewClientWithList[*v1beta1.ServicePlan, *v1beta1.ServicePlanList](
+			"serviceplans",
+			c.RESTClient(),
+			scheme.ParameterCodec,
+			namespace,
+			func() *v1beta1.ServicePlan { return &v1beta1.ServicePlan{} },
+			func() *v1beta1.ServicePlanList { return &v1beta1.ServicePlanList{} }),
 	}
-}
-
-// Get takes name of the servicePlan, and returns the corresponding servicePlan object, and an error if there is any.
-func (c *servicePlans) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1beta1.ServicePlan, err error) {
-	result = &v1beta1.ServicePlan{}
-	err = c.client.Get().
-		Namespace(c.ns).
-		Resource("serviceplans").
-		Name(name).
-		VersionedParams(&options, scheme.ParameterCodec).
-		Do(ctx).
-		Into(result)
-	return
-}
-
-// List takes label and field selectors, and returns the list of ServicePlans that match those selectors.
-func (c *servicePlans) List(ctx context.Context, opts v1.ListOptions) (result *v1beta1.ServicePlanList, err error) {
-	var timeout time.Duration
-	if opts.TimeoutSeconds != nil {
-		timeout = time.Duration(*opts.TimeoutSeconds) * time.Second
-	}
-	result = &v1beta1.ServicePlanList{}
-	err = c.client.Get().
-		Namespace(c.ns).
-		Resource("serviceplans").
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Timeout(timeout).
-		Do(ctx).
-		Into(result)
-	return
-}
-
-// Watch returns a watch.Interface that watches the requested servicePlans.
-func (c *servicePlans) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
-	var timeout time.Duration
-	if opts.TimeoutSeconds != nil {
-		timeout = time.Duration(*opts.TimeoutSeconds) * time.Second
-	}
-	opts.Watch = true
-	return c.client.Get().
-		Namespace(c.ns).
-		Resource("serviceplans").
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Timeout(timeout).
-		Watch(ctx)
-}
-
-// Create takes the representation of a servicePlan and creates it.  Returns the server's representation of the servicePlan, and an error, if there is any.
-func (c *servicePlans) Create(ctx context.Context, servicePlan *v1beta1.ServicePlan, opts v1.CreateOptions) (result *v1beta1.ServicePlan, err error) {
-	result = &v1beta1.ServicePlan{}
-	err = c.client.Post().
-		Namespace(c.ns).
-		Resource("serviceplans").
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Body(servicePlan).
-		Do(ctx).
-		Into(result)
-	return
-}
-
-// Update takes the representation of a servicePlan and updates it. Returns the server's representation of the servicePlan, and an error, if there is any.
-func (c *servicePlans) Update(ctx context.Context, servicePlan *v1beta1.ServicePlan, opts v1.UpdateOptions) (result *v1beta1.ServicePlan, err error) {
-	result = &v1beta1.ServicePlan{}
-	err = c.client.Put().
-		Namespace(c.ns).
-		Resource("serviceplans").
-		Name(servicePlan.Name).
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Body(servicePlan).
-		Do(ctx).
-		Into(result)
-	return
-}
-
-// UpdateStatus was generated because the type contains a Status member.
-// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *servicePlans) UpdateStatus(ctx context.Context, servicePlan *v1beta1.ServicePlan, opts v1.UpdateOptions) (result *v1beta1.ServicePlan, err error) {
-	result = &v1beta1.ServicePlan{}
-	err = c.client.Put().
-		Namespace(c.ns).
-		Resource("serviceplans").
-		Name(servicePlan.Name).
-		SubResource("status").
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Body(servicePlan).
-		Do(ctx).
-		Into(result)
-	return
-}
-
-// Delete takes name of the servicePlan and deletes it. Returns an error if one occurs.
-func (c *servicePlans) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
-	return c.client.Delete().
-		Namespace(c.ns).
-		Resource("serviceplans").
-		Name(name).
-		Body(&opts).
-		Do(ctx).
-		Error()
-}
-
-// DeleteCollection deletes a collection of objects.
-func (c *servicePlans) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	var timeout time.Duration
-	if listOpts.TimeoutSeconds != nil {
-		timeout = time.Duration(*listOpts.TimeoutSeconds) * time.Second
-	}
-	return c.client.Delete().
-		Namespace(c.ns).
-		Resource("serviceplans").
-		VersionedParams(&listOpts, scheme.ParameterCodec).
-		Timeout(timeout).
-		Body(&opts).
-		Do(ctx).
-		Error()
-}
-
-// Patch applies the patch and returns the patched servicePlan.
-func (c *servicePlans) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1beta1.ServicePlan, err error) {
-	result = &v1beta1.ServicePlan{}
-	err = c.client.Patch(pt).
-		Namespace(c.ns).
-		Resource("serviceplans").
-		Name(name).
-		SubResource(subresources...).
-		VersionedParams(&opts, scheme.ParameterCodec).
-		Body(data).
-		Do(ctx).
-		Into(result)
-	return
 }

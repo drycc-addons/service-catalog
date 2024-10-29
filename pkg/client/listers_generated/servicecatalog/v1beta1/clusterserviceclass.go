@@ -20,8 +20,8 @@ package v1beta1
 
 import (
 	v1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/client-go/listers"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -39,30 +39,10 @@ type ClusterServiceClassLister interface {
 
 // clusterServiceClassLister implements the ClusterServiceClassLister interface.
 type clusterServiceClassLister struct {
-	indexer cache.Indexer
+	listers.ResourceIndexer[*v1beta1.ClusterServiceClass]
 }
 
 // NewClusterServiceClassLister returns a new ClusterServiceClassLister.
 func NewClusterServiceClassLister(indexer cache.Indexer) ClusterServiceClassLister {
-	return &clusterServiceClassLister{indexer: indexer}
-}
-
-// List lists all ClusterServiceClasses in the indexer.
-func (s *clusterServiceClassLister) List(selector labels.Selector) (ret []*v1beta1.ClusterServiceClass, err error) {
-	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1beta1.ClusterServiceClass))
-	})
-	return ret, err
-}
-
-// Get retrieves the ClusterServiceClass from the index for a given name.
-func (s *clusterServiceClassLister) Get(name string) (*v1beta1.ClusterServiceClass, error) {
-	obj, exists, err := s.indexer.GetByKey(name)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, errors.NewNotFound(v1beta1.Resource("clusterserviceclass"), name)
-	}
-	return obj.(*v1beta1.ClusterServiceClass), nil
+	return &clusterServiceClassLister{listers.New[*v1beta1.ClusterServiceClass](indexer, v1beta1.Resource("clusterserviceclass"))}
 }

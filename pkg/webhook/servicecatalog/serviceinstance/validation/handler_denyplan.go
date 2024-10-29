@@ -30,7 +30,7 @@ import (
 
 // DenyPlanChangeIfNotUpdatable handles ServiceInstance validation
 type DenyPlanChangeIfNotUpdatable struct {
-	decoder *admission.Decoder
+	decoder admission.Decoder
 	client  client.Client
 }
 
@@ -92,7 +92,7 @@ func (h *DenyPlanChangeIfNotUpdatable) Validate(ctx context.Context, req admissi
 }
 
 // InjectDecoder injects the decoder
-func (h *DenyPlanChangeIfNotUpdatable) InjectDecoder(d *admission.Decoder) error {
+func (h *DenyPlanChangeIfNotUpdatable) InjectDecoder(d admission.Decoder) error {
 	h.decoder = d
 	return nil
 }

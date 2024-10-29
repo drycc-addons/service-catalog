@@ -20,8 +20,8 @@ package v1beta1
 
 import (
 	v1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/client-go/listers"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -38,25 +38,17 @@ type ServicePlanLister interface {
 
 // servicePlanLister implements the ServicePlanLister interface.
 type servicePlanLister struct {
-	indexer cache.Indexer
+	listers.ResourceIndexer[*v1beta1.ServicePlan]
 }
 
 // NewServicePlanLister returns a new ServicePlanLister.
 func NewServicePlanLister(indexer cache.Indexer) ServicePlanLister {
-	return &servicePlanLister{indexer: indexer}
-}
-
-// List lists all ServicePlans in the indexer.
-func (s *servicePlanLister) List(selector labels.Selector) (ret []*v1beta1.ServicePlan, err error) {
-	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1beta1.ServicePlan))
-	})
-	return ret, err
+	return &servicePlanLister{listers.New[*v1beta1.ServicePlan](indexer, v1beta1.Resource("serviceplan"))}
 }
 
 // ServicePlans returns an object that can list and get ServicePlans.
 func (s *servicePlanLister) ServicePlans(namespace string) ServicePlanNamespaceLister {
-	return servicePlanNamespaceLister{indexer: s.indexer, namespace: namespace}
+	return servicePlanNamespaceLister{listers.NewNamespaced[*v1beta1.ServicePlan](s.ResourceIndexer, namespace)}
 }
 
 // ServicePlanNamespaceLister helps list and get ServicePlans.
@@ -74,26 +66,5 @@ type ServicePlanNamespaceLister interface {
 // servicePlanNamespaceLister implements the ServicePlanNamespaceLister
 // interface.
 type servicePlanNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all ServicePlans in the indexer for a given namespace.
-func (s servicePlanNamespaceLister) List(selector labels.Selector) (ret []*v1beta1.ServicePlan, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1beta1.ServicePlan))
-	})
-	return ret, err
-}
-
-// Get retrieves the ServicePlan from the indexer for a given namespace and name.
-func (s servicePlanNamespaceLister) Get(name string) (*v1beta1.ServicePlan, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, errors.NewNotFound(v1beta1.Resource("serviceplan"), name)
-	}
-	return obj.(*v1beta1.ServicePlan), nil
+	listers.ResourceIndexer[*v1beta1.ServicePlan]
 }

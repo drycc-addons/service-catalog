@@ -22,9 +22,10 @@ import (
 	"github.com/drycc-addons/service-catalog/pkg/webhookutil"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 
+	"net/http"
+
 	sc "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	scv "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/validation"
-	"net/http"
 )
 
 // StaticCreate runs basic ServiceBroker validation for a Create operation.
@@ -33,7 +34,7 @@ type StaticCreate struct {
 
 // StaticUpdate runs basic ServiceBroker validation for an Update operation.
 type StaticUpdate struct {
-	decoder *admission.Decoder
+	decoder admission.Decoder
 }
 
 // Validate validate ServiceBinding instance
@@ -59,7 +60,7 @@ func (v *StaticUpdate) Validate(ctx context.Context, req admission.Request, serv
 }
 
 // InjectDecoder injects the decoder
-func (v *StaticUpdate) InjectDecoder(d *admission.Decoder) error {
+func (v *StaticUpdate) InjectDecoder(d admission.Decoder) error {
 	v.decoder = d
 	return nil
 }

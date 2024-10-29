@@ -14,6 +14,6 @@
 
 # Upgrade binary versions in a controlled fashion
 # along with the script contents (config, flags...)
-readonly STABLE_KUBERNETES_VERSION=v1.29.2
-readonly STABLE_KIND_VERSION=v0.22.0
-readonly STABLE_HELM_VERSION=v3.14.3
+readonly STABLE_KUBERNETES_VERSION=v1.31.0
+readonly STABLE_KIND_VERSION=v0.24.0
+readonly STABLE_HELM_VERSION=v3.16.2

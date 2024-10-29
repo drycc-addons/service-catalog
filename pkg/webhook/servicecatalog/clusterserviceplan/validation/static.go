@@ -34,7 +34,7 @@ type StaticCreate struct {
 
 // StaticUpdate performs basic ClusterServicePlan validation for an Update operation.
 type StaticUpdate struct {
-	decoder *admission.Decoder
+	decoder admission.Decoder
 }
 
 // Validate validates ClusterServicePlan instance
@@ -60,7 +60,7 @@ func (v *StaticUpdate) Validate(ctx context.Context, req admission.Request, clus
 }
 
 // InjectDecoder injects the decoder
-func (v *StaticUpdate) InjectDecoder(d *admission.Decoder) error {
+func (v *StaticUpdate) InjectDecoder(d admission.Decoder) error {
 	v.decoder = d
 	return nil
 }

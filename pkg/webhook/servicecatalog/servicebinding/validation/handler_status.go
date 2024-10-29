@@ -30,7 +30,7 @@ import (
 
 // StatusValidationHandler provides status resource validation
 type StatusValidationHandler struct {
-	decoder *admission.Decoder
+	decoder admission.Decoder
 }
 
 // Handle handles admission requests.
@@ -66,7 +66,7 @@ func (h *StatusValidationHandler) Handle(ctx context.Context, req admission.Requ
 }
 
 // InjectDecoder injects the decoder into the handlers
-func (h *StatusValidationHandler) InjectDecoder(d *admission.Decoder) error {
+func (h *StatusValidationHandler) InjectDecoder(d admission.Decoder) error {
 	h.decoder = d
 	return nil
 }

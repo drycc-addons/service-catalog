@@ -17,7 +17,7 @@ limitations under the License.
 package servicecatalog_test
 
 import (
-	"fmt"
+	"errors"
 
 	"github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	"github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset/fake"
@@ -100,7 +100,7 @@ var _ = Describe("Secret", func() {
 			badClient := k8sfake.NewSimpleClientset()
 			errorMessage := "resource not found"
 			badClient.PrependReactor("get", "secrets", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk.K8sClient = badClient
 

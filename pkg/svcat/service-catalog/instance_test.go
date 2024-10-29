@@ -18,7 +18,6 @@ package servicecatalog_test
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 	"time"
 
@@ -99,7 +98,7 @@ var _ = Describe("Instances", func() {
 			badClient := fake.NewSimpleClientset()
 			errorMessage := "error retrieving list"
 			badClient.PrependReactor("list", "serviceinstances", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk.ServiceCatalogClient = badClient
 
@@ -160,7 +159,7 @@ var _ = Describe("Instances", func() {
 			badClient := &fake.Clientset{}
 			errorMessage := "no instance found"
 			badClient.PrependReactor("get", "serviceinstances", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk.ServiceCatalogClient = badClient
 			instance, err := sdk.RetrieveInstanceByBinding(sb)
@@ -215,7 +214,7 @@ var _ = Describe("Instances", func() {
 				Spec: v1beta1.ClusterServicePlanSpec{},
 			}
 			badClient.PrependReactor("list", "serviceinstances", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk.ServiceCatalogClient = badClient
 
@@ -384,10 +383,10 @@ var _ = Describe("Instances", func() {
 			badClient := fake.NewSimpleClientset()
 			errorMessage := "error retrieving thing"
 			badClient.PrependReactor("get", "clusterserviceclasses", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			badClient.PrependReactor("get", "clusterserviceplans", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk.ServiceCatalogClient = badClient
 
@@ -477,10 +476,10 @@ var _ = Describe("Instances", func() {
 			badClient := fake.NewSimpleClientset()
 			errorMessage := "error retrieving thing"
 			badClient.PrependReactor("get", "clusterserviceclasses", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			badClient.PrependReactor("get", "clusterserviceplans", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk.ServiceCatalogClient = badClient
 
@@ -555,7 +554,7 @@ var _ = Describe("Instances", func() {
 			secrets["password"] = "abc123"
 			badClient := fake.NewSimpleClientset()
 			badClient.PrependReactor("create", "serviceinstances", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk.ServiceCatalogClient = badClient
 			opts := &ProvisionOptions{
@@ -584,7 +583,7 @@ var _ = Describe("Instances", func() {
 		errorMessage := "instance not found"
 		badClient := fake.NewSimpleClientset()
 		badClient.PrependReactor("delete", "serviceinstances", func(action testing.Action) (bool, runtime.Object, error) {
-			return true, nil, fmt.Errorf(errorMessage)
+			return true, nil, errors.New(errorMessage)
 		})
 		sdk.ServiceCatalogClient = badClient
 
@@ -701,7 +700,7 @@ var _ = Describe("Instances", func() {
 		It("Calls the v1beta1 get instance method with the passed in service instance name until the instance no longer exists", func() {
 			waitClient.PrependReactor("get", "serviceinstances", func(action testing.Action) (bool, runtime.Object, error) {
 				if counter > 5 {
-					return true, nil, apierrors.NewNotFound(v1beta1.Resource("serviceinstance"), "instance not found")
+					return true, nil, apierrors.NewNotFound(v1beta1.Resource("serviceinstances"), "instance not found")
 				}
 				return false, nil, nil
 			})
@@ -767,7 +766,7 @@ var _ = Describe("Instances", func() {
 			errorMessage := "instance not found"
 			badClient := fake.NewSimpleClientset()
 			badClient.PrependReactor("get", "serviceinstances", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk.ServiceCatalogClient = badClient
 

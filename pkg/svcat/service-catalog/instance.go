@@ -254,6 +254,7 @@ func (sdk *SDK) WaitForInstanceToNotExist(ns, name string, interval time.Duratio
 			if err != nil {
 				if apierrors.IsNotFound(err) {
 					err = nil
+					instance = nil
 				}
 				return true, err
 			}

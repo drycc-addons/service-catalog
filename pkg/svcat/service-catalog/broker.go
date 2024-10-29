@@ -31,7 +31,7 @@ import (
 
 // MultipleBrokersFoundError is the error returned when we find a clusterservicebroker
 // and a servicebroker with the same name
-const MultipleBrokersFoundError = "More than one broker found"
+const MultipleBrokersFoundError = "more than one broker found"
 
 // Broker provides a unifying layer of cluster and namespace scoped broker resources.
 type Broker interface {
@@ -137,7 +137,6 @@ func (sdk *SDK) RetrieveBrokerByID(kubeName string, opts ScopeOptions) (Broker, 
 			}
 		}
 	}
-
 	switch {
 	case csb != nil && sb != nil:
 		return nil, fmt.Errorf(MultipleBrokersFoundError+" for '%s'", kubeName)
@@ -180,7 +179,7 @@ func (sdk *SDK) Register(brokerName string, url string, opts *RegisterOptions, s
 	if opts.CAFile != "" {
 		caBytes, err = os.ReadFile(opts.CAFile)
 		if err != nil {
-			return nil, fmt.Errorf("Error opening CA file: %v", err.Error())
+			return nil, fmt.Errorf("error opening CA file: %v", err.Error())
 		}
 
 	}

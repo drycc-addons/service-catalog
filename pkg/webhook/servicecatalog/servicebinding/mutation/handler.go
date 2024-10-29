@@ -32,7 +32,7 @@ import (
 
 // CreateUpdateHandler handles ServiceBinding
 type CreateUpdateHandler struct {
-	decoder *admission.Decoder
+	decoder admission.Decoder
 	UUID    webhookutil.UUIDGenerator
 }
 
@@ -81,7 +81,7 @@ func (h *CreateUpdateHandler) Handle(ctx context.Context, req admission.Request)
 }
 
 // InjectDecoder injects the decoder
-func (h *CreateUpdateHandler) InjectDecoder(d *admission.Decoder) error {
+func (h *CreateUpdateHandler) InjectDecoder(d admission.Decoder) error {
 	h.decoder = d
 	return nil
 }

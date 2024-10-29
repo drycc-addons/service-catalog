@@ -20,8 +20,8 @@ package v1beta1
 
 import (
 	v1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/client-go/listers"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -38,25 +38,17 @@ type ServiceBrokerLister interface {
 
 // serviceBrokerLister implements the ServiceBrokerLister interface.
 type serviceBrokerLister struct {
-	indexer cache.Indexer
+	listers.ResourceIndexer[*v1beta1.ServiceBroker]
 }
 
 // NewServiceBrokerLister returns a new ServiceBrokerLister.
 func NewServiceBrokerLister(indexer cache.Indexer) ServiceBrokerLister {
-	return &serviceBrokerLister{indexer: indexer}
-}
-
-// List lists all ServiceBrokers in the indexer.
-func (s *serviceBrokerLister) List(selector labels.Selector) (ret []*v1beta1.ServiceBroker, err error) {
-	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1beta1.ServiceBroker))
-	})
-	return ret, err
+	return &serviceBrokerLister{listers.New[*v1beta1.ServiceBroker](indexer, v1beta1.Resource("servicebroker"))}
 }
 
 // ServiceBrokers returns an object that can list and get ServiceBrokers.
 func (s *serviceBrokerLister) ServiceBrokers(namespace string) ServiceBrokerNamespaceLister {
-	return serviceBrokerNamespaceLister{indexer: s.indexer, namespace: namespace}
+	return serviceBrokerNamespaceLister{listers.NewNamespaced[*v1beta1.ServiceBroker](s.ResourceIndexer, namespace)}
 }
 
 // ServiceBrokerNamespaceLister helps list and get ServiceBrokers.
@@ -74,26 +66,5 @@ type ServiceBrokerNamespaceLister interface {
 // serviceBrokerNamespaceLister implements the ServiceBrokerNamespaceLister
 // interface.
 type serviceBrokerNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all ServiceBrokers in the indexer for a given namespace.
-func (s serviceBrokerNamespaceLister) List(selector labels.Selector) (ret []*v1beta1.ServiceBroker, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1beta1.ServiceBroker))
-	})
-	return ret, err
-}
-
-// Get retrieves the ServiceBroker from the indexer for a given namespace and name.
-func (s serviceBrokerNamespaceLister) Get(name string) (*v1beta1.ServiceBroker, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, errors.NewNotFound(v1beta1.Resource("servicebroker"), name)
-	}
-	return obj.(*v1beta1.ServiceBroker), nil
+	listers.ResourceIndexer[*v1beta1.ServiceBroker]
 }

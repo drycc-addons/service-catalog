@@ -18,11 +18,9 @@ package servicecatalog_test
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	apisservicecatalog "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	"github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset/fake"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -123,7 +121,7 @@ var _ = Describe("Broker", func() {
 			}
 			badClient := &fake.Clientset{}
 			badClient.AddReactor("delete", "clusterservicebrokers", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk.ServiceCatalogClient = badClient
 
@@ -141,7 +139,7 @@ var _ = Describe("Broker", func() {
 			}
 			badClient := &fake.Clientset{}
 			badClient.AddReactor("delete", "servicebrokers", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk.ServiceCatalogClient = badClient
 
@@ -204,7 +202,7 @@ var _ = Describe("Broker", func() {
 			badClient := &fake.Clientset{}
 			errorMessage := "error retrieving list"
 			badClient.AddReactor("list", "clusterservicebrokers", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk.ServiceCatalogClient = badClient
 			_, err := sdk.RetrieveBrokers(ScopeOptions{Scope: AllScope})
@@ -219,7 +217,7 @@ var _ = Describe("Broker", func() {
 			badClient := &fake.Clientset{}
 			errorMessage := "error retrieving list"
 			badClient.AddReactor("list", "servicebrokers", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk.ServiceCatalogClient = badClient
 			_, err := sdk.RetrieveBrokers(ScopeOptions{Scope: AllScope})
@@ -240,7 +238,7 @@ var _ = Describe("Broker", func() {
 				return true, csb, nil
 			})
 			realClient.AddReactor("get", "servicebrokers", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, nil
+				return true, nil, apierrors.NewNotFound(v1beta1.Resource("servicebrokers"), brokerName)
 			})
 			sdk = &SDK{
 				ServiceCatalogClient: realClient,
@@ -300,7 +298,7 @@ var _ = Describe("Broker", func() {
 			errorMsg := "banana error"
 			realClient := &fake.Clientset{}
 			realClient.AddReactor("get", "clusterservicebrokers", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMsg)
+				return true, nil, errors.New(errorMsg)
 			})
 			sdk = &SDK{
 				ServiceCatalogClient: realClient,
@@ -370,10 +368,10 @@ var _ = Describe("Broker", func() {
 			brokerName := csb.Name
 			realClient := &fake.Clientset{}
 			realClient.AddReactor("get", "clusterservicebrokers", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, &v1beta1.ClusterServiceBroker{}, apierrors.NewNotFound(apisservicecatalog.Resource("clusterservicebroker"), brokerName)
+				return true, &v1beta1.ClusterServiceBroker{}, apierrors.NewNotFound(v1beta1.Resource("clusterservicebroker"), brokerName)
 			})
 			realClient.AddReactor("get", "servicebrokers", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, &v1beta1.ServiceBroker{}, apierrors.NewNotFound(apisservicecatalog.Resource("servicebroker"), brokerName)
+				return true, &v1beta1.ServiceBroker{}, apierrors.NewNotFound(v1beta1.Resource("servicebroker"), brokerName)
 			})
 			sdk = &SDK{
 				ServiceCatalogClient: realClient,
@@ -500,7 +498,7 @@ var _ = Describe("Broker", func() {
 			url := "http://potato.com"
 			badClient := &fake.Clientset{}
 			badClient.AddReactor("create", "servicebrokers", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk.ServiceCatalogClient = badClient
 			scopeOpts := &ScopeOptions{
@@ -622,7 +620,7 @@ var _ = Describe("Broker", func() {
 			url := "http://potato.com"
 			badClient := &fake.Clientset{}
 			badClient.AddReactor("create", "clusterservicebrokers", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk.ServiceCatalogClient = badClient
 			scopeOpts := &ScopeOptions{
@@ -697,6 +695,9 @@ var _ = Describe("Broker", func() {
 				}
 				return false, nil, nil
 			})
+			waitClient.PrependReactor("get", "servicebrokers", func(action testing.Action) (bool, runtime.Object, error) {
+				return true, nil, apierrors.NewNotFound(v1beta1.Resource("servicebrokers"), csb.Name)
+			})
 			opts := &ScopeOptions{
 				Namespace: "default",
 				Scope:     AllScope,
@@ -713,7 +714,7 @@ var _ = Describe("Broker", func() {
 		})
 		It("waits until a namespaced broker is ready to return", func() {
 			waitClient.PrependReactor("get", "clusterservicebrokers", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, nil
+				return true, nil, apierrors.NewNotFound(v1beta1.Resource("clusterservicebrokers"), sb.Name)
 			})
 			waitClient.PrependReactor("get", "servicebrokers", func(action testing.Action) (bool, runtime.Object, error) {
 				counter++

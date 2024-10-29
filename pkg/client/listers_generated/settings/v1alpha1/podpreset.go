@@ -20,8 +20,8 @@ package v1alpha1
 
 import (
 	v1alpha1 "github.com/drycc-addons/service-catalog/pkg/apis/settings/v1alpha1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/client-go/listers"
 	"k8s.io/client-go/tools/cache"
 )
 
@@ -38,25 +38,17 @@ type PodPresetLister interface {
 
 // podPresetLister implements the PodPresetLister interface.
 type podPresetLister struct {
-	indexer cache.Indexer
+	listers.ResourceIndexer[*v1alpha1.PodPreset]
 }
 
 // NewPodPresetLister returns a new PodPresetLister.
 func NewPodPresetLister(indexer cache.Indexer) PodPresetLister {
-	return &podPresetLister{indexer: indexer}
-}
-
-// List lists all PodPresets in the indexer.
-func (s *podPresetLister) List(selector labels.Selector) (ret []*v1alpha1.PodPreset, err error) {
-	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.PodPreset))
-	})
-	return ret, err
+	return &podPresetLister{listers.New[*v1alpha1.PodPreset](indexer, v1alpha1.Resource("podpreset"))}
 }
 
 // PodPresets returns an object that can list and get PodPresets.
 func (s *podPresetLister) PodPresets(namespace string) PodPresetNamespaceLister {
-	return podPresetNamespaceLister{indexer: s.indexer, namespace: namespace}
+	return podPresetNamespaceLister{listers.NewNamespaced[*v1alpha1.PodPreset](s.ResourceIndexer, namespace)}
 }
 
 // PodPresetNamespaceLister helps list and get PodPresets.
@@ -74,26 +66,5 @@ type PodPresetNamespaceLister interface {
 // podPresetNamespaceLister implements the PodPresetNamespaceLister
 // interface.
 type podPresetNamespaceLister struct {
-	indexer   cache.Indexer
-	namespace string
-}
-
-// List lists all PodPresets in the indexer for a given namespace.
-func (s podPresetNamespaceLister) List(selector labels.Selector) (ret []*v1alpha1.PodPreset, err error) {
-	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1alpha1.PodPreset))
-	})
-	return ret, err
-}
-
-// Get retrieves the PodPreset from the indexer for a given namespace and name.
-func (s podPresetNamespaceLister) Get(name string) (*v1alpha1.PodPreset, error) {
-	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
-	if err != nil {
-		return nil, err
-	}
-	if !exists {
-		return nil, errors.NewNotFound(v1alpha1.Resource("podpreset"), name)
-	}
-	return obj.(*v1alpha1.PodPreset), nil
+	listers.ResourceIndexer[*v1alpha1.PodPreset]
 }

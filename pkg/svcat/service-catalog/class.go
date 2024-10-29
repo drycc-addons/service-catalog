@@ -32,7 +32,7 @@ import (
 const (
 	// MultipleClassesFoundError is the error returned when we find a clusterserviceclass
 	// and a serviceclass with the same name
-	MultipleClassesFoundError = "More than one class found"
+	MultipleClassesFoundError = "more than one class found"
 )
 
 // CreateClassFromOptions allows to specify how a new class will be created

@@ -17,6 +17,7 @@ limitations under the License.
 package servicecatalog_test
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
@@ -85,7 +86,7 @@ var _ = Describe("Binding", func() {
 			badClient := &fake.Clientset{}
 			errorMessage := "error retrieving list"
 			badClient.AddReactor("list", "servicebindings", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk.ServiceCatalogClient = badClient
 
@@ -120,7 +121,7 @@ var _ = Describe("Binding", func() {
 			badClient := &fake.Clientset{}
 			errorMessage := "error retrieving list"
 			badClient.AddReactor("list", "servicebindings", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk.ServiceCatalogClient = badClient
 
@@ -157,7 +158,7 @@ var _ = Describe("Binding", func() {
 			badClient := &fake.Clientset{}
 			errorMessage := "error retrieving list"
 			badClient.AddReactor("create", "servicebindings", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk.ServiceCatalogClient = badClient
 
@@ -207,7 +208,7 @@ var _ = Describe("Binding", func() {
 				return true, &v1beta1.ServiceBindingList{Items: []v1beta1.ServiceBinding{*sb}}, nil
 			})
 			badClient.AddReactor("delete", "servicebindings", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk = &SDK{
 				ServiceCatalogClient: badClient,
@@ -260,7 +261,7 @@ var _ = Describe("Binding", func() {
 				}
 				switch da.GetName() {
 				case sb2.Name:
-					return true, nil, fmt.Errorf(errorMessage)
+					return true, nil, errors.New(errorMessage)
 				default:
 					return true, sb, nil
 				}
@@ -376,7 +377,7 @@ var _ = Describe("Binding", func() {
 			badClient := &fake.Clientset{}
 			errorMessage := "error updating bindings"
 			badClient.AddReactor("update", "servicebindings", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk.ServiceCatalogClient = badClient
 
@@ -415,7 +416,7 @@ var _ = Describe("Binding", func() {
 			client := fake.NewSimpleClientset(sb, sb2, si)
 			errorMessage := "error updating bindings"
 			client.PrependReactor("update", "servicebindings", func(action testing.Action) (bool, runtime.Object, error) {
-				return true, nil, fmt.Errorf(errorMessage)
+				return true, nil, errors.New(errorMessage)
 			})
 			sdk.ServiceCatalogClient = client
 
