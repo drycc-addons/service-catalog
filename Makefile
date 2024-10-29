@@ -56,7 +56,7 @@ STAT           = stat -c '%Y %n'
 endif
 
 TYPES_FILES    = $(shell find pkg/apis -name types.go)
-GO_VERSION    ?= 1.22
+GO_VERSION    ?= 1.23
 
 # Preserve also user values
 ALL_ARCH=amd64 arm arm64 ppc64le s390x
