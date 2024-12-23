@@ -16,11 +16,14 @@ steps:
   - make test
   environment:
     KIND_EXPERIMENTAL_PROVIDER: podman
-  secrets:
-  - codename
-  - codecov_token
-  - dev_registry
-  - drycc_registry
+    CODENAME:
+      from_secret: codename
+    DEV_REGISTRY:
+      from_secret: dev_registry
+    DRYCC_REGISTRY:
+      from_secret: drycc_registry
+    CODECOV_TOKEN:
+      from_secret: codecov_token
   when:
     event:
     - push

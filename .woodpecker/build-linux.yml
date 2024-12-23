@@ -17,12 +17,16 @@ steps:
   - make service-catalog-push
   environment:
     KIND_EXPERIMENTAL_PROVIDER: podman
-  secrets:
-  - codename
-  - dev_registry
-  - drycc_registry
-  - container_username
-  - container_password
+    CODENAME:
+      from_secret: codename
+    DEV_REGISTRY:
+      from_secret: dev_registry
+    DRYCC_REGISTRY:
+      from_secret: drycc_registry
+    CONTAINER_USERNAME:
+      from_secret: container_username
+    CONTAINER_PASSWORD:
+      from_secret: container_password
   when:
     event:
     - push

@@ -8,8 +8,9 @@ steps:
   commands:
   - sed -i "s/{{project}}/$${CI_REPO_NAME}/g" .woodpecker/manifest.tmpl
   - sed -i "s/registry.drycc.cc/$${DRYCC_REGISTRY}/g" .woodpecker/manifest.tmpl
-  secrets:
-  - drycc_registry
+  environment:
+    DRYCC_REGISTRY:
+      from_secret: drycc_registry
   when:
     event:
     - tag
@@ -26,9 +27,11 @@ steps:
     -v $(pwd):$(pwd)
     -w $(pwd)
     docker.io/plugins/manifest
-  secrets:
-  - container_username
-  - container_password
+  environment:
+    CONTAINER_USERNAME:
+      from_secret: container_username
+    CONTAINER_PASSWORD:
+      from_secret: container_password
   when:
     event:
     - tag
