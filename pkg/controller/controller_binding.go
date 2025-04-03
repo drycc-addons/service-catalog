@@ -19,6 +19,7 @@ package controller
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"net"
 	"reflect"
@@ -74,14 +75,14 @@ func (c *controller) bindingAdd(obj interface{}) {
 	key, err := cache.DeletionHandlingMetaNamespaceKeyFunc(obj)
 	if err != nil {
 		pcb := pretty.NewContextBuilder(pretty.ServiceBinding, "", "", "")
-		klog.Errorf(pcb.Messagef("Couldn't get key for object %+v: %v", obj, err))
+		klog.Error(pcb.Messagef("Couldn't get key for object %+v: %v", obj, err))
 		return
 	}
 	pcb := pretty.NewContextBuilder(pretty.ServiceBinding, "", key, "")
 
 	acc, err := meta.Accessor(obj)
 	if err != nil {
-		klog.Errorf(pcb.Messagef("error creating meta accessor: %v", err))
+		klog.Error(pcb.Messagef("error creating meta accessor: %v", err))
 		return
 	}
 
@@ -180,7 +181,7 @@ func (c *controller) reconcileServiceBinding(binding *v1beta1.ServiceBinding) er
 	case reconcilePoll:
 		return c.pollServiceBinding(binding)
 	default:
-		return fmt.Errorf(pcb.Messagef("Unknown reconciliation action %v", reconciliationAction))
+		return errors.New(pcb.Messagef("Unknown reconciliation action %v", reconciliationAction))
 	}
 }
 
@@ -192,7 +193,7 @@ func (c *controller) reconcileServiceBindingAdd(binding *v1beta1.ServiceBinding)
 	if !c.isServiceBindingStatusInitialized(binding) {
 		klog.V(4).Info(pcb.Message("Initialize Status entry"))
 		if err := c.initializeServiceBindingStatus(binding); err != nil {
-			klog.Errorf(pcb.Messagef("Error initializing status: %v", err))
+			klog.Error(pcb.Messagef("Error initializing status: %v", err))
 			return err
 		}
 		return nil
@@ -300,7 +301,7 @@ func (c *controller) reconcileServiceBindingAdd(binding *v1beta1.ServiceBinding)
 	}
 
 	if binding.Status.CurrentOperation == "" {
-		binding, err = c.recordStartOfServiceBindingOperation(binding, v1beta1.ServiceBindingOperationBind, inProgressProperties)
+		_, err = c.recordStartOfServiceBindingOperation(binding, v1beta1.ServiceBindingOperationBind, inProgressProperties)
 		if err != nil {
 			// There has been an update to the binding. Start reconciliation
 			// over with a fresh view of the binding.
@@ -409,7 +410,7 @@ func (c *controller) reconcileServiceBindingDelete(binding *v1beta1.ServiceBindi
 		}
 	} else {
 		if binding.Status.CurrentOperation != v1beta1.ServiceBindingOperationUnbind {
-			binding, err = c.recordStartOfServiceBindingOperation(binding, v1beta1.ServiceBindingOperationUnbind, nil)
+			_, err = c.recordStartOfServiceBindingOperation(binding, v1beta1.ServiceBindingOperationUnbind, nil)
 			if err != nil {
 				// There has been an update to the binding. Start reconciliation
 				// over with a fresh view of the binding.
@@ -542,14 +543,14 @@ func (c *controller) injectServiceBinding(binding *v1beta1.ServiceBinding, crede
 	))
 
 	if err := c.transformCredentials(binding.Spec.SecretTransforms, credentials); err != nil {
-		return fmt.Errorf(`Unexpected error while transforming credentials for ServiceBinding "%s/%s": %v`, binding.Namespace, binding.Name, err)
+		return fmt.Errorf(`unexpected error while transforming credentials for ServiceBinding "%s/%s": %v`, binding.Namespace, binding.Name, err)
 	}
 
 	secretData := make(map[string][]byte)
 	for k, v := range credentials {
 		var err error
 		if secretData[k], err = serialize(v); err != nil {
-			return fmt.Errorf("Unable to serialize value for credential key %q (value is intentionally not logged): %s", k, err)
+			return fmt.Errorf("unable to serialize value for credential key %q (value is intentionally not logged): %s", k, err)
 		}
 	}
 
@@ -560,20 +561,20 @@ func (c *controller) injectServiceBinding(binding *v1beta1.ServiceBinding, crede
 		// Update existing secret
 		if !metav1.IsControlledBy(existingSecret, binding) {
 			controllerRef := metav1.GetControllerOf(existingSecret)
-			return fmt.Errorf(`Secret "%s/%s" is not owned by ServiceBinding, controllerRef: %v`, binding.Namespace, existingSecret.Name, controllerRef)
+			return fmt.Errorf(`secret "%s/%s" is not owned by ServiceBinding, controllerRef: %v`, binding.Namespace, existingSecret.Name, controllerRef)
 		}
 		existingSecret.Data = secretData
 		if _, err = secretClient.Update(context.Background(), existingSecret, metav1.UpdateOptions{}); err != nil {
 			if apierrors.IsConflict(err) {
 				// Conflicting update detected, try again later
-				return fmt.Errorf(`Conflicting Secret "%s/%s" update detected`, binding.Namespace, existingSecret.Name)
+				return fmt.Errorf(`conflicting Secret "%s/%s" update detected`, binding.Namespace, existingSecret.Name)
 			}
-			return fmt.Errorf(`Unexpected error updating Secret "%s/%s": %v`, binding.Namespace, existingSecret.Name, err)
+			return fmt.Errorf(`unexpected error updating Secret "%s/%s": %v`, binding.Namespace, existingSecret.Name, err)
 		}
 	} else {
 		if !apierrors.IsNotFound(err) {
 			// Terminal error
-			return fmt.Errorf(`Unexpected error getting Secret "%s/%s": %v`, binding.Namespace, existingSecret.Name, err)
+			return fmt.Errorf(`unexpected error getting Secret "%s/%s": %v`, binding.Namespace, existingSecret.Name, err)
 		}
 		err = nil
 		// Create new secret
@@ -592,10 +593,10 @@ func (c *controller) injectServiceBinding(binding *v1beta1.ServiceBinding, crede
 			if apierrors.IsAlreadyExists(err) {
 				// Concurrent controller has created secret under the same name,
 				// Update the secret at the next retry iteration
-				return fmt.Errorf(`Conflicting Secret "%s/%s" creation detected`, binding.Namespace, secret.Name)
+				return fmt.Errorf(`conflicting Secret "%s/%s" creation detected`, binding.Namespace, secret.Name)
 			}
 			// Terminal error
-			return fmt.Errorf(`Unexpected error creating Secret "%s/%s": %v`, binding.Namespace, secret.Name, err)
+			return fmt.Errorf(`unexpected error creating Secret "%s/%s": %v`, binding.Namespace, secret.Name, err)
 		}
 	}
 
@@ -747,7 +748,7 @@ func (c *controller) updateServiceBindingStatus(toUpdate *v1beta1.ServiceBinding
 	klog.V(4).Info(pcb.Message("Updating status"))
 	updatedBinding, err := c.serviceCatalogClient.ServiceBindings(toUpdate.Namespace).UpdateStatus(context.Background(), toUpdate, metav1.UpdateOptions{})
 	if err != nil {
-		klog.Errorf(pcb.Messagef("Error updating status: %v", err))
+		klog.Error(pcb.Messagef("Error updating status: %v", err))
 	} else {
 		klog.V(6).Info(pcb.Messagef(`Updated status of resourceVersion: %v; got resourceVersion: %v`,
 			toUpdate.ResourceVersion, updatedBinding.ResourceVersion),
@@ -776,7 +777,7 @@ func (c *controller) updateServiceBindingCondition(
 	))
 	_, err := c.serviceCatalogClient.ServiceBindings(binding.Namespace).UpdateStatus(context.Background(), toUpdate, metav1.UpdateOptions{})
 	if err != nil {
-		klog.Errorf(pcb.Messagef(
+		klog.Error(pcb.Messagef(
 			"Error updating %v condition to %v: %v",
 			conditionType, status, err,
 		))
@@ -885,8 +886,8 @@ func (c *controller) requeueServiceBindingForPoll(key string) error {
 func (c *controller) beginPollingServiceBinding(binding *v1beta1.ServiceBinding) error {
 	key, err := cache.DeletionHandlingMetaNamespaceKeyFunc(binding)
 	if err != nil {
-		klog.Errorf("Couldn't create a key for object %+v: %v", binding, err)
-		return fmt.Errorf("Couldn't create a key for object %+v: %v", binding, err)
+		klog.Errorf("couldn't create a key for object %+v: %v", binding, err)
+		return fmt.Errorf("couldn't create a key for object %+v: %v", binding, err)
 	}
 
 	c.bindingPollingQueue.AddRateLimited(key)
@@ -905,8 +906,8 @@ func (c *controller) continuePollingServiceBinding(binding *v1beta1.ServiceBindi
 func (c *controller) finishPollingServiceBinding(binding *v1beta1.ServiceBinding) error {
 	key, err := cache.DeletionHandlingMetaNamespaceKeyFunc(binding)
 	if err != nil {
-		klog.Errorf("Couldn't create a key for object %+v: %v", binding, err)
-		return fmt.Errorf("Couldn't create a key for object %+v: %v", binding, err)
+		klog.Errorf("couldn't create a key for object %+v: %v", binding, err)
+		return fmt.Errorf("couldn't create a key for object %+v: %v", binding, err)
 	}
 
 	c.bindingPollingQueue.Forget(key)
@@ -916,7 +917,7 @@ func (c *controller) finishPollingServiceBinding(binding *v1beta1.ServiceBinding
 
 func (c *controller) pollServiceBinding(binding *v1beta1.ServiceBinding) error {
 	pcb := pretty.NewBindingContextBuilder(binding)
-	klog.V(4).Infof(pcb.Message("Processing"))
+	klog.V(4).Info(pcb.Message("Processing"))
 
 	binding = binding.DeepCopy()
 
@@ -1089,7 +1090,7 @@ func (c *controller) pollServiceBinding(binding *v1beta1.ServiceBinding) error {
 		}
 
 		c.finishPollingServiceBinding(binding)
-		return fmt.Errorf(readyCond.Message)
+		return errors.New(readyCond.Message)
 	default:
 		klog.Warning(pcb.Messagef("Got invalid state in LastOperationResponse: %q", response.State))
 
@@ -1194,7 +1195,7 @@ func (c *controller) prepareBindRequest(
 			}
 		}
 
-		servicePlan, err := c.getClusterServicePlanForServiceBinding(instance, binding, serviceClass)
+		servicePlan, err := c.getClusterServicePlanForServiceBinding(instance, binding)
 		if err != nil {
 			return nil, nil, &operationError{
 				reason:  errorNonexistentClusterServicePlanReason,
@@ -1216,7 +1217,7 @@ func (c *controller) prepareBindRequest(
 			}
 		}
 
-		servicePlan, err := c.getServicePlanForServiceBinding(instance, binding, serviceClass)
+		servicePlan, err := c.getServicePlanForServiceBinding(instance, binding)
 		if err != nil {
 			return nil, nil, &operationError{
 				reason:  errorNonexistentServicePlanReason,
@@ -1383,7 +1384,7 @@ func (c *controller) prepareServiceBindingLastOperationRequest(
 		if err != nil {
 			return nil, c.handleServiceBindingReconciliationError(binding, err)
 		}
-		servicePlan, err := c.getClusterServicePlanForServiceBinding(instance, binding, serviceClass)
+		servicePlan, err := c.getClusterServicePlanForServiceBinding(instance, binding)
 		if err != nil {
 			return nil, c.handleServiceBindingReconciliationError(binding, err)
 		}
@@ -1397,7 +1398,7 @@ func (c *controller) prepareServiceBindingLastOperationRequest(
 		if err != nil {
 			return nil, c.handleServiceBindingReconciliationError(binding, err)
 		}
-		servicePlan, err := c.getServicePlanForServiceBinding(instance, binding, serviceClass)
+		servicePlan, err := c.getServicePlanForServiceBinding(instance, binding)
 		if err != nil {
 			return nil, c.handleServiceBindingReconciliationError(binding, err)
 		}
@@ -1440,7 +1441,7 @@ func (c *controller) processServiceBindingOperationError(binding *v1beta1.Servic
 		return err
 	}
 
-	return fmt.Errorf(readyCond.Message)
+	return errors.New(readyCond.Message)
 }
 
 // processBindSuccess handles the logging and updating of a ServiceBinding that

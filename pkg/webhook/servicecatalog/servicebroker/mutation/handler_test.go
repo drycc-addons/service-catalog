@@ -18,6 +18,7 @@ package mutation_test
 
 import (
 	"context"
+	"encoding/json"
 	"testing"
 
 	sc "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
@@ -175,7 +176,7 @@ func TestCreateUpdateHandlerHandleUpdateSuccess(t *testing.T) {
 				{
 					Operation: "replace",
 					Path:      "/spec/relistRequests",
-					Value:     float64(1),
+					Value:     json.Number("1"),
 				},
 			},
 		},

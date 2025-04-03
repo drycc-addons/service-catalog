@@ -84,18 +84,18 @@ func internalValidateClusterServiceClass(clusterserviceclass *sc.ClusterServiceC
 			validateCommonServiceClassName,
 			field.NewPath("metadata"))...)
 
-	allErrs = append(allErrs, validateClusterServiceClassSpec(&clusterserviceclass.Spec, field.NewPath("spec"), true)...)
+	allErrs = append(allErrs, validateClusterServiceClassSpec(&clusterserviceclass.Spec, field.NewPath("spec"))...)
 	return allErrs
 }
 
-func validateClusterServiceClassSpec(spec *sc.ClusterServiceClassSpec, fldPath *field.Path, create bool) field.ErrorList {
+func validateClusterServiceClassSpec(spec *sc.ClusterServiceClassSpec, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	if "" == spec.ClusterServiceBrokerName {
+	if spec.ClusterServiceBrokerName == "" {
 		allErrs = append(allErrs, field.Required(fldPath.Child("clusterServiceBrokerName"), "clusterServiceBrokerName is required"))
 	}
 
-	commonErrs := validateCommonServiceClassSpec(&spec.CommonServiceClassSpec, fldPath, create)
+	commonErrs := validateCommonServiceClassSpec(&spec.CommonServiceClassSpec, fldPath)
 
 	if len(commonErrs) != 0 {
 		allErrs = append(allErrs, commonErrs...)
@@ -128,18 +128,18 @@ func internalValidateServiceClass(clusterserviceclass *sc.ServiceClass) field.Er
 			validateCommonServiceClassName,
 			field.NewPath("metadata"))...)
 
-	allErrs = append(allErrs, validateServiceClassSpec(&clusterserviceclass.Spec, field.NewPath("spec"), true)...)
+	allErrs = append(allErrs, validateServiceClassSpec(&clusterserviceclass.Spec, field.NewPath("spec"))...)
 	return allErrs
 }
 
-func validateServiceClassSpec(spec *sc.ServiceClassSpec, fldPath *field.Path, create bool) field.ErrorList {
+func validateServiceClassSpec(spec *sc.ServiceClassSpec, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
-	if "" == spec.ServiceBrokerName {
+	if spec.ServiceBrokerName == "" {
 		allErrs = append(allErrs, field.Required(fldPath.Child("serviceBrokerName"), "serviceBrokerName is required"))
 	}
 
-	commonErrs := validateCommonServiceClassSpec(&spec.CommonServiceClassSpec, fldPath, create)
+	commonErrs := validateCommonServiceClassSpec(&spec.CommonServiceClassSpec, fldPath)
 
 	if len(commonErrs) != 0 {
 		allErrs = append(allErrs, commonErrs...)
@@ -148,14 +148,14 @@ func validateServiceClassSpec(spec *sc.ServiceClassSpec, fldPath *field.Path, cr
 	return allErrs
 }
 
-func validateCommonServiceClassSpec(spec *sc.CommonServiceClassSpec, fldPath *field.Path, create bool) field.ErrorList {
+func validateCommonServiceClassSpec(spec *sc.CommonServiceClassSpec, fldPath *field.Path) field.ErrorList {
 	commonErrs := field.ErrorList{}
 
-	if "" == spec.ExternalID {
+	if spec.ExternalID == "" {
 		commonErrs = append(commonErrs, field.Required(fldPath.Child("externalID"), "externalID is required"))
 	}
 
-	if "" == spec.Description {
+	if spec.Description == "" {
 		commonErrs = append(commonErrs, field.Required(fldPath.Child("description"), "description is required"))
 	}
 

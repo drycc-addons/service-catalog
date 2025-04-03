@@ -1,5 +1,5 @@
 /*
-Copyright 2024 The Kubernetes Authors.
+Copyright 2025 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ limitations under the License.
 package internalversion
 
 import (
-	"net/http"
+	http "net/http"
 
-	"github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/internalclientset/scheme"
+	scheme "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/internalclientset/scheme"
 	rest "k8s.io/client-go/rest"
 )
 
@@ -92,7 +92,7 @@ func setConfigDefaults(config *rest.Config) error {
 		gv := scheme.Scheme.PrioritizedVersionsForGroup("settings.servicecatalog.k8s.io")[0]
 		config.GroupVersion = &gv
 	}
-	config.NegotiatedSerializer = scheme.Codecs
+	config.NegotiatedSerializer = rest.CodecFactoryForGeneratedClient(scheme.Scheme, scheme.Codecs)
 
 	if config.QPS == 0 {
 		config.QPS = 5

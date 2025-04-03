@@ -1,5 +1,5 @@
 /*
-Copyright 2024 The Kubernetes Authors.
+Copyright 2025 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -29,35 +29,35 @@ type FakeServicecatalogV1beta1 struct {
 }
 
 func (c *FakeServicecatalogV1beta1) ClusterServiceBrokers() v1beta1.ClusterServiceBrokerInterface {
-	return &FakeClusterServiceBrokers{c}
+	return newFakeClusterServiceBrokers(c)
 }
 
 func (c *FakeServicecatalogV1beta1) ClusterServiceClasses() v1beta1.ClusterServiceClassInterface {
-	return &FakeClusterServiceClasses{c}
+	return newFakeClusterServiceClasses(c)
 }
 
 func (c *FakeServicecatalogV1beta1) ClusterServicePlans() v1beta1.ClusterServicePlanInterface {
-	return &FakeClusterServicePlans{c}
+	return newFakeClusterServicePlans(c)
 }
 
 func (c *FakeServicecatalogV1beta1) ServiceBindings(namespace string) v1beta1.ServiceBindingInterface {
-	return &FakeServiceBindings{c, namespace}
+	return newFakeServiceBindings(c, namespace)
 }
 
 func (c *FakeServicecatalogV1beta1) ServiceBrokers(namespace string) v1beta1.ServiceBrokerInterface {
-	return &FakeServiceBrokers{c, namespace}
+	return newFakeServiceBrokers(c, namespace)
 }
 
 func (c *FakeServicecatalogV1beta1) ServiceClasses(namespace string) v1beta1.ServiceClassInterface {
-	return &FakeServiceClasses{c, namespace}
+	return newFakeServiceClasses(c, namespace)
 }
 
 func (c *FakeServicecatalogV1beta1) ServiceInstances(namespace string) v1beta1.ServiceInstanceInterface {
-	return &FakeServiceInstances{c, namespace}
+	return newFakeServiceInstances(c, namespace)
 }
 
 func (c *FakeServicecatalogV1beta1) ServicePlans(namespace string) v1beta1.ServicePlanInterface {
-	return &FakeServicePlans{c, namespace}
+	return newFakeServicePlans(c, namespace)
 }
 
 // RESTClient returns a RESTClient that is used to communicate

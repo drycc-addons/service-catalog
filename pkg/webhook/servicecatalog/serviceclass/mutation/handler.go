@@ -53,14 +53,14 @@ func (h *CreateUpdateHandler) Handle(ctx context.Context, req admission.Request)
 	mutated := cb.DeepCopy()
 	switch req.Operation {
 	case admissionTypes.Create:
-		h.mutateOnCreate(ctx, mutated)
+		h.mutateOnCreate(mutated)
 	case admissionTypes.Update:
 		oldObj := &sc.ServiceClass{}
 		if err := h.decoder.DecodeRaw(req.OldObject, oldObj); err != nil {
 			traced.Errorf("Could not decode request old object: %v", err)
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		h.mutateOnUpdate(ctx, oldObj, mutated)
+		h.mutateOnUpdate(oldObj, mutated)
 	default:
 		traced.Infof("ServiceClass mutation wehbook does not support action %q", req.Operation)
 		return admission.Allowed("action not taken")
@@ -82,11 +82,11 @@ func (h *CreateUpdateHandler) InjectDecoder(d admission.Decoder) error {
 	return nil
 }
 
-func (h *CreateUpdateHandler) mutateOnCreate(ctx context.Context, serviceClass *sc.ServiceClass) {
+func (h *CreateUpdateHandler) mutateOnCreate(serviceClass *sc.ServiceClass) {
 	serviceClass.Status = sc.ServiceClassStatus{}
 }
 
-func (h *CreateUpdateHandler) mutateOnUpdate(ctx context.Context, oldServiceClass, newServiceClass *sc.ServiceClass) {
+func (h *CreateUpdateHandler) mutateOnUpdate(oldServiceClass, newServiceClass *sc.ServiceClass) {
 	newServiceClass.Spec.ServiceBrokerName = oldServiceClass.Spec.ServiceBrokerName
 }
 

@@ -827,7 +827,7 @@ func TestReconcileClusterServiceBrokerZeroServices(t *testing.T) {
 	events := getRecordedEvents(testController)
 	expectedEvent := corev1.EventTypeNormal + " " + successFetchedCatalogReason + " " + successFetchedCatalogMessage
 	if e, a := expectedEvent, events[0]; !strings.HasPrefix(a, e) {
-		t.Fatalf("Received unexpected event, %s", expectedGot(e, a))
+		t.Fatalf("received unexpected event, %s", expectedGot(e, a))
 	}
 }
 
@@ -951,7 +951,7 @@ func testReconcileClusterServiceBrokerWithAuth(t *testing.T, authInfo *v1beta1.C
 		expectedEvent = corev1.EventTypeWarning + " " + errorAuthCredentialsReason + " " + `Error getting broker auth credentials`
 	}
 	if e, a := expectedEvent, events[0]; !strings.HasPrefix(a, e) {
-		t.Fatalf("Received unexpected event, %s", expectedGot(e, a))
+		t.Fatalf("received unexpected event, %s", expectedGot(e, a))
 	}
 }
 

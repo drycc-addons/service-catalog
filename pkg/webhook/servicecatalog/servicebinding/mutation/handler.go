@@ -86,7 +86,7 @@ func (h *CreateUpdateHandler) InjectDecoder(d admission.Decoder) error {
 	return nil
 }
 
-func (h *CreateUpdateHandler) mutateOnCreate(ctx context.Context, req admission.Request, binding *sc.ServiceBinding) {
+func (h *CreateUpdateHandler) mutateOnCreate(_ context.Context, req admission.Request, binding *sc.ServiceBinding) {
 	// This feature was copied from Service Catalog registry: https://github.com/drycc-addons/service-catalog/blob/master/pkg/registry/servicecatalog/binding/strategy.go
 	// If you want to track previous changes please check there.
 
@@ -105,7 +105,7 @@ func (h *CreateUpdateHandler) mutateOnCreate(ctx context.Context, req admission.
 	binding.Finalizers = []string{sc.FinalizerServiceCatalog}
 }
 
-func (h *CreateUpdateHandler) mutateOnUpdate(ctx context.Context, req admission.Request, oldServiceBinding, newServiceBinding *sc.ServiceBinding) {
+func (h *CreateUpdateHandler) mutateOnUpdate(_ context.Context, _ admission.Request, oldServiceBinding, newServiceBinding *sc.ServiceBinding) {
 	// TODO: We currently don't handle any changes to the spec in the
 	// reconciler. Once we do that, this check needs to be removed and
 	// proper validation of allowed changes needs to be implemented in

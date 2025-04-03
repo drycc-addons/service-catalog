@@ -18,6 +18,7 @@ package controller
 
 import (
 	"context"
+	stderrors "errors"
 	"fmt"
 	"time"
 
@@ -149,7 +150,7 @@ func (c *controller) serviceBrokerClient(broker *v1beta1.ServiceBroker) (osb.Cli
 // processed and should be resubmitted at a later time.
 func (c *controller) reconcileServiceBroker(broker *v1beta1.ServiceBroker) error {
 	pcb := pretty.NewServiceBrokerContextBuilder(broker)
-	klog.V(4).Infof(pcb.Message("Processing"))
+	klog.V(4).Info(pcb.Message("Processing"))
 
 	// * If the broker's ready condition is true and the RelistBehavior has been
 	// set to Manual, do not reconcile it.
@@ -180,12 +181,11 @@ func (c *controller) reconcileServiceBroker(broker *v1beta1.ServiceBroker) error
 			if broker.Status.OperationStartTime == nil {
 				toUpdate := broker.DeepCopy()
 				toUpdate.Status.OperationStartTime = &now
-				updated, err := c.serviceCatalogClient.ServiceBrokers(broker.Namespace).UpdateStatus(context.Background(), toUpdate, metav1.UpdateOptions{})
+				_, err = c.serviceCatalogClient.ServiceBrokers(broker.Namespace).UpdateStatus(context.Background(), toUpdate, metav1.UpdateOptions{})
 				if err != nil {
 					klog.Error(pcb.Messagef("Error updating operation start time: %v", err))
 					return err
 				}
-				broker = updated
 			} else if !time.Now().Before(broker.Status.OperationStartTime.Time.Add(c.reconciliationRetryDuration)) {
 				s := "Stopping reconciliation retries because too much time has elapsed"
 				klog.Info(pcb.Message(s))
@@ -244,11 +244,14 @@ func (c *controller) reconcileServiceBroker(broker *v1beta1.ServiceBroker) error
 		// reconcile the serviceClasses that were part of the broker's catalog
 		// payload
 		for _, payloadServiceClass := range payloadServiceClasses {
-			existingServiceClass, _ := existingServiceClassMap[payloadServiceClass.Name]
-			delete(existingServiceClassMap, payloadServiceClass.Name)
-			if existingServiceClass == nil {
-				existingServiceClass, _ = existingServiceClassMap[payloadServiceClass.Spec.ExternalID]
-				delete(existingServiceClassMap, payloadServiceClass.Spec.ExternalID)
+			existingServiceClass, exists := existingServiceClassMap[payloadServiceClass.Name]
+			if exists {
+				delete(existingServiceClassMap, payloadServiceClass.Name)
+			} else {
+				existingServiceClass, exists = existingServiceClassMap[payloadServiceClass.Spec.ExternalID]
+				if exists {
+					delete(existingServiceClassMap, payloadServiceClass.Spec.ExternalID)
+				}
 			}
 
 			klog.V(4).Info(pcb.Messagef("Reconciling %s", pretty.ServiceClassName(payloadServiceClass)))
@@ -296,11 +299,14 @@ func (c *controller) reconcileServiceBroker(broker *v1beta1.ServiceBroker) error
 
 		// reconcile the plans that were part of the broker's catalog payload
 		for _, payloadServicePlan := range payloadServicePlans {
-			existingServicePlan, _ := existingServicePlanMap[payloadServicePlan.Name]
-			delete(existingServicePlanMap, payloadServicePlan.Name)
-			if existingServicePlan == nil {
-				existingServicePlan, _ = existingServicePlanMap[payloadServicePlan.Spec.ExternalID]
-				delete(existingServicePlanMap, payloadServicePlan.Spec.ExternalID)
+			existingServicePlan, exists := existingServicePlanMap[payloadServicePlan.Name]
+			if exists {
+				delete(existingServicePlanMap, payloadServicePlan.Name)
+			} else {
+				existingServicePlan, exists = existingServicePlanMap[payloadServicePlan.Spec.ExternalID]
+				if exists {
+					delete(existingServicePlanMap, payloadServicePlan.Spec.ExternalID)
+				}
 			}
 
 			klog.V(4).Infof(
@@ -464,7 +470,7 @@ func (c *controller) reconcileServiceClassFromServiceBrokerCatalog(broker *v1bet
 					pretty.ServiceClassName(serviceClass), otherServiceClass.Spec.ServiceBrokerName,
 				)
 				klog.Error(pcb.Message(errMsg))
-				return fmt.Errorf(errMsg)
+				return stderrors.New(errMsg)
 			}
 		}
 
@@ -483,7 +489,7 @@ func (c *controller) reconcileServiceClassFromServiceBrokerCatalog(broker *v1bet
 			pretty.ServiceClassName(serviceClass), existingServiceClass.Name, serviceClass.Name,
 		)
 		klog.Error(pcb.Message(errMsg))
-		return fmt.Errorf(errMsg)
+		return stderrors.New(errMsg)
 	}
 
 	klog.V(5).Info(pcb.Messagef("Found existing %s; updating", pretty.ServiceClassName(serviceClass)))
@@ -548,7 +554,7 @@ func (c *controller) reconcileServicePlanFromServiceBrokerCatalog(broker *v1beta
 					pretty.ServicePlanName(servicePlan), otherServicePlan.Spec.ServiceBrokerName,
 				)
 				klog.Error(pcb.Message(errMsg))
-				return fmt.Errorf(errMsg)
+				return stderrors.New(errMsg)
 			}
 		}
 
@@ -568,7 +574,7 @@ func (c *controller) reconcileServicePlanFromServiceBrokerCatalog(broker *v1beta
 			pretty.ServicePlanName(servicePlan), existingServicePlan.Spec.ExternalID, servicePlan.Spec.ExternalID,
 		)
 		klog.Error(pcb.Message(errMsg))
-		return fmt.Errorf(errMsg)
+		return stderrors.New(errMsg)
 	}
 
 	klog.V(5).Info(pcb.Messagef("Found existing %s; updating", pretty.ServicePlanName(servicePlan)))
@@ -765,15 +771,4 @@ func convertServicePlanListToMap(list []v1beta1.ServicePlan) map[string]*v1beta1
 	}
 
 	return ret
-}
-
-func getServiceBrokerLastConditionState(status v1beta1.CommonServiceBrokerStatus) string {
-	if len(status.Conditions) > 0 {
-		condition := status.Conditions[len(status.Conditions)-1]
-		if condition.Status == v1beta1.ConditionTrue {
-			return string(condition.Type)
-		}
-		return condition.Reason
-	}
-	return ""
 }

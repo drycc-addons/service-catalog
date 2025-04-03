@@ -164,7 +164,7 @@ func validateServiceBrokerSpec(spec *sc.ServiceBrokerSpec, fldPath *field.Path) 
 func validateCommonServiceBrokerSpec(spec *sc.CommonServiceBrokerSpec, fldPath *field.Path, isClusterServiceBroker bool) field.ErrorList {
 	commonErrs := field.ErrorList{}
 
-	if "" == spec.URL {
+	if spec.URL == "" {
 		commonErrs = append(commonErrs,
 			field.Required(fldPath.Child("url"),
 				"brokers must have a remote url to contact"))
@@ -174,7 +174,7 @@ func validateCommonServiceBrokerSpec(spec *sc.CommonServiceBrokerSpec, fldPath *
 		commonErrs = append(commonErrs, field.Invalid(fldPath.Child("caBundle"), spec.CABundle, "caBundle cannot be used when insecureSkipTLSVerify is true"))
 	}
 
-	if "" == spec.RelistBehavior {
+	if spec.RelistBehavior == "" {
 		commonErrs = append(commonErrs,
 			field.Required(fldPath.Child("relistBehavior"),
 				"relist behavior is required"))

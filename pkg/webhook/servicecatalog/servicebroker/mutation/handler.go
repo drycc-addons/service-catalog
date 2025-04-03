@@ -81,7 +81,7 @@ func (h *CreateUpdateHandler) InjectDecoder(d admission.Decoder) error {
 	return nil
 }
 
-func (h *CreateUpdateHandler) mutateOnCreate(ctx context.Context, sb *sc.ServiceBroker) {
+func (h *CreateUpdateHandler) mutateOnCreate(_ context.Context, sb *sc.ServiceBroker) {
 	sb.Finalizers = []string{sc.FinalizerServiceCatalog}
 
 	if sb.Spec.RelistBehavior == "" {
@@ -89,7 +89,7 @@ func (h *CreateUpdateHandler) mutateOnCreate(ctx context.Context, sb *sc.Service
 	}
 }
 
-func (h *CreateUpdateHandler) mutateOnUpdate(ctx context.Context, oldSb, newSb *sc.ServiceBroker) {
+func (h *CreateUpdateHandler) mutateOnUpdate(_ context.Context, oldSb, newSb *sc.ServiceBroker) {
 	// This feature was copied from Service Catalog registry: https://github.com/drycc-addons/service-catalog/blob/master/pkg/registry/servicecatalog/servicebroker/strategy.go
 	// If you want to track previous changes please check there.
 

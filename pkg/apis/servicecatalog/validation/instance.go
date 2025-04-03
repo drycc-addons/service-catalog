@@ -77,7 +77,7 @@ func internalValidateServiceInstance(instance *sc.ServiceInstance, create bool) 
 	allErrs = append(allErrs, apivalidation.ValidateObjectMeta(&instance.ObjectMeta, true, /*namespace*/
 		validateServiceInstanceName,
 		field.NewPath("metadata"))...)
-	allErrs = append(allErrs, validateServiceInstanceSpec(&instance.Spec, field.NewPath("spec"), create)...)
+	allErrs = append(allErrs, validateServiceInstanceSpec(&instance.Spec, field.NewPath("spec"))...)
 	if create {
 		allErrs = append(allErrs, validateServiceInstanceCreate(instance)...)
 	} else {
@@ -86,7 +86,7 @@ func internalValidateServiceInstance(instance *sc.ServiceInstance, create bool) 
 	return allErrs
 }
 
-func validateServiceInstanceSpec(spec *sc.ServiceInstanceSpec, fldPath *field.Path, create bool) field.ErrorList {
+func validateServiceInstanceSpec(spec *sc.ServiceInstanceSpec, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	allErrs = append(allErrs, validateObjectReferences(spec, fldPath)...)
@@ -159,11 +159,11 @@ func validateServiceInstanceStatus(status *sc.ServiceInstanceStatus, fldPath *fi
 	}
 
 	if status.InProgressProperties != nil {
-		allErrs = append(allErrs, validateServiceInstancePropertiesState(status.InProgressProperties, fldPath.Child("inProgressProperties"), create)...)
+		allErrs = append(allErrs, validateServiceInstancePropertiesState(status.InProgressProperties, fldPath.Child("inProgressProperties"))...)
 	}
 
 	if status.ExternalProperties != nil {
-		allErrs = append(allErrs, validateServiceInstancePropertiesState(status.ExternalProperties, fldPath.Child("externalProperties"), create)...)
+		allErrs = append(allErrs, validateServiceInstancePropertiesState(status.ExternalProperties, fldPath.Child("externalProperties"))...)
 	}
 
 	if create {
@@ -179,7 +179,7 @@ func validateServiceInstanceStatus(status *sc.ServiceInstanceStatus, fldPath *fi
 	return allErrs
 }
 
-func validateServiceInstancePropertiesState(propertiesState *sc.ServiceInstancePropertiesState, fldPath *field.Path, create bool) field.ErrorList {
+func validateServiceInstancePropertiesState(propertiesState *sc.ServiceInstancePropertiesState, fldPath *field.Path) field.ErrorList {
 	var errMsg string
 	allErrs := field.ErrorList{}
 
@@ -348,13 +348,6 @@ func ValidateServiceInstanceUpdate(new *sc.ServiceInstance, old *sc.ServiceInsta
 	return allErrs
 }
 
-func internalValidateServiceInstanceStatusUpdateAllowed(new *sc.ServiceInstance, old *sc.ServiceInstance) field.ErrorList {
-	errors := field.ErrorList{}
-	// TODO(vaikas): Are there any cases where we do not allow updates to
-	// Status during Async updates in progress?
-	return errors
-}
-
 func internalValidateServiceInstanceReferencesUpdateAllowed(new *sc.ServiceInstance, old *sc.ServiceInstance) field.ErrorList {
 	var errMsg string
 	allErrs := field.ErrorList{}
@@ -403,7 +396,6 @@ func internalValidateServiceInstanceReferencesUpdateAllowed(new *sc.ServiceInsta
 // instance to a newer instance is okay. This only checks the instance.Status field.
 func ValidateServiceInstanceStatusUpdate(new *sc.ServiceInstance, old *sc.ServiceInstance) field.ErrorList {
 	allErrs := field.ErrorList{}
-	allErrs = append(allErrs, internalValidateServiceInstanceStatusUpdateAllowed(new, old)...)
 	allErrs = append(allErrs, validateServiceInstanceStatus(&new.Status, field.NewPath("status"), false)...)
 	allErrs = append(allErrs, internalValidateServiceInstance(new, false)...)
 	return allErrs
@@ -436,11 +428,6 @@ func validateObjectReferences(spec *sc.ServiceInstanceSpec, fldPath *field.Path)
 
 	return allErrs
 }
-
-const (
-	clusterScopedPlanReference   = "clusterScoped"
-	namespaceScopedPlanReference = "namespaceScoped"
-)
 
 type scopedRefHelper struct {
 	externalClassName string
@@ -546,10 +533,10 @@ func validatePlanReference(p *sc.PlanReference, fldPath *field.Path) field.Error
 		}
 	}
 
-	return append(allErrs, validateScopedPlanRef(refHelper, p, fldPath)...)
+	return append(allErrs, validateScopedPlanRef(refHelper, fldPath)...)
 }
 
-func validateScopedPlanRef(h scopedRefHelper, p *sc.PlanReference, fldPath *field.Path) field.ErrorList {
+func validateScopedPlanRef(h scopedRefHelper, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	// helper function to test that exactly one set of plan references are set

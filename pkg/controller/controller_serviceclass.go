@@ -68,7 +68,7 @@ func (c *controller) reconcileServiceClassKey(key string) error {
 		return nil
 	}
 	if err != nil {
-		klog.Infof(pcb.Message("Unable to retrieve"))
+		klog.Info(pcb.Message("Unable to retrieve"))
 		return err
 	}
 

@@ -1,5 +1,5 @@
 /*
-Copyright 2024 The Kubernetes Authors.
+Copyright 2025 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ limitations under the License.
 package v1beta1
 
 import (
-	"context"
+	context "context"
 	time "time"
 
-	servicecatalogv1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	apisservicecatalogv1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	clientset "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset"
 	internalinterfaces "github.com/drycc-addons/service-catalog/pkg/client/informers_generated/externalversions/internalinterfaces"
-	v1beta1 "github.com/drycc-addons/service-catalog/pkg/client/listers_generated/servicecatalog/v1beta1"
+	servicecatalogv1beta1 "github.com/drycc-addons/service-catalog/pkg/client/listers_generated/servicecatalog/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	watch "k8s.io/apimachinery/pkg/watch"
@@ -36,7 +36,7 @@ import (
 // ServicePlans.
 type ServicePlanInformer interface {
 	Informer() cache.SharedIndexInformer
-	Lister() v1beta1.ServicePlanLister
+	Lister() servicecatalogv1beta1.ServicePlanLister
 }
 
 type servicePlanInformer struct {
@@ -71,7 +71,7 @@ func NewFilteredServicePlanInformer(client clientset.Interface, namespace string
 				return client.ServicecatalogV1beta1().ServicePlans(namespace).Watch(context.TODO(), options)
 			},
 		},
-		&servicecatalogv1beta1.ServicePlan{},
+		&apisservicecatalogv1beta1.ServicePlan{},
 		resyncPeriod,
 		indexers,
 	)
@@ -82,9 +82,9 @@ func (f *servicePlanInformer) defaultInformer(client clientset.Interface, resync
 }
 
 func (f *servicePlanInformer) Informer() cache.SharedIndexInformer {
-	return f.factory.InformerFor(&servicecatalogv1beta1.ServicePlan{}, f.defaultInformer)
+	return f.factory.InformerFor(&apisservicecatalogv1beta1.ServicePlan{}, f.defaultInformer)
 }
 
-func (f *servicePlanInformer) Lister() v1beta1.ServicePlanLister {
-	return v1beta1.NewServicePlanLister(f.Informer().GetIndexer())
+func (f *servicePlanInformer) Lister() servicecatalogv1beta1.ServicePlanLister {
+	return servicecatalogv1beta1.NewServicePlanLister(f.Informer().GetIndexer())
 }

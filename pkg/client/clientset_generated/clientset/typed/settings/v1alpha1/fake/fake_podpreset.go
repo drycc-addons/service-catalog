@@ -1,5 +1,5 @@
 /*
-Copyright 2024 The Kubernetes Authors.
+Copyright 2025 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,116 +19,32 @@ limitations under the License.
 package fake
 
 import (
-	"context"
-
 	v1alpha1 "github.com/drycc-addons/service-catalog/pkg/apis/settings/v1alpha1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	labels "k8s.io/apimachinery/pkg/labels"
-	types "k8s.io/apimachinery/pkg/types"
-	watch "k8s.io/apimachinery/pkg/watch"
-	testing "k8s.io/client-go/testing"
+	settingsv1alpha1 "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset/typed/settings/v1alpha1"
+	gentype "k8s.io/client-go/gentype"
 )
 
-// FakePodPresets implements PodPresetInterface
-type FakePodPresets struct {
+// fakePodPresets implements PodPresetInterface
+type fakePodPresets struct {
+	*gentype.FakeClientWithList[*v1alpha1.PodPreset, *v1alpha1.PodPresetList]
 	Fake *FakeSettingsV1alpha1
-	ns   string
 }
 
-var podpresetsResource = v1alpha1.SchemeGroupVersion.WithResource("podpresets")
-
-var podpresetsKind = v1alpha1.SchemeGroupVersion.WithKind("PodPreset")
-
-// Get takes name of the podPreset, and returns the corresponding podPreset object, and an error if there is any.
-func (c *FakePodPresets) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1alpha1.PodPreset, err error) {
-	emptyResult := &v1alpha1.PodPreset{}
-	obj, err := c.Fake.
-		Invokes(testing.NewGetActionWithOptions(podpresetsResource, c.ns, name, options), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
+func newFakePodPresets(fake *FakeSettingsV1alpha1, namespace string) settingsv1alpha1.PodPresetInterface {
+	return &fakePodPresets{
+		gentype.NewFakeClientWithList[*v1alpha1.PodPreset, *v1alpha1.PodPresetList](
+			fake.Fake,
+			namespace,
+			v1alpha1.SchemeGroupVersion.WithResource("podpresets"),
+			v1alpha1.SchemeGroupVersion.WithKind("PodPreset"),
+			func() *v1alpha1.PodPreset { return &v1alpha1.PodPreset{} },
+			func() *v1alpha1.PodPresetList { return &v1alpha1.PodPresetList{} },
+			func(dst, src *v1alpha1.PodPresetList) { dst.ListMeta = src.ListMeta },
+			func(list *v1alpha1.PodPresetList) []*v1alpha1.PodPreset { return gentype.ToPointerSlice(list.Items) },
+			func(list *v1alpha1.PodPresetList, items []*v1alpha1.PodPreset) {
+				list.Items = gentype.FromPointerSlice(items)
+			},
+		),
+		fake,
 	}
-	return obj.(*v1alpha1.PodPreset), err
-}
-
-// List takes label and field selectors, and returns the list of PodPresets that match those selectors.
-func (c *FakePodPresets) List(ctx context.Context, opts v1.ListOptions) (result *v1alpha1.PodPresetList, err error) {
-	emptyResult := &v1alpha1.PodPresetList{}
-	obj, err := c.Fake.
-		Invokes(testing.NewListActionWithOptions(podpresetsResource, podpresetsKind, c.ns, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-
-	label, _, _ := testing.ExtractFromListOptions(opts)
-	if label == nil {
-		label = labels.Everything()
-	}
-	list := &v1alpha1.PodPresetList{ListMeta: obj.(*v1alpha1.PodPresetList).ListMeta}
-	for _, item := range obj.(*v1alpha1.PodPresetList).Items {
-		if label.Matches(labels.Set(item.Labels)) {
-			list.Items = append(list.Items, item)
-		}
-	}
-	return list, err
-}
-
-// Watch returns a watch.Interface that watches the requested podPresets.
-func (c *FakePodPresets) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
-	return c.Fake.
-		InvokesWatch(testing.NewWatchActionWithOptions(podpresetsResource, c.ns, opts))
-
-}
-
-// Create takes the representation of a podPreset and creates it.  Returns the server's representation of the podPreset, and an error, if there is any.
-func (c *FakePodPresets) Create(ctx context.Context, podPreset *v1alpha1.PodPreset, opts v1.CreateOptions) (result *v1alpha1.PodPreset, err error) {
-	emptyResult := &v1alpha1.PodPreset{}
-	obj, err := c.Fake.
-		Invokes(testing.NewCreateActionWithOptions(podpresetsResource, c.ns, podPreset, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.PodPreset), err
-}
-
-// Update takes the representation of a podPreset and updates it. Returns the server's representation of the podPreset, and an error, if there is any.
-func (c *FakePodPresets) Update(ctx context.Context, podPreset *v1alpha1.PodPreset, opts v1.UpdateOptions) (result *v1alpha1.PodPreset, err error) {
-	emptyResult := &v1alpha1.PodPreset{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateActionWithOptions(podpresetsResource, c.ns, podPreset, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.PodPreset), err
-}
-
-// Delete takes name of the podPreset and deletes it. Returns an error if one occurs.
-func (c *FakePodPresets) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
-	_, err := c.Fake.
-		Invokes(testing.NewDeleteActionWithOptions(podpresetsResource, c.ns, name, opts), &v1alpha1.PodPreset{})
-
-	return err
-}
-
-// DeleteCollection deletes a collection of objects.
-func (c *FakePodPresets) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionActionWithOptions(podpresetsResource, c.ns, opts, listOpts)
-
-	_, err := c.Fake.Invokes(action, &v1alpha1.PodPresetList{})
-	return err
-}
-
-// Patch applies the patch and returns the patched podPreset.
-func (c *FakePodPresets) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.PodPreset, err error) {
-	emptyResult := &v1alpha1.PodPreset{}
-	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceActionWithOptions(podpresetsResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1alpha1.PodPreset), err
 }

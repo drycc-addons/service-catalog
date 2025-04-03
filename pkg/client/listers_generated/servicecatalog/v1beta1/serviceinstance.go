@@ -1,5 +1,5 @@
 /*
-Copyright 2024 The Kubernetes Authors.
+Copyright 2025 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,10 +19,10 @@ limitations under the License.
 package v1beta1
 
 import (
-	v1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/client-go/listers"
-	"k8s.io/client-go/tools/cache"
+	servicecatalogv1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	labels "k8s.io/apimachinery/pkg/labels"
+	listers "k8s.io/client-go/listers"
+	cache "k8s.io/client-go/tools/cache"
 )
 
 // ServiceInstanceLister helps list ServiceInstances.
@@ -30,7 +30,7 @@ import (
 type ServiceInstanceLister interface {
 	// List lists all ServiceInstances in the indexer.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1beta1.ServiceInstance, err error)
+	List(selector labels.Selector) (ret []*servicecatalogv1beta1.ServiceInstance, err error)
 	// ServiceInstances returns an object that can list and get ServiceInstances.
 	ServiceInstances(namespace string) ServiceInstanceNamespaceLister
 	ServiceInstanceListerExpansion
@@ -38,17 +38,17 @@ type ServiceInstanceLister interface {
 
 // serviceInstanceLister implements the ServiceInstanceLister interface.
 type serviceInstanceLister struct {
-	listers.ResourceIndexer[*v1beta1.ServiceInstance]
+	listers.ResourceIndexer[*servicecatalogv1beta1.ServiceInstance]
 }
 
 // NewServiceInstanceLister returns a new ServiceInstanceLister.
 func NewServiceInstanceLister(indexer cache.Indexer) ServiceInstanceLister {
-	return &serviceInstanceLister{listers.New[*v1beta1.ServiceInstance](indexer, v1beta1.Resource("serviceinstance"))}
+	return &serviceInstanceLister{listers.New[*servicecatalogv1beta1.ServiceInstance](indexer, servicecatalogv1beta1.Resource("serviceinstance"))}
 }
 
 // ServiceInstances returns an object that can list and get ServiceInstances.
 func (s *serviceInstanceLister) ServiceInstances(namespace string) ServiceInstanceNamespaceLister {
-	return serviceInstanceNamespaceLister{listers.NewNamespaced[*v1beta1.ServiceInstance](s.ResourceIndexer, namespace)}
+	return serviceInstanceNamespaceLister{listers.NewNamespaced[*servicecatalogv1beta1.ServiceInstance](s.ResourceIndexer, namespace)}
 }
 
 // ServiceInstanceNamespaceLister helps list and get ServiceInstances.
@@ -56,15 +56,15 @@ func (s *serviceInstanceLister) ServiceInstances(namespace string) ServiceInstan
 type ServiceInstanceNamespaceLister interface {
 	// List lists all ServiceInstances in the indexer for a given namespace.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1beta1.ServiceInstance, err error)
+	List(selector labels.Selector) (ret []*servicecatalogv1beta1.ServiceInstance, err error)
 	// Get retrieves the ServiceInstance from the indexer for a given namespace and name.
 	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1beta1.ServiceInstance, error)
+	Get(name string) (*servicecatalogv1beta1.ServiceInstance, error)
 	ServiceInstanceNamespaceListerExpansion
 }
 
 // serviceInstanceNamespaceLister implements the ServiceInstanceNamespaceLister
 // interface.
 type serviceInstanceNamespaceLister struct {
-	listers.ResourceIndexer[*v1beta1.ServiceInstance]
+	listers.ResourceIndexer[*servicecatalogv1beta1.ServiceInstance]
 }

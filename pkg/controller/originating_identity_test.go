@@ -36,7 +36,6 @@ func TestBuildOriginatingIdentity(t *testing.T) {
 
 	e := osb.OriginatingIdentity{
 		Platform: "kubernetes",
-		Value:    `{extra: {"foo":["bar","baz"]},"groups":["stuff-dev","main-eng"],"uid":"abcd-1234","username":"person@place.com"}`,
 	}
 
 	g, err := buildOriginatingIdentity(&userInfo)

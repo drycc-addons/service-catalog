@@ -67,11 +67,11 @@ func (c *controller) reconcileServicePlanKey(key string) error {
 	pcb := pretty.NewContextBuilder(pretty.ServicePlan, namespace, name, "")
 	plan, err := c.servicePlanLister.ServicePlans(namespace).Get(name)
 	if errors.IsNotFound(err) {
-		klog.Infof(pcb.Message("not doing work because plan has been deleted"))
+		klog.Info(pcb.Message("not doing work because plan has been deleted"))
 		return nil
 	}
 	if err != nil {
-		klog.Infof(pcb.Message("unable to retrieve object from store: %v"))
+		klog.Info(pcb.Message("unable to retrieve object from store: %v"))
 		return err
 	}
 
@@ -86,7 +86,7 @@ func (c *controller) reconcileServicePlan(servicePlan *v1beta1.ServicePlan) erro
 		return nil
 	}
 
-	klog.Infof(pcb.Message("removed from broker catalog; determining whether there are instances remaining"))
+	klog.Info(pcb.Message("removed from broker catalog; determining whether there are instances remaining"))
 
 	serviceInstances, err := c.findServiceInstancesOnServicePlan(servicePlan)
 	if err != nil {
@@ -98,7 +98,7 @@ func (c *controller) reconcileServicePlan(servicePlan *v1beta1.ServicePlan) erro
 		return nil
 	}
 
-	klog.Infof(pcb.Message("removed from broker catalog and has zero instances remaining; deleting"))
+	klog.Info(pcb.Message("removed from broker catalog and has zero instances remaining; deleting"))
 	return c.serviceCatalogClient.ServicePlans(servicePlan.Namespace).Delete(context.Background(), servicePlan.Name, metav1.DeleteOptions{})
 }
 

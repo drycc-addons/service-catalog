@@ -115,8 +115,8 @@ type backoffEntry struct {
 type instanceOperationBackoff struct {
 	// lock to be used for accessing retry map
 	mutex       sync.RWMutex
-	instances   map[string]backoffEntry // Key is K8s metadata UID
-	rateLimiter workqueue.RateLimiter   // used to calculate next retry time, key is UID
+	instances   map[string]backoffEntry         // Key is K8s metadata UID
+	rateLimiter workqueue.TypedRateLimiter[any] // used to calculate next retry time, key is UID
 }
 
 // ServiceInstance handlers and control-loop
@@ -224,8 +224,8 @@ func (c *controller) beginPollingServiceInstance(instance *v1beta1.ServiceInstan
 	if err != nil {
 		pcb := pretty.NewInstanceContextBuilder(instance)
 		s := fmt.Sprintf("Couldn't create a key for object %+v: %v", instance, err)
-		klog.Errorf(pcb.Message(s))
-		return fmt.Errorf(s)
+		klog.Error(pcb.Message(s))
+		return stderrors.New(s)
 	}
 
 	c.instancePollingQueue.AddRateLimited(key)
@@ -246,8 +246,8 @@ func (c *controller) finishPollingServiceInstance(instance *v1beta1.ServiceInsta
 	if err != nil {
 		pcb := pretty.NewInstanceContextBuilder(instance)
 		s := fmt.Sprintf("Couldn't create a key for object %+v: %v", instance, err)
-		klog.Errorf(pcb.Message(s))
-		return fmt.Errorf(s)
+		klog.Error(pcb.Message(s))
+		return stderrors.New(s)
 	}
 
 	c.instancePollingQueue.Forget(key)
@@ -262,7 +262,7 @@ func (c *controller) resetPollingRateLimiterForServiceInstance(instance *v1beta1
 	if err != nil {
 		pcb := pretty.NewInstanceContextBuilder(instance)
 		s := fmt.Sprintf("Couldn't create a key for object %+v: %v", instance, err)
-		klog.Errorf(pcb.Message(s))
+		klog.Error(pcb.Message(s))
 		return
 	}
 
@@ -298,7 +298,7 @@ func (c *controller) reconcileServiceInstanceKey(key string) error {
 		return nil
 	}
 	if err != nil {
-		klog.Errorf(pcb.Messagef("Unable to retrieve %v from store: %v", key, err))
+		klog.Error(pcb.Messagef("Unable to retrieve %v from store: %v", key, err))
 		return err
 	}
 
@@ -341,7 +341,7 @@ func (c *controller) reconcileServiceInstance(instance *v1beta1.ServiceInstance)
 		return c.pollServiceInstance(instance)
 	default:
 		pcb := pretty.NewInstanceContextBuilder(instance)
-		return fmt.Errorf(pcb.Messagef("Unknown reconciliation action %v", reconciliationAction))
+		return stderrors.New(pcb.Messagef("Unknown reconciliation action %v", reconciliationAction))
 	}
 }
 
@@ -446,7 +446,7 @@ func (c *controller) backoffAndRequeueIfRetrying(instance *v1beta1.ServiceInstan
 			retryEntry.calculatedRetryTime = time.Now().Add(c.instanceOperationRetryQueue.rateLimiter.When(key))
 			retryEntry.dirty = false
 			c.instanceOperationRetryQueue.instances[key] = retryEntry
-			klog.V(4).Infof(pcb.Messagef("BrokerOpRetry: generation %v retryTime calculated as %v", instance.Generation, retryEntry.calculatedRetryTime))
+			klog.V(4).Info(pcb.Messagef("BrokerOpRetry: generation %v retryTime calculated as %v", instance.Generation, retryEntry.calculatedRetryTime))
 		}
 
 		now := time.Now()
@@ -510,7 +510,7 @@ func (c *controller) reconcileServiceInstanceAdd(instance *v1beta1.ServiceInstan
 	if !c.isServiceInstanceStatusInitialized(instance) {
 		klog.V(4).Info(pcb.Message("Initialize Status entry"))
 		if err := c.initializeServiceInstanceStatus(instance); err != nil {
-			klog.Errorf(pcb.Messagef("Error initializing status: %v", err))
+			klog.Error(pcb.Messagef("Error initializing status: %v", err))
 			return err
 		}
 		return nil
@@ -1174,7 +1174,7 @@ func (c *controller) pollServiceInstance(instance *v1beta1.ServiceInstance) erro
 			return c.processServiceInstancePollingFailureRetryTimeout(instance, readyCond)
 		}
 
-		err := fmt.Errorf(`Got invalid state in LastOperationResponse: %q`, response.State)
+		err := fmt.Errorf(`got invalid state in LastOperationResponse: %q`, response.State)
 		return c.handleServiceInstancePollingError(instance, err)
 	}
 }
@@ -1247,7 +1247,7 @@ func (c *controller) processServiceInstancePollingTemporaryFailure(instance *v1b
 	// a few lines above.
 	// But we still need to return a non-nil error for retriable errors and
 	// orphan mitigation to avoid resetting the rate limiter.
-	return fmt.Errorf(readyCond.Message)
+	return stderrors.New(readyCond.Message)
 }
 
 // resolveReferences checks to see if (Cluster)ServiceClassRef and/or (Cluster)ServicePlanRef are
@@ -1395,7 +1395,7 @@ func (c *controller) resolveClusterServiceClassRef(instance *v1beta1.ServiceInst
 			))
 		} else {
 			return nil, fmt.Errorf(
-				"References a non-existent ClusterServiceClass %c",
+				"references a non-existent ClusterServiceClass %c",
 				instance.Spec.PlanReference,
 			)
 		}
@@ -1425,7 +1425,7 @@ func (c *controller) resolveClusterServiceClassRef(instance *v1beta1.ServiceInst
 			))
 		} else {
 			return nil, fmt.Errorf(
-				"References a non-existent ClusterServiceClass %c or there is more than one (found: %d)",
+				"references a non-existent ClusterServiceClass %c or there is more than one (found: %d)",
 				instance.Spec.PlanReference, len(serviceClasses.Items),
 			)
 		}
@@ -1467,7 +1467,7 @@ func (c *controller) resolveServiceClassRef(instance *v1beta1.ServiceInstance) (
 			))
 		} else {
 			return nil, fmt.Errorf(
-				"References a non-existent ServiceClass %c",
+				"references a non-existent ServiceClass %c",
 				instance.Spec.PlanReference,
 			)
 		}
@@ -1499,7 +1499,7 @@ func (c *controller) resolveServiceClassRef(instance *v1beta1.ServiceInstance) (
 			))
 		} else {
 			return nil, fmt.Errorf(
-				"References a non-existent ServiceClass %c or there is more than one (found: %d)",
+				"references a non-existent ServiceClass %c or there is more than one (found: %d)",
 				instance.Spec.PlanReference, len(serviceClasses.Items),
 			)
 		}
@@ -1532,7 +1532,7 @@ func (c *controller) resolveClusterServicePlanRef(instance *v1beta1.ServiceInsta
 			))
 		} else {
 			return fmt.Errorf(
-				"References a non-existent ClusterServicePlan %v",
+				"references a non-existent ClusterServicePlan %v",
 				instance.Spec.PlanReference,
 			)
 		}
@@ -1559,7 +1559,7 @@ func (c *controller) resolveClusterServicePlanRef(instance *v1beta1.ServiceInsta
 			))
 		} else {
 			return fmt.Errorf(
-				"References a non-existent ClusterServicePlan %b on ClusterServiceClass %s %c or there is more than one (found: %d)",
+				"references a non-existent ClusterServicePlan %b on ClusterServiceClass %s %c or there is more than one (found: %d)",
 				instance.Spec.PlanReference, instance.Spec.ClusterServiceClassRef.Name, instance.Spec.PlanReference, len(servicePlans.Items),
 			)
 		}
@@ -1592,7 +1592,7 @@ func (c *controller) resolveServicePlanRef(instance *v1beta1.ServiceInstance, br
 			))
 		} else {
 			return fmt.Errorf(
-				"References a non-existent ServicePlan %v",
+				"references a non-existent ServicePlan %v",
 				instance.Spec.PlanReference,
 			)
 		}
@@ -1619,7 +1619,7 @@ func (c *controller) resolveServicePlanRef(instance *v1beta1.ServiceInstance, br
 			))
 		} else {
 			return fmt.Errorf(
-				"References a non-existent ServicePlan %b on ServiceClass %s %c or there is more than one (found: %d)",
+				"references a non-existent ServicePlan %b on ServiceClass %s %c or there is more than one (found: %d)",
 				instance.Spec.PlanReference, instance.Spec.ServiceClassRef.Name, instance.Spec.PlanReference, len(servicePlans.Items),
 			)
 		}
@@ -1665,7 +1665,7 @@ func (c *controller) applyDefaultProvisioningParameters(instance *v1beta1.Servic
 		s := fmt.Sprintf("error updating service instance to apply default parameters: %s", err)
 		klog.Warning(pcb.Message(s))
 		c.recorder.Event(instance, corev1.EventTypeWarning, errorWithParametersReason, s)
-		return false, fmt.Errorf(s)
+		return false, stderrors.New(s)
 	}
 
 	instance.Status.DefaultProvisionParameters = defaultParams
@@ -1877,7 +1877,7 @@ func (c *controller) updateServiceInstanceReferences(toUpdate *v1beta1.ServiceIn
 	klog.V(4).Info(pcb.Message("Updating references"))
 	updatedInstance, err := c.serviceCatalogClient.ServiceInstances(toUpdate.Namespace).Update(context.Background(), toUpdate, metav1.UpdateOptions{})
 	if err != nil {
-		klog.Errorf(pcb.Messagef("Failed to update references: %v", err))
+		klog.Error(pcb.Messagef("Failed to update references: %v", err))
 	}
 	return updatedInstance, err
 }
@@ -1921,7 +1921,7 @@ func (c *controller) updateServiceInstanceWithRetries(
 	})
 
 	if err != nil {
-		klog.Errorf(pcb.Messagef("Failed to update instance: %v", err))
+		klog.Error(pcb.Messagef("Failed to update instance: %v", err))
 	}
 
 	return updatedInstance, err
@@ -1980,7 +1980,7 @@ func (c *controller) updateServiceInstanceStatusWithRetries(
 	})
 
 	if err != nil {
-		klog.Errorf(pcb.Messagef("Failed to update status: %v", err))
+		klog.Error(pcb.Messagef("Failed to update status: %v", err))
 	}
 
 	return updatedInstance, err
@@ -2003,7 +2003,7 @@ func (c *controller) updateServiceInstanceCondition(
 	klog.V(4).Info(pcb.Messagef("Updating %v condition to %v", conditionType, status))
 	updatedInstance, err := c.serviceCatalogClient.ServiceInstances(instance.Namespace).UpdateStatus(context.Background(), toUpdate, metav1.UpdateOptions{})
 	if err != nil {
-		klog.Errorf(pcb.Messagef("Failed to update condition %v to true: %v", conditionType, err))
+		klog.Error(pcb.Messagef("Failed to update condition %v to true: %v", conditionType, err))
 	}
 
 	return updatedInstance, err
@@ -2508,7 +2508,7 @@ func (c *controller) prepareDeprovisionRequest(instance *v1beta1.ServiceInstance
 				return nil, nil, &operationError{
 					reason: errorNonexistentClusterServicePlanReason,
 					message: fmt.Sprintf(
-						"The instance references a non-existent ClusterServicePlan %q - %v",
+						"the instance references a non-existent ClusterServicePlan %q - %v",
 						instance.Spec.ClusterServicePlanRef.Name, instance.Spec.PlanReference,
 					),
 				}
@@ -2687,7 +2687,7 @@ func (c *controller) processServiceInstanceOperationError(instance *v1beta1.Serv
 	// The result of this function should be directly returned from the
 	// reconciler, so it is necessary to return an error to tell the worker
 	// to retry reconciling the resource.
-	return fmt.Errorf(readyCond.Message)
+	return stderrors.New(readyCond.Message)
 }
 
 // processProvisionSuccess handles the logging and updating of a
@@ -2737,9 +2737,9 @@ func (c *controller) processProvisionFailure(instance *v1beta1.ServiceInstance, 
 	if failedCond != nil {
 		c.recorder.Event(instance, corev1.EventTypeWarning, failedCond.Reason, failedCond.Message)
 		setServiceInstanceCondition(instance, v1beta1.ServiceInstanceConditionFailed, failedCond.Status, failedCond.Reason, failedCond.Message)
-		errorMessage = fmt.Errorf(failedCond.Message)
+		errorMessage = stderrors.New(failedCond.Message)
 	} else {
-		errorMessage = fmt.Errorf(readyCond.Message)
+		errorMessage = stderrors.New(readyCond.Message)
 	}
 
 	if shouldMitigateOrphan {
@@ -2860,7 +2860,7 @@ func (c *controller) processUpdateServiceInstanceFailure(instance *v1beta1.Servi
 	// But we still need to return a non-nil error for retriable errors
 	// to avoid resetting the rate limiter.
 	if failedCond == nil {
-		return fmt.Errorf(readyCond.Message)
+		return stderrors.New(readyCond.Message)
 	}
 	return nil
 }

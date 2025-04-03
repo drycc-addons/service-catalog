@@ -40,19 +40,18 @@ import (
 func buildParameters(kubeClient kubernetes.Interface, namespace string, parametersFrom []v1beta1.ParametersFromSource, parameters *runtime.RawExtension) (map[string]interface{}, map[string]interface{}, error) {
 	params := make(map[string]interface{})
 	paramsWithSecretsRedacted := make(map[string]interface{})
-	if parametersFrom != nil {
-		for _, p := range parametersFrom {
-			fps, err := fetchParametersFromSource(kubeClient, namespace, &p)
-			if err != nil {
-				return nil, nil, err
+
+	for _, p := range parametersFrom {
+		fps, err := fetchParametersFromSource(kubeClient, namespace, &p)
+		if err != nil {
+			return nil, nil, err
+		}
+		for k, v := range fps {
+			if _, ok := params[k]; ok {
+				return nil, nil, fmt.Errorf("conflict: duplicate entry for parameter %q", k)
 			}
-			for k, v := range fps {
-				if _, ok := params[k]; ok {
-					return nil, nil, fmt.Errorf("conflict: duplicate entry for parameter %q", k)
-				}
-				params[k] = v
-				paramsWithSecretsRedacted[k] = "<redacted>"
-			}
+			params[k] = v
+			paramsWithSecretsRedacted[k] = "<redacted>"
 		}
 	}
 	if parameters != nil {
@@ -111,7 +110,7 @@ func UnmarshalRawParameters(in []byte) (map[string]interface{}, error) {
 
 // MarshalRawParameters marshals the specified map of parameters into JSON
 func MarshalRawParameters(in map[string]interface{}) ([]byte, error) {
-	if in == nil || len(in) == 0 {
+	if len(in) == 0 {
 		return nil, nil
 	}
 	return json.Marshal(in)
@@ -138,7 +137,7 @@ func fetchSecretKeyValue(kubeClient kubernetes.Interface, namespace string, secr
 // generateChecksumOfParameters generates a checksum for the map of parameters.
 // This checksum is used to determine if parameters have changed.
 func generateChecksumOfParameters(params map[string]interface{}) (string, error) {
-	if params == nil || len(params) == 0 {
+	if len(params) == 0 {
 		return "", nil
 	}
 	paramsAsJSON, err := json.Marshal(params)

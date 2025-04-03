@@ -215,7 +215,7 @@ var _ = Describe("Get Broker Command", func() {
 
 				fakeApp, _ := svcat.NewApp(nil, nil, "default")
 				fakeSDK := new(servicecatalogfakes.FakeSvcatClient)
-				fakeSDK.RetrieveBrokerByIDReturns(nil, fmt.Errorf(servicecatalog.MultipleBrokersFoundError+" for broker '"+brokerName+"'"))
+				fakeSDK.RetrieveBrokerByIDReturns(nil, fmt.Errorf("%s for broker '%s'", servicecatalog.MultipleBrokersFoundError, brokerName))
 				fakeApp.SvcatClient = fakeSDK
 				cmd := GetCmd{
 					Namespaced: &command.Namespaced{Context: svcattest.NewContext(outputBuffer, fakeApp)},

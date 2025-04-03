@@ -53,14 +53,14 @@ func (h *CreateUpdateHandler) Handle(ctx context.Context, req admission.Request)
 	mutated := cb.DeepCopy()
 	switch req.Operation {
 	case admissionTypes.Create:
-		h.mutateOnCreate(ctx, mutated)
+		h.mutateOnCreate(mutated)
 	case admissionTypes.Update:
 		oldObj := &sc.ClusterServiceBroker{}
 		if err := h.decoder.DecodeRaw(req.OldObject, oldObj); err != nil {
 			traced.Errorf("Could not decode request old object: %v", err)
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		h.mutateOnUpdate(ctx, oldObj, mutated)
+		h.mutateOnUpdate(oldObj, mutated)
 	default:
 		traced.Infof("ClusterServiceBroker mutation wehbook does not support action %q", req.Operation)
 		return admission.Allowed("action not taken")
@@ -82,7 +82,7 @@ func (h *CreateUpdateHandler) InjectDecoder(d admission.Decoder) error {
 	return nil
 }
 
-func (h *CreateUpdateHandler) mutateOnCreate(ctx context.Context, sb *sc.ClusterServiceBroker) {
+func (h *CreateUpdateHandler) mutateOnCreate(sb *sc.ClusterServiceBroker) {
 	// TODO(mszostok): logic with finalizers was moved from aggregated api-server
 	// question, should we reset whole finalizers entry or only append our own?
 	sb.Finalizers = []string{sc.FinalizerServiceCatalog}
@@ -92,7 +92,7 @@ func (h *CreateUpdateHandler) mutateOnCreate(ctx context.Context, sb *sc.Cluster
 	}
 }
 
-func (h *CreateUpdateHandler) mutateOnUpdate(ctx context.Context, oldClusterServiceBroker, newClusterServiceBroker *sc.ClusterServiceBroker) {
+func (h *CreateUpdateHandler) mutateOnUpdate(oldClusterServiceBroker, newClusterServiceBroker *sc.ClusterServiceBroker) {
 	// Ignore the RelistRequests field when it is the default value
 	if newClusterServiceBroker.Spec.RelistRequests == 0 {
 		newClusterServiceBroker.Spec.RelistRequests = oldClusterServiceBroker.Spec.RelistRequests

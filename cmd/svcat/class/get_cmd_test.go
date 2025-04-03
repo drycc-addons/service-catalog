@@ -344,7 +344,7 @@ var _ = Describe("Get Class Command", func() {
 
 				fakeApp, _ := svcat.NewApp(nil, nil, namespace)
 				fakeSDK := new(servicecatalogfakes.FakeSvcatClient)
-				fakeSDK.RetrieveClassByIDReturns(nil, fmt.Errorf(errMsg))
+				fakeSDK.RetrieveClassByIDReturns(nil, fmt.Errorf("%s", errMsg))
 				fakeApp.SvcatClient = fakeSDK
 				cxt := svcattest.NewContext(outputBuffer, fakeApp)
 				cmd := GetCmd{
@@ -372,7 +372,7 @@ var _ = Describe("Get Class Command", func() {
 				Expect(returnedScopeOpts).To(Equal(scopeOpts))
 			})
 			It("prompts the user for more input when it finds multiple classes", func() {
-				errToReturn := fmt.Errorf(servicecatalog.MultipleClassesFoundError + " for '" + className + "'")
+				errToReturn := fmt.Errorf("%s for '%s'", servicecatalog.MultipleClassesFoundError, className)
 				outputBuffer := &bytes.Buffer{}
 
 				fakeApp, _ := svcat.NewApp(nil, nil, namespace)

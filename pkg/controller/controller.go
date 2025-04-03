@@ -21,6 +21,7 @@ import (
 	"context"
 	"crypto/md5"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -103,16 +104,16 @@ func NewController(
 		OSBAPITimeOut:               osbAPITimeOut,
 		recorder:                    recorder,
 		reconciliationRetryDuration: reconciliationRetryDuration,
-		clusterServiceBrokerQueue:   workqueue.NewNamedRateLimitingQueue(workqueue.NewItemExponentialFailureRateLimiter(pollingStartInterval, operationPollingMaximumBackoffDuration), "cluster-service-broker"),
-		serviceBrokerQueue:          workqueue.NewNamedRateLimitingQueue(workqueue.NewItemExponentialFailureRateLimiter(pollingStartInterval, operationPollingMaximumBackoffDuration), "service-broker"),
-		clusterServiceClassQueue:    workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "cluster-service-class"),
-		serviceClassQueue:           workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "service-class"),
-		clusterServicePlanQueue:     workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "cluster-service-plan"),
-		servicePlanQueue:            workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "service-plan"),
-		instanceQueue:               workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "service-instance"),
-		bindingQueue:                workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "service-binding"),
-		instancePollingQueue:        workqueue.NewNamedRateLimitingQueue(workqueue.NewItemExponentialFailureRateLimiter(pollingStartInterval, operationPollingMaximumBackoffDuration), "instance-poller"),
-		bindingPollingQueue:         workqueue.NewNamedRateLimitingQueue(workqueue.NewItemExponentialFailureRateLimiter(pollingStartInterval, operationPollingMaximumBackoffDuration), "binding-poller"),
+		clusterServiceBrokerQueue:   workqueue.NewNamedRateLimitingQueue(workqueue.NewTypedItemExponentialFailureRateLimiter[any](pollingStartInterval, operationPollingMaximumBackoffDuration), "cluster-service-broker"),
+		serviceBrokerQueue:          workqueue.NewNamedRateLimitingQueue(workqueue.NewTypedItemExponentialFailureRateLimiter[any](pollingStartInterval, operationPollingMaximumBackoffDuration), "service-broker"),
+		clusterServiceClassQueue:    workqueue.NewNamedRateLimitingQueue(workqueue.DefaultTypedControllerRateLimiter[any](), "cluster-service-class"),
+		serviceClassQueue:           workqueue.NewNamedRateLimitingQueue(workqueue.DefaultTypedControllerRateLimiter[any](), "service-class"),
+		clusterServicePlanQueue:     workqueue.NewNamedRateLimitingQueue(workqueue.DefaultTypedControllerRateLimiter[any](), "cluster-service-plan"),
+		servicePlanQueue:            workqueue.NewNamedRateLimitingQueue(workqueue.DefaultTypedControllerRateLimiter[any](), "service-plan"),
+		instanceQueue:               workqueue.NewNamedRateLimitingQueue(workqueue.DefaultTypedControllerRateLimiter[any](), "service-instance"),
+		bindingQueue:                workqueue.NewNamedRateLimitingQueue(workqueue.DefaultTypedControllerRateLimiter[any](), "service-binding"),
+		instancePollingQueue:        workqueue.NewNamedRateLimitingQueue(workqueue.NewTypedItemExponentialFailureRateLimiter[any](pollingStartInterval, operationPollingMaximumBackoffDuration), "instance-poller"),
+		bindingPollingQueue:         workqueue.NewNamedRateLimitingQueue(workqueue.NewTypedItemExponentialFailureRateLimiter[any](pollingStartInterval, operationPollingMaximumBackoffDuration), "binding-poller"),
 		clusterIDConfigMapName:      clusterIDConfigMapName,
 		clusterIDConfigMapNamespace: clusterIDConfigMapNamespace,
 		brokerClientCreateFunc:      brokerClientCreateFunc,
@@ -175,7 +176,7 @@ func NewController(
 		})
 	}
 	controller.instanceOperationRetryQueue.instances = make(map[string]backoffEntry)
-	controller.instanceOperationRetryQueue.rateLimiter = workqueue.NewItemExponentialFailureRateLimiter(minBrokerOperationRetryDelay, maxBrokerOperationRetryDelay)
+	controller.instanceOperationRetryQueue.rateLimiter = workqueue.NewTypedItemExponentialFailureRateLimiter[any](minBrokerOperationRetryDelay, maxBrokerOperationRetryDelay)
 
 	return controller, nil
 }
@@ -206,16 +207,16 @@ type controller struct {
 	OSBAPITimeOut               time.Duration
 	recorder                    record.EventRecorder
 	reconciliationRetryDuration time.Duration
-	clusterServiceBrokerQueue   workqueue.RateLimitingInterface
-	serviceBrokerQueue          workqueue.RateLimitingInterface
-	clusterServiceClassQueue    workqueue.RateLimitingInterface
-	serviceClassQueue           workqueue.RateLimitingInterface
-	clusterServicePlanQueue     workqueue.RateLimitingInterface
-	servicePlanQueue            workqueue.RateLimitingInterface
-	instanceQueue               workqueue.RateLimitingInterface
-	bindingQueue                workqueue.RateLimitingInterface
-	instancePollingQueue        workqueue.RateLimitingInterface
-	bindingPollingQueue         workqueue.RateLimitingInterface
+	clusterServiceBrokerQueue   workqueue.TypedRateLimitingInterface[any]
+	serviceBrokerQueue          workqueue.TypedRateLimitingInterface[any]
+	clusterServiceClassQueue    workqueue.TypedRateLimitingInterface[any]
+	serviceClassQueue           workqueue.TypedRateLimitingInterface[any]
+	clusterServicePlanQueue     workqueue.TypedRateLimitingInterface[any]
+	servicePlanQueue            workqueue.TypedRateLimitingInterface[any]
+	instanceQueue               workqueue.TypedRateLimitingInterface[any]
+	bindingQueue                workqueue.TypedRateLimitingInterface[any]
+	instancePollingQueue        workqueue.TypedRateLimitingInterface[any]
+	bindingPollingQueue         workqueue.TypedRateLimitingInterface[any]
 	// clusterIDConfigMapName is the k8s name that the clusterid
 	// configmap will have.
 	clusterIDConfigMapName string
@@ -299,7 +300,7 @@ func (c *controller) Run(workers int, stopCh <-chan struct{}) {
 // createWorker creates and runs a worker thread that just processes items in the
 // specified queue. The worker will run until stopCh is closed. The worker will be
 // added to the wait group when started and marked done when finished.
-func createWorker(queue workqueue.RateLimitingInterface, resourceType string, maxRetries int, forgetAfterSuccess bool, reconciler func(key string) error, stopCh <-chan struct{}, waitGroup *sync.WaitGroup) {
+func createWorker(queue workqueue.TypedRateLimitingInterface[any], resourceType string, maxRetries int, forgetAfterSuccess bool, reconciler func(key string) error, stopCh <-chan struct{}, waitGroup *sync.WaitGroup) {
 	waitGroup.Add(1)
 	go func() {
 		wait.Until(worker(queue, resourceType, maxRetries, forgetAfterSuccess, reconciler), time.Second, stopCh)
@@ -353,7 +354,7 @@ func (c *controller) monitorConfigMap() {
 	} else if err == nil {
 		// cluster id exists and is set
 		// get id out of cm
-		if id := cm.Data["id"]; "" != id {
+		if id, ok := cm.Data["id"]; ok {
 			c.setClusterID(id)
 		} else {
 			m := cm.Data
@@ -375,7 +376,7 @@ func (c *controller) monitorConfigMap() {
 // It enforces that the reconciler is never invoked concurrently with the same key.
 // If forgetAfterSuccess is true, it will cause the queue to forget the item should reconciliation
 // have no error.
-func worker(queue workqueue.RateLimitingInterface, resourceType string, maxRetries int, forgetAfterSuccess bool, reconciler func(key string) error) func() {
+func worker(queue workqueue.TypedRateLimitingInterface[any], resourceType string, maxRetries int, forgetAfterSuccess bool, reconciler func(key string) error) func() {
 	return func() {
 		exit := false
 		for !exit {
@@ -438,7 +439,7 @@ func (c *controller) getClusterServiceClassPlanAndClusterServiceBroker(instance 
 			return nil, nil, "", nil, &operationError{
 				reason: errorNonexistentClusterServicePlanReason,
 				message: fmt.Sprintf(
-					"The instance references a non-existent ClusterServicePlan %q - %v",
+					"the instance references a non-existent ClusterServicePlan %q - %v",
 					instance.Spec.ClusterServicePlanRef.Name, instance.Spec.PlanReference,
 				),
 			}
@@ -547,7 +548,7 @@ func (c *controller) getClusterServiceClassPlanAndClusterServiceBrokerForService
 	if err != nil {
 		return nil, nil, "", nil, err
 	}
-	servicePlan, err := c.getClusterServicePlanForServiceBinding(instance, binding, serviceClass)
+	servicePlan, err := c.getClusterServicePlanForServiceBinding(instance, binding)
 	if err != nil {
 		return nil, nil, "", nil, err
 	}
@@ -579,7 +580,7 @@ func (c *controller) getClusterServiceClassForServiceBinding(instance *v1beta1.S
 	serviceClass, err := c.clusterServiceClassLister.Get(instance.Spec.ClusterServiceClassRef.Name)
 	if err != nil {
 		s := fmt.Sprintf(
-			"References a non-existent ClusterServiceClass %q - %c",
+			"references a non-existent ClusterServiceClass %q - %c",
 			instance.Spec.ClusterServiceClassRef.Name, instance.Spec.PlanReference,
 		)
 		klog.Warning(pcb.Message(s))
@@ -588,7 +589,7 @@ func (c *controller) getClusterServiceClassForServiceBinding(instance *v1beta1.S
 			v1beta1.ServiceBindingConditionReady,
 			v1beta1.ConditionFalse,
 			errorNonexistentClusterServiceClassReason,
-			"The binding references a ClusterServiceClass that does not exist. "+s,
+			"the binding references a ClusterServiceClass that does not exist. "+s,
 		)
 		c.recorder.Event(binding, corev1.EventTypeWarning, errorNonexistentClusterServiceClassMessage, s)
 		return nil, err
@@ -596,12 +597,12 @@ func (c *controller) getClusterServiceClassForServiceBinding(instance *v1beta1.S
 	return serviceClass, nil
 }
 
-func (c *controller) getClusterServicePlanForServiceBinding(instance *v1beta1.ServiceInstance, binding *v1beta1.ServiceBinding, serviceClass *v1beta1.ClusterServiceClass) (*v1beta1.ClusterServicePlan, error) {
+func (c *controller) getClusterServicePlanForServiceBinding(instance *v1beta1.ServiceInstance, binding *v1beta1.ServiceBinding) (*v1beta1.ClusterServicePlan, error) {
 	pcb := pretty.NewInstanceContextBuilder(instance)
 	servicePlan, err := c.clusterServicePlanLister.Get(instance.Spec.ClusterServicePlanRef.Name)
 	if nil != err {
 		s := fmt.Sprintf(
-			"References a non-existent ClusterServicePlan %q - %v",
+			"references a non-existent ClusterServicePlan %q - %v",
 			instance.Spec.ClusterServicePlanRef.Name, instance.Spec.PlanReference,
 		)
 		klog.Warning(pcb.Message(s))
@@ -613,7 +614,7 @@ func (c *controller) getClusterServicePlanForServiceBinding(instance *v1beta1.Se
 			"The ServiceBinding references an ServiceInstance which references ClusterServicePlan that does not exist. "+s,
 		)
 		c.recorder.Event(binding, corev1.EventTypeWarning, errorNonexistentClusterServicePlanReason, s)
-		return nil, fmt.Errorf(s)
+		return nil, stderrors.New(s)
 	}
 	return servicePlan, nil
 }
@@ -823,7 +824,7 @@ func convertAndFilterCatalogToNamespacedTypes(namespace string, in *osb.CatalogR
 		if svc.Metadata != nil {
 			metadata, err := json.Marshal(svc.Metadata)
 			if err != nil {
-				err = fmt.Errorf("Failed to marshal metadata\n%+v\n %v", svc.Metadata, err)
+				err = fmt.Errorf("failed to marshal metadata\n%+v\n %v", svc.Metadata, err)
 				klog.Error(err)
 				return nil, nil, err
 			}
@@ -953,7 +954,7 @@ func convertAndFilterCatalog(in *osb.CatalogResponse, restrictions *v1beta1.Cata
 		if svc.Metadata != nil {
 			metadata, err := json.Marshal(svc.Metadata)
 			if err != nil {
-				err = fmt.Errorf("Failed to marshal metadata\n%+v\n %v", svc.Metadata, err)
+				err = fmt.Errorf("failed to marshal metadata\n%+v\n %v", svc.Metadata, err)
 				klog.Error(err)
 				return nil, nil, err
 			}
@@ -1053,7 +1054,7 @@ func filterServicePlans(restrictions *v1beta1.CatalogRestrictions, servicePlans 
 }
 
 func convertServicePlans(namespace string, plans []osb.Plan, serviceClassID string, existingServicePlans map[string]*v1beta1.ServicePlan) ([]*v1beta1.ServicePlan, error) {
-	if 0 == len(plans) {
+	if len(plans) == 0 {
 		return nil, fmt.Errorf("ServiceClass (K8S: %q) must have at least one plan", serviceClassID)
 	}
 	servicePlans := make([]*v1beta1.ServicePlan, len(plans))
@@ -1096,7 +1097,7 @@ func convertCommonServicePlan(plan osb.Plan, commonServicePlanSpec *v1beta1.Comm
 	if plan.Metadata != nil {
 		metadata, err := json.Marshal(plan.Metadata)
 		if err != nil {
-			err = fmt.Errorf("Failed to marshal metadata\n%+v\n %v", plan.Metadata, err)
+			err = fmt.Errorf("failed to marshal metadata\n%+v\n %v", plan.Metadata, err)
 			klog.Error(err)
 			return err
 		}
@@ -1108,7 +1109,7 @@ func convertCommonServicePlan(plan osb.Plan, commonServicePlanSpec *v1beta1.Comm
 			if instanceCreateSchema := instanceSchemas.Create; instanceCreateSchema != nil && instanceCreateSchema.Parameters != nil {
 				schema, err := json.Marshal(instanceCreateSchema.Parameters)
 				if err != nil {
-					err = fmt.Errorf("Failed to marshal instance create schema \n%+v\n %v", instanceCreateSchema.Parameters, err)
+					err = fmt.Errorf("failed to marshal instance create schema \n%+v\n %v", instanceCreateSchema.Parameters, err)
 					klog.Error(err)
 					return err
 				}
@@ -1117,7 +1118,7 @@ func convertCommonServicePlan(plan osb.Plan, commonServicePlanSpec *v1beta1.Comm
 			if instanceUpdateSchema := instanceSchemas.Update; instanceUpdateSchema != nil && instanceUpdateSchema.Parameters != nil {
 				schema, err := json.Marshal(instanceUpdateSchema.Parameters)
 				if err != nil {
-					err = fmt.Errorf("Failed to marshal instance update schema \n%+v\n %v", instanceUpdateSchema.Parameters, err)
+					err = fmt.Errorf("failed to marshal instance update schema \n%+v\n %v", instanceUpdateSchema.Parameters, err)
 					klog.Error(err)
 					return err
 				}
@@ -1129,7 +1130,7 @@ func convertCommonServicePlan(plan osb.Plan, commonServicePlanSpec *v1beta1.Comm
 				if bindingCreateSchema.Parameters != nil {
 					schema, err := json.Marshal(bindingCreateSchema.Parameters)
 					if err != nil {
-						err = fmt.Errorf("Failed to marshal binding create schema \n%+v\n %v", bindingCreateSchema.Parameters, err)
+						err = fmt.Errorf("failed to marshal binding create schema \n%+v\n %v", bindingCreateSchema.Parameters, err)
 						klog.Error(err)
 						return err
 					}
@@ -1142,7 +1143,7 @@ func convertCommonServicePlan(plan osb.Plan, commonServicePlanSpec *v1beta1.Comm
 }
 
 func convertClusterServicePlans(plans []osb.Plan, serviceClassID string, existingServicePlans map[string]*v1beta1.ClusterServicePlan) ([]*v1beta1.ClusterServicePlan, error) {
-	if 0 == len(plans) {
+	if len(plans) == 0 {
 		return nil, fmt.Errorf("ClusterServiceClass (K8S: %q) must have at least one plan", serviceClassID)
 	}
 	servicePlans := make([]*v1beta1.ClusterServicePlan, len(plans))
@@ -1174,7 +1175,7 @@ func convertClusterServicePlans(plans []osb.Plan, serviceClassID string, existin
 		if plan.Metadata != nil {
 			metadata, err := json.Marshal(plan.Metadata)
 			if err != nil {
-				err = fmt.Errorf("Failed to marshal metadata\n%+v\n %v", plan.Metadata, err)
+				err = fmt.Errorf("failed to marshal metadata\n%+v\n %v", plan.Metadata, err)
 				klog.Error(err)
 				return nil, err
 			}
@@ -1186,7 +1187,7 @@ func convertClusterServicePlans(plans []osb.Plan, serviceClassID string, existin
 				if instanceCreateSchema := instanceSchemas.Create; instanceCreateSchema != nil && instanceCreateSchema.Parameters != nil {
 					schema, err := json.Marshal(instanceCreateSchema.Parameters)
 					if err != nil {
-						err = fmt.Errorf("Failed to marshal instance create schema \n%+v\n %v", instanceCreateSchema.Parameters, err)
+						err = fmt.Errorf("failed to marshal instance create schema \n%+v\n %v", instanceCreateSchema.Parameters, err)
 						klog.Error(err)
 						return nil, err
 					}
@@ -1195,7 +1196,7 @@ func convertClusterServicePlans(plans []osb.Plan, serviceClassID string, existin
 				if instanceUpdateSchema := instanceSchemas.Update; instanceUpdateSchema != nil && instanceUpdateSchema.Parameters != nil {
 					schema, err := json.Marshal(instanceUpdateSchema.Parameters)
 					if err != nil {
-						err = fmt.Errorf("Failed to marshal instance update schema \n%+v\n %v", instanceUpdateSchema.Parameters, err)
+						err = fmt.Errorf("failed to marshal instance update schema \n%+v\n %v", instanceUpdateSchema.Parameters, err)
 						klog.Error(err)
 						return nil, err
 					}
@@ -1207,7 +1208,7 @@ func convertClusterServicePlans(plans []osb.Plan, serviceClassID string, existin
 					if bindingCreateSchema.Parameters != nil {
 						schema, err := json.Marshal(bindingCreateSchema.Parameters)
 						if err != nil {
-							err = fmt.Errorf("Failed to marshal binding create schema \n%+v\n %v", bindingCreateSchema.Parameters, err)
+							err = fmt.Errorf("fFailed to marshal binding create schema \n%+v\n %v", bindingCreateSchema.Parameters, err)
 							klog.Error(err)
 							return nil, err
 						}
@@ -1337,7 +1338,7 @@ func (c *controller) getServiceClassPlanAndServiceBrokerForServiceBinding(instan
 	if err != nil {
 		return nil, nil, "", nil, err
 	}
-	servicePlan, err := c.getServicePlanForServiceBinding(instance, binding, serviceClass)
+	servicePlan, err := c.getServicePlanForServiceBinding(instance, binding)
 	if err != nil {
 		return nil, nil, "", nil, err
 	}
@@ -1386,7 +1387,7 @@ func (c *controller) getServiceClassForServiceBinding(instance *v1beta1.ServiceI
 	return serviceClass, nil
 }
 
-func (c *controller) getServicePlanForServiceBinding(instance *v1beta1.ServiceInstance, binding *v1beta1.ServiceBinding, serviceClass *v1beta1.ServiceClass) (*v1beta1.ServicePlan, error) {
+func (c *controller) getServicePlanForServiceBinding(instance *v1beta1.ServiceInstance, binding *v1beta1.ServiceBinding) (*v1beta1.ServicePlan, error) {
 	pcb := pretty.NewInstanceContextBuilder(instance)
 	servicePlan, err := c.servicePlanLister.ServicePlans(instance.Namespace).Get(instance.Spec.ServicePlanRef.Name)
 	if nil != err {
@@ -1403,7 +1404,7 @@ func (c *controller) getServicePlanForServiceBinding(instance *v1beta1.ServiceIn
 			"The ServiceBinding references an ServiceInstance which references ServicePlan that does not exist. "+s,
 		)
 		c.recorder.Event(binding, corev1.EventTypeWarning, errorNonexistentClusterServicePlanReason, s)
-		return nil, fmt.Errorf(s)
+		return nil, stderrors.New(s)
 	}
 	return servicePlan, nil
 }
@@ -1471,7 +1472,7 @@ func shouldReconcileServiceBrokerCommon(pcb *pretty.ContextBuilder, brokerMeta *
 				if brokerStatus.LastCatalogRetrievalTime != nil {
 					intervalPassed = now.After(brokerStatus.LastCatalogRetrievalTime.Time.Add(duration))
 				}
-				if intervalPassed == false {
+				if !intervalPassed {
 					klog.V(10).Info(pcb.Message("Not processing because RelistDuration has not elapsed since the last relist"))
 				}
 				return intervalPassed

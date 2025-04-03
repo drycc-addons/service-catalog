@@ -18,6 +18,7 @@ package broker_test
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 
 	. "github.com/drycc-addons/service-catalog/cmd/svcat/broker"
@@ -165,7 +166,7 @@ var _ = Describe("Describe Command", func() {
 		It("bubbles up errors", func() {
 			outputBuffer := &bytes.Buffer{}
 			errMsg := "incompatible potato"
-			errToReturn := fmt.Errorf(errMsg)
+			errToReturn := errors.New(errMsg)
 
 			fakeApp, _ := svcat.NewApp(nil, nil, namespace)
 			fakeSDK := new(servicecatalogfakes.FakeSvcatClient)
@@ -196,7 +197,7 @@ var _ = Describe("Describe Command", func() {
 		})
 		It("prompts the user for more input when it gets a MultipleBrokersFound error", func() {
 			outputBuffer := &bytes.Buffer{}
-			errToReturn := fmt.Errorf(servicecatalog.MultipleBrokersFoundError + " for '" + brokerName + "'")
+			errToReturn := fmt.Errorf("%s for '%s'", servicecatalog.MultipleBrokersFoundError, brokerName)
 
 			fakeApp, _ := svcat.NewApp(nil, nil, namespace)
 			fakeSDK := new(servicecatalogfakes.FakeSvcatClient)

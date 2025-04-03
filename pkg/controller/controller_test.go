@@ -1853,7 +1853,7 @@ func TestFilterServicePlans(t *testing.T) {
 				ServicePlan: tc.requirements,
 			}
 
-			acceptedServiceClass, rejectedServiceClasses, err := filterServicePlans(restrictions, servicePlans)
+			acceptedServiceClass, rejectedServiceClasses, _ := filterServicePlans(restrictions, servicePlans)
 			if len(acceptedServiceClass) != tc.accepted {
 				t.Fatalf("Unexpected number of accepted service plans after filtering, %s", expectedGot(tc.accepted, len(acceptedServiceClass)))
 			}
@@ -2655,10 +2655,6 @@ func assertClassRemovedFromBrokerCatalogFalse(t *testing.T, obj runtime.Object) 
 	assertClassRemovedFromBrokerCatalog(t, obj, false)
 }
 
-func assertClassRemovedFromBrokerCatalogTrue(t *testing.T, obj runtime.Object) {
-	assertClassRemovedFromBrokerCatalog(t, obj, true)
-}
-
 func assertClassRemovedFromBrokerCatalog(t *testing.T, obj runtime.Object, condition bool) {
 	clusterServiceClass, ok := obj.(*v1beta1.ClusterServiceClass)
 	if !ok {
@@ -2672,10 +2668,6 @@ func assertClassRemovedFromBrokerCatalog(t *testing.T, obj runtime.Object, condi
 
 func assertPlanRemovedFromBrokerCatalogFalse(t *testing.T, obj runtime.Object) {
 	assertPlanRemovedFromBrokerCatalog(t, obj, false)
-}
-
-func assertPlanRemovedFromBrokerCatalogTrue(t *testing.T, obj runtime.Object) {
-	assertPlanRemovedFromBrokerCatalog(t, obj, true)
 }
 
 func assertPlanRemovedFromBrokerCatalog(t *testing.T, obj runtime.Object, condition bool) {
@@ -2725,10 +2717,6 @@ func assertClusterServiceBrokerOperationStartTimeSet(t *testing.T, obj runtime.O
 	}
 }
 
-func assertServiceInstanceReadyTrue(t *testing.T, obj runtime.Object, reason ...string) {
-	assertServiceInstanceReadyCondition(t, obj, v1beta1.ConditionTrue, reason...)
-}
-
 func assertServiceInstanceReadyFalse(t *testing.T, obj runtime.Object, reason ...string) {
 	assertServiceInstanceReadyCondition(t, obj, v1beta1.ConditionFalse, reason...)
 }
@@ -2765,7 +2753,7 @@ func assertServiceInstanceCondition(t *testing.T, obj runtime.Object, conditionT
 	}
 }
 
-func assertServiceInstanceOrphanMitigationMissing(t *testing.T, obj runtime.Object, reason ...string) {
+func assertServiceInstanceOrphanMitigationMissing(t *testing.T, obj runtime.Object) {
 	assertServiceInstanceConditionMissing(t, obj, v1beta1.ServiceInstanceConditionOrphanMitigation)
 }
 
@@ -2780,17 +2768,6 @@ func assertServiceInstanceConditionMissing(t *testing.T, obj runtime.Object, con
 			fatalf(t, "%v condition expected to be missing, but was present with the reason %q and message %q", conditionType, condition.Reason, condition.Message)
 			return
 		}
-	}
-}
-
-func assertServiceInstanceConditionsCount(t *testing.T, obj runtime.Object, count int) {
-	instance, ok := obj.(*v1beta1.ServiceInstance)
-	if !ok {
-		fatalf(t, "Couldn't convert object %+v into a *v1beta1.ServiceInstance", obj)
-	}
-
-	if e, a := count, len(instance.Status.Conditions); e != a {
-		fatalf(t, "Expected %v condition, got %v", e, a)
 	}
 }
 
@@ -3378,10 +3355,6 @@ func assertServiceInstancePropertiesStateParametersUnchanged(t *testing.T, props
 	}
 }
 
-func assertServiceBindingReadyTrue(t *testing.T, obj runtime.Object) {
-	assertServiceBindingReadyCondition(t, obj, v1beta1.ConditionTrue)
-}
-
 func assertServiceBindingReadyFalse(t *testing.T, obj runtime.Object, reason ...string) {
 	assertServiceBindingReadyCondition(t, obj, v1beta1.ConditionFalse, reason...)
 }
@@ -3423,16 +3396,6 @@ func assertServiceBindingReconciledGeneration(t *testing.T, obj runtime.Object, 
 
 	if e, a := reconciledGeneration, binding.Status.ReconciledGeneration; e != a {
 		fatalf(t, "unexpected reconciled generation: expected %v, got %v", e, a)
-	}
-}
-
-func assertServiceBindingReconciliationNotComplete(t *testing.T, obj runtime.Object) {
-	binding, ok := obj.(*v1beta1.ServiceBinding)
-	if !ok {
-		fatalf(t, "Couldn't convert object %+v into a *v1beta1.ServiceBinding", obj)
-	}
-	if g, rg := binding.Generation, binding.Status.ReconciledGeneration; g <= rg {
-		fatalf(t, "expected ReconciledGeneration to be less than Generation: Generation %v, ReconciledGeneration %v", g, rg)
 	}
 }
 
@@ -3609,7 +3572,7 @@ func assertServiceBindingAsyncBindErrorAfterStateSucceeded(t *testing.T, obj run
 	assertCatalogFinalizerExists(t, obj)
 }
 
-func assertServiceBindingAsyncUnbindRetryDurationExceeded(t *testing.T, obj runtime.Object, operation v1beta1.ServiceBindingOperation, readyReason string, failureReason string, originalBinding *v1beta1.ServiceBinding) {
+func assertServiceBindingAsyncUnbindRetryDurationExceeded(t *testing.T, obj runtime.Object, readyReason string, failureReason string, originalBinding *v1beta1.ServiceBinding) {
 	assertServiceBindingReadyCondition(t, obj, v1beta1.ConditionUnknown, readyReason)
 	assertServiceBindingCondition(t, obj, v1beta1.ServiceBindingConditionFailed, v1beta1.ConditionTrue, failureReason)
 	assertServiceBindingCurrentOperationClear(t, obj)
@@ -3629,33 +3592,6 @@ func assertServiceBindingAsyncOrphanMitigationRetryDurationExceeded(t *testing.T
 	assertServiceBindingInProgressPropertiesNil(t, obj)
 	assertServiceBindingExternalPropertiesNil(t, obj)
 	assertServiceBindingUnbindStatus(t, obj, v1beta1.ServiceBindingUnbindStatusFailed)
-	assertCatalogFinalizerExists(t, obj)
-}
-
-func assertServiceBindingErrorFetchingBinding(t *testing.T, obj runtime.Object, originalBinding *v1beta1.ServiceBinding) {
-	assertServiceBindingReadyCondition(t, obj, v1beta1.ConditionFalse, errorFetchingBindingFailedReason)
-	assertServiceBindingCurrentOperation(t, obj, v1beta1.ServiceBindingOperationBind)
-	assertServiceBindingOperationStartTimeSet(t, obj, true)
-	assertServiceBindingReconciledGeneration(t, obj, originalBinding.Status.ReconciledGeneration)
-	assertServiceBindingInProgressPropertiesNil(t, obj)
-	assertServiceBindingExternalPropertiesParameters(t, obj, nil, "")
-	assertServiceBindingAsyncOpInProgressTrue(t, obj)
-	assertServiceBindingOrphanMitigationSet(t, obj, false)
-	assertServiceBindingUnbindStatus(t, obj, v1beta1.ServiceBindingUnbindStatusRequired)
-	assertCatalogFinalizerExists(t, obj)
-}
-
-func assertServiceBindingErrorInjectingCredentials(t *testing.T, obj runtime.Object, originalBinding *v1beta1.ServiceBinding) {
-	assertServiceBindingReadyFalse(t, obj, errorInjectingBindResultReason)
-	assertServiceBindingCurrentOperation(t, obj, v1beta1.ServiceBindingOperationBind)
-	assertServiceBindingOperationStartTimeSet(t, obj, true)
-	assertServiceBindingReconciledGeneration(t, obj, originalBinding.Status.ReconciledGeneration)
-	assertServiceBindingInProgressPropertiesNil(t, obj)
-	// External properties are updated because the bind request with the Broker was successful
-	assertServiceBindingExternalPropertiesParameters(t, obj, nil, "")
-	assertServiceBindingAsyncOpInProgressTrue(t, obj)
-	assertServiceBindingOrphanMitigationSet(t, obj, false)
-	assertServiceBindingUnbindStatus(t, obj, v1beta1.ServiceBindingUnbindStatusRequired)
 	assertCatalogFinalizerExists(t, obj)
 }
 
@@ -3723,17 +3659,6 @@ func assertServiceBindingOrphanMitigationSuccess(t *testing.T, obj runtime.Objec
 	assertCatalogFinalizerExists(t, obj)
 }
 
-func assertServiceBindingOrphanMitigationFailure(t *testing.T, obj runtime.Object, originalBinding *v1beta1.ServiceBinding) {
-	assertServiceBindingReadyCondition(t, obj, v1beta1.ConditionUnknown, errorOrphanMitigationFailedReason)
-	assertServiceBindingCurrentOperationClear(t, obj)
-	assertServiceBindingOperationStartTimeSet(t, obj, false)
-	assertServiceBindingReconciledGeneration(t, obj, originalBinding.Generation)
-	assertServiceBindingInProgressPropertiesNil(t, obj)
-	assertServiceBindingExternalPropertiesNil(t, obj)
-	assertServiceBindingUnbindStatus(t, obj, v1beta1.ServiceBindingUnbindStatusFailed)
-	assertCatalogFinalizerExists(t, obj)
-}
-
 func assertServiceBindingLastOperation(t *testing.T, obj runtime.Object, operation string) {
 	binding, ok := obj.(*v1beta1.ServiceBinding)
 	if !ok {
@@ -3758,16 +3683,6 @@ func assertServiceBindingAsyncOpInProgressTrue(t *testing.T, obj runtime.Object)
 	}
 }
 
-func assertServiceBindingAsyncOpInProgressFalse(t *testing.T, obj runtime.Object) {
-	binding, ok := obj.(*v1beta1.ServiceBinding)
-	if !ok {
-		fatalf(t, "Couldn't convert object %+v into a *v1beta1.ServiceBinding", obj)
-	}
-	if binding.Status.AsyncOpInProgress {
-		fatalf(t, "expected AsyncOpInProgress to be false but was %v", binding.Status.AsyncOpInProgress)
-	}
-}
-
 func assertServiceBindingInProgressPropertiesNil(t *testing.T, obj runtime.Object) {
 	binding, ok := obj.(*v1beta1.ServiceBinding)
 	if !ok {
@@ -3785,18 +3700,6 @@ func assertServiceBindingInProgressPropertiesParameters(t *testing.T, obj runtim
 		fatalf(t, "Couldn't convert object %+v into a *v1beta1.ServiceBinding", obj)
 	}
 	assertServiceBindingPropertiesStateParameters(t, "in-progress", binding.Status.InProgressProperties, params, checksum)
-}
-
-func assertServiceBindingInProgressPropertiesUnchanged(t *testing.T, obj runtime.Object, originalBinding *v1beta1.ServiceBinding) {
-	binding, ok := obj.(*v1beta1.ServiceBinding)
-	if !ok {
-		fatalf(t, "Couldn't convert object %+v into a *v1beta1.ServiceBinding", obj)
-	}
-	if originalBinding.Status.InProgressProperties == nil {
-		assertServiceBindingInProgressPropertiesNil(t, obj)
-	} else {
-		assertServiceBindingPropertiesStateParametersUnchanged(t, "in-progress", binding.Status.InProgressProperties, *originalBinding.Status.InProgressProperties)
-	}
 }
 
 func assertServiceBindingExternalPropertiesNil(t *testing.T, obj runtime.Object) {
@@ -4006,18 +3909,10 @@ func assertUnbind(t *testing.T, action fakeosb.Action, request *osb.UnbindReques
 	}
 }
 
-func assertGetBinding(t *testing.T, action fakeosb.Action, request *osb.GetBindingRequest) {
+func assertGetBinding(t *testing.T, action fakeosb.Action) {
 	if e, a := fakeosb.GetBinding, action.Type; e != a {
 		fatalf(t, "unexpected action type; expected %v, got %v", e, a)
 	}
-
-	// TODO(mkibbe): Currently the GetBinding fake has a bug where it does not
-	// store the request. Re-enable this once this is fixed.
-	/*
-		if e, a := request, action.Request; !reflect.DeepEqual(e, a) {
-			fatalf(t, "unexpected diff in GET binding request: %v\nexpected %+v\ngot      %+v", diff.ObjectReflectDiff(e, a), e, a)
-		}
-	*/
 }
 
 func assertOriginatingIdentity(t *testing.T, expected *osb.OriginatingIdentity, actual *osb.OriginatingIdentity) {

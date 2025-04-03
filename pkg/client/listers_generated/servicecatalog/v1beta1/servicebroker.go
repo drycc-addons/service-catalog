@@ -1,5 +1,5 @@
 /*
-Copyright 2024 The Kubernetes Authors.
+Copyright 2025 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,10 +19,10 @@ limitations under the License.
 package v1beta1
 
 import (
-	v1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/client-go/listers"
-	"k8s.io/client-go/tools/cache"
+	servicecatalogv1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	labels "k8s.io/apimachinery/pkg/labels"
+	listers "k8s.io/client-go/listers"
+	cache "k8s.io/client-go/tools/cache"
 )
 
 // ServiceBrokerLister helps list ServiceBrokers.
@@ -30,7 +30,7 @@ import (
 type ServiceBrokerLister interface {
 	// List lists all ServiceBrokers in the indexer.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1beta1.ServiceBroker, err error)
+	List(selector labels.Selector) (ret []*servicecatalogv1beta1.ServiceBroker, err error)
 	// ServiceBrokers returns an object that can list and get ServiceBrokers.
 	ServiceBrokers(namespace string) ServiceBrokerNamespaceLister
 	ServiceBrokerListerExpansion
@@ -38,17 +38,17 @@ type ServiceBrokerLister interface {
 
 // serviceBrokerLister implements the ServiceBrokerLister interface.
 type serviceBrokerLister struct {
-	listers.ResourceIndexer[*v1beta1.ServiceBroker]
+	listers.ResourceIndexer[*servicecatalogv1beta1.ServiceBroker]
 }
 
 // NewServiceBrokerLister returns a new ServiceBrokerLister.
 func NewServiceBrokerLister(indexer cache.Indexer) ServiceBrokerLister {
-	return &serviceBrokerLister{listers.New[*v1beta1.ServiceBroker](indexer, v1beta1.Resource("servicebroker"))}
+	return &serviceBrokerLister{listers.New[*servicecatalogv1beta1.ServiceBroker](indexer, servicecatalogv1beta1.Resource("servicebroker"))}
 }
 
 // ServiceBrokers returns an object that can list and get ServiceBrokers.
 func (s *serviceBrokerLister) ServiceBrokers(namespace string) ServiceBrokerNamespaceLister {
-	return serviceBrokerNamespaceLister{listers.NewNamespaced[*v1beta1.ServiceBroker](s.ResourceIndexer, namespace)}
+	return serviceBrokerNamespaceLister{listers.NewNamespaced[*servicecatalogv1beta1.ServiceBroker](s.ResourceIndexer, namespace)}
 }
 
 // ServiceBrokerNamespaceLister helps list and get ServiceBrokers.
@@ -56,15 +56,15 @@ func (s *serviceBrokerLister) ServiceBrokers(namespace string) ServiceBrokerName
 type ServiceBrokerNamespaceLister interface {
 	// List lists all ServiceBrokers in the indexer for a given namespace.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1beta1.ServiceBroker, err error)
+	List(selector labels.Selector) (ret []*servicecatalogv1beta1.ServiceBroker, err error)
 	// Get retrieves the ServiceBroker from the indexer for a given namespace and name.
 	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1beta1.ServiceBroker, error)
+	Get(name string) (*servicecatalogv1beta1.ServiceBroker, error)
 	ServiceBrokerNamespaceListerExpansion
 }
 
 // serviceBrokerNamespaceLister implements the ServiceBrokerNamespaceLister
 // interface.
 type serviceBrokerNamespaceLister struct {
-	listers.ResourceIndexer[*v1beta1.ServiceBroker]
+	listers.ResourceIndexer[*servicecatalogv1beta1.ServiceBroker]
 }

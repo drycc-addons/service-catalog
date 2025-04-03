@@ -1,5 +1,5 @@
 /*
-Copyright 2024 The Kubernetes Authors.
+Copyright 2025 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,10 +19,10 @@ limitations under the License.
 package v1beta1
 
 import (
-	v1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/client-go/listers"
-	"k8s.io/client-go/tools/cache"
+	servicecatalogv1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	labels "k8s.io/apimachinery/pkg/labels"
+	listers "k8s.io/client-go/listers"
+	cache "k8s.io/client-go/tools/cache"
 )
 
 // ServicePlanLister helps list ServicePlans.
@@ -30,7 +30,7 @@ import (
 type ServicePlanLister interface {
 	// List lists all ServicePlans in the indexer.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1beta1.ServicePlan, err error)
+	List(selector labels.Selector) (ret []*servicecatalogv1beta1.ServicePlan, err error)
 	// ServicePlans returns an object that can list and get ServicePlans.
 	ServicePlans(namespace string) ServicePlanNamespaceLister
 	ServicePlanListerExpansion
@@ -38,17 +38,17 @@ type ServicePlanLister interface {
 
 // servicePlanLister implements the ServicePlanLister interface.
 type servicePlanLister struct {
-	listers.ResourceIndexer[*v1beta1.ServicePlan]
+	listers.ResourceIndexer[*servicecatalogv1beta1.ServicePlan]
 }
 
 // NewServicePlanLister returns a new ServicePlanLister.
 func NewServicePlanLister(indexer cache.Indexer) ServicePlanLister {
-	return &servicePlanLister{listers.New[*v1beta1.ServicePlan](indexer, v1beta1.Resource("serviceplan"))}
+	return &servicePlanLister{listers.New[*servicecatalogv1beta1.ServicePlan](indexer, servicecatalogv1beta1.Resource("serviceplan"))}
 }
 
 // ServicePlans returns an object that can list and get ServicePlans.
 func (s *servicePlanLister) ServicePlans(namespace string) ServicePlanNamespaceLister {
-	return servicePlanNamespaceLister{listers.NewNamespaced[*v1beta1.ServicePlan](s.ResourceIndexer, namespace)}
+	return servicePlanNamespaceLister{listers.NewNamespaced[*servicecatalogv1beta1.ServicePlan](s.ResourceIndexer, namespace)}
 }
 
 // ServicePlanNamespaceLister helps list and get ServicePlans.
@@ -56,15 +56,15 @@ func (s *servicePlanLister) ServicePlans(namespace string) ServicePlanNamespaceL
 type ServicePlanNamespaceLister interface {
 	// List lists all ServicePlans in the indexer for a given namespace.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1beta1.ServicePlan, err error)
+	List(selector labels.Selector) (ret []*servicecatalogv1beta1.ServicePlan, err error)
 	// Get retrieves the ServicePlan from the indexer for a given namespace and name.
 	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1beta1.ServicePlan, error)
+	Get(name string) (*servicecatalogv1beta1.ServicePlan, error)
 	ServicePlanNamespaceListerExpansion
 }
 
 // servicePlanNamespaceLister implements the ServicePlanNamespaceLister
 // interface.
 type servicePlanNamespaceLister struct {
-	listers.ResourceIndexer[*v1beta1.ServicePlan]
+	listers.ResourceIndexer[*servicecatalogv1beta1.ServicePlan]
 }

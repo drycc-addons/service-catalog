@@ -18,6 +18,7 @@ package class_test
 
 import (
 	"bytes"
+	stderrors "errors"
 	"fmt"
 
 	. "github.com/drycc-addons/service-catalog/cmd/svcat/class"
@@ -255,7 +256,7 @@ var _ = Describe("Describe Command", func() {
 
 			fakeApp, _ := svcat.NewApp(nil, nil, namespace)
 			fakeSDK := new(servicecatalogfakes.FakeSvcatClient)
-			fakeSDK.RetrieveClassByNameReturns(nil, fmt.Errorf(errMsg))
+			fakeSDK.RetrieveClassByNameReturns(nil, stderrors.New(errMsg))
 			fakeApp.SvcatClient = fakeSDK
 			cxt := svcattest.NewContext(outputBuffer, fakeApp)
 			cmd := DescribeCmd{
@@ -272,7 +273,7 @@ var _ = Describe("Describe Command", func() {
 			Expect(err.Error()).To(ContainSubstring(errMsg))
 		})
 		It("prompts the user for more input when it gets a MultipleClassesFound error", func() {
-			errToReturn := fmt.Errorf(servicecatalog.MultipleClassesFoundError + " for '" + className + "'")
+			errToReturn := fmt.Errorf("%s for '%s'", servicecatalog.MultipleClassesFoundError, className)
 			outputBuffer := &bytes.Buffer{}
 
 			fakeApp, _ := svcat.NewApp(nil, nil, namespace)
@@ -300,7 +301,7 @@ var _ = Describe("Describe Command", func() {
 			fakeApp, _ := svcat.NewApp(nil, nil, namespace)
 			fakeSDK := new(servicecatalogfakes.FakeSvcatClient)
 			fakeSDK.RetrieveClassByNameReturns(classToReturn, nil)
-			fakeSDK.RetrievePlansReturns(nil, fmt.Errorf(errMsg))
+			fakeSDK.RetrievePlansReturns(nil, fmt.Errorf("%s", errMsg))
 			fakeApp.SvcatClient = fakeSDK
 			cxt := svcattest.NewContext(outputBuffer, fakeApp)
 			cmd := DescribeCmd{

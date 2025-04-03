@@ -104,7 +104,7 @@ func (c *DescribeCmd) Run() error {
 	}
 	if err != nil {
 		if strings.Contains(err.Error(), servicecatalog.MultipleClassesFoundError) {
-			return fmt.Errorf(err.Error() + ", please specify a scope with --scope or an exact Kubernetes name with --kube-name")
+			return fmt.Errorf("%s, please specify a scope with --scope or an exact Kubernetes name with --kube-name", err.Error())
 		}
 
 		return err

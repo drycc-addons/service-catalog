@@ -148,7 +148,7 @@ func TestReconcileServiceInstanceNonExistentClusterServiceClass(t *testing.T) {
 	events := getRecordedEvents(testController)
 
 	expectedEvent := warningEventBuilder(errorNonexistentClusterServiceClassReason).msgf(
-		"References a non-existent ClusterServiceClass %c or there is more than one (found: 0)",
+		"references a non-existent ClusterServiceClass %c or there is more than one (found: 0)",
 		instance.Spec.PlanReference,
 	)
 	if err := checkEvents(events, expectedEvent.stringArr()); err != nil {
@@ -195,7 +195,7 @@ func TestReconcileServiceInstanceNonExistentClusterServiceClassWithK8SName(t *te
 	events := getRecordedEvents(testController)
 
 	expectedEvent := warningEventBuilder(errorNonexistentClusterServiceClassReason).msgf(
-		"References a non-existent ClusterServiceClass %c",
+		"references a non-existent ClusterServiceClass %c",
 		instance.Spec.PlanReference,
 	)
 	if err := checkEvents(events, expectedEvent.stringArr()); err != nil {
@@ -343,7 +343,7 @@ func TestReconcileServiceInstanceNonExistentClusterServicePlan(t *testing.T) {
 	events := getRecordedEvents(testController)
 
 	expectedEvent := warningEventBuilder(errorNonexistentClusterServicePlanReason).msgf(
-		`References a non-existent ClusterServicePlan %b on ClusterServiceClass %s %c or there is more than one (found: 0)`,
+		`references a non-existent ClusterServicePlan %b on ClusterServiceClass %s %c or there is more than one (found: 0)`,
 		instance.Spec.PlanReference, instance.Spec.ClusterServiceClassRef.Name, instance.Spec.PlanReference,
 	)
 	if err := checkEvents(events, expectedEvent.stringArr()); err != nil {
@@ -402,7 +402,7 @@ func TestReconcileServiceInstanceNonExistentClusterServicePlanK8SName(t *testing
 	events := getRecordedEvents(testController)
 
 	expectedEvent := warningEventBuilder(errorNonexistentClusterServicePlanReason).msgf(
-		"References a non-existent ClusterServicePlan %v",
+		"references a non-existent ClusterServicePlan %v",
 		instance.Spec.PlanReference,
 	)
 	if err := checkEvents(events, expectedEvent.stringArr()); err != nil {
@@ -1154,10 +1154,10 @@ func TestReconcileServiceInstanceWithTemporaryProvisionFailure(t *testing.T) {
 
 	actions := fakeCatalogClient.Actions()
 	assertNumberOfActions(t, actions, 2)
-	updatedServiceInstance := assertUpdateStatus(t, actions[1], instance)
+	assertUpdateStatus(t, actions[1], instance)
 
-	events := getRecordedEvents(testController)
-	updatedServiceInstance = assertUpdateStatus(t, actions[1], instance)
+	getRecordedEvents(testController)
+	updatedServiceInstance := assertUpdateStatus(t, actions[1], instance)
 	assertServiceInstanceOperationInProgress(t,
 		updatedServiceInstance,
 		v1beta1.ServiceInstanceOperationProvision,
@@ -1212,7 +1212,7 @@ func TestReconcileServiceInstanceWithTemporaryProvisionFailure(t *testing.T) {
 		instance,
 	)
 
-	events = getRecordedEvents(testController)
+	events := getRecordedEvents(testController)
 
 	message := fmt.Sprintf(
 		"Error provisioning ServiceInstance of ClusterServiceClass (K8S: %q ExternalName: %q) at ClusterServiceBroker %q: Status: %v; ErrorMessage: %s",
@@ -3648,7 +3648,7 @@ func TestReconcileServiceInstanceWithStatusUpdateError(t *testing.T) {
 	brokerActions := fakeClusterServiceBrokerClient.Actions()
 	assertNumberOfBrokerActions(t, brokerActions, 0)
 
-	instance = assertServiceInstanceProvisionInProgressIsTheOnlyCatalogClientAction(t, fakeCatalogClient, instance)
+	assertServiceInstanceProvisionInProgressIsTheOnlyCatalogClientAction(t, fakeCatalogClient, instance)
 
 	events := getRecordedEvents(testController)
 	assertNumEvents(t, events, 0)
@@ -4727,7 +4727,7 @@ func TestResolveReferencesNoClusterServiceClass(t *testing.T) {
 	events := getRecordedEvents(testController)
 
 	expectedEvent := warningEventBuilder(errorNonexistentClusterServiceClassReason).msg(
-		fmt.Sprintf(`References a non-existent ClusterServiceClass %c or there is more than one (found: 0)`,
+		fmt.Sprintf(`references a non-existent ClusterServiceClass %c or there is more than one (found: 0)`,
 			instance.Spec.PlanReference))
 	if err := checkEvents(events, expectedEvent.stringArr()); err != nil {
 		t.Fatal(err)
@@ -5032,7 +5032,7 @@ func TestResolveReferencesNoClusterServicePlan(t *testing.T) {
 	events := getRecordedEvents(testController)
 
 	expectedEvent := warningEventBuilder(errorNonexistentClusterServicePlanReason).msgf(
-		`References a non-existent ClusterServicePlan %b on ClusterServiceClass %s %c or there is more than one (found: 0)`,
+		`references a non-existent ClusterServicePlan %b on ClusterServiceClass %s %c or there is more than one (found: 0)`,
 		instance.Spec.PlanReference, instance.Spec.ClusterServiceClassRef.Name, instance.Spec.PlanReference,
 	)
 	if err := checkEvents(events, expectedEvent.stringArr()); err != nil {
@@ -6174,7 +6174,7 @@ func TestReconcileServiceInstanceDeleteWithOngoingOperation(t *testing.T) {
 
 	expectedEvent := corev1.EventTypeNormal + " " + successDeprovisionReason + " " + "The instance was deprovisioned successfully"
 	if e, a := expectedEvent, events[0]; e != a {
-		t.Fatalf("Received unexpected event: %v\nExpected: %v", a, e)
+		t.Fatalf("received unexpected event: %v\nExpected: %v", a, e)
 	}
 }
 

@@ -67,14 +67,14 @@ func (h *CreateUpdateHandler) Handle(ctx context.Context, req admission.Request)
 	mutated := si.DeepCopy()
 	switch req.Operation {
 	case admissionTypes.Create:
-		h.mutateOnCreate(ctx, req, mutated)
+		h.mutateOnCreate(req, mutated)
 	case admissionTypes.Update:
 		oldObj := &sc.ServiceInstance{}
 		if err := h.decoder.DecodeRaw(req.OldObject, oldObj); err != nil {
 			traced.Errorf("Could not decode request old object: %v", err)
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		h.mutateOnUpdate(ctx, req, oldObj, mutated)
+		h.mutateOnUpdate(req, oldObj, mutated)
 		h.syncLabels(mutated)
 	default:
 		traced.Infof("ServiceInstance mutation wehbook does not support action %q", req.Operation)
@@ -107,7 +107,7 @@ func (h *CreateUpdateHandler) InjectDecoder(d admission.Decoder) error {
 	return nil
 }
 
-func (h *CreateUpdateHandler) mutateOnCreate(ctx context.Context, req admission.Request, instance *sc.ServiceInstance) {
+func (h *CreateUpdateHandler) mutateOnCreate(req admission.Request, instance *sc.ServiceInstance) {
 	// This feature was copied from Service Catalog registry: https://github.com/drycc-addons/service-catalog/blob/master/pkg/registry/servicecatalog/instance/strategy.go
 	// If you want to track previous changes please check there.
 
@@ -124,7 +124,7 @@ func (h *CreateUpdateHandler) mutateOnCreate(ctx context.Context, req admission.
 	instance.Finalizers = []string{sc.FinalizerServiceCatalog}
 }
 
-func (h *CreateUpdateHandler) mutateOnUpdate(ctx context.Context, req admission.Request, oldServiceInstance, newServiceInstance *sc.ServiceInstance) {
+func (h *CreateUpdateHandler) mutateOnUpdate(req admission.Request, oldServiceInstance, newServiceInstance *sc.ServiceInstance) {
 
 	// Clear out the ClusterServicePlanRef so that it is resolved during reconciliation
 	planUpdated := newServiceInstance.Spec.ClusterServicePlanExternalName != oldServiceInstance.Spec.ClusterServicePlanExternalName ||

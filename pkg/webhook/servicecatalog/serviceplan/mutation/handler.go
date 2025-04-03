@@ -26,6 +26,7 @@ import (
 	webhookutil "github.com/drycc-addons/service-catalog/pkg/webhookutil"
 
 	admissionTypes "k8s.io/api/admission/v1"
+	"k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
@@ -53,14 +54,14 @@ func (h *CreateUpdateHandler) Handle(ctx context.Context, req admission.Request)
 	mutated := cb.DeepCopy()
 	switch req.Operation {
 	case admissionTypes.Create:
-		h.mutateOnCreate(ctx, mutated)
+		h.mutateOnCreate(mutated)
 	case admissionTypes.Update:
 		oldObj := &sc.ServicePlan{}
 		if err := h.decoder.DecodeRaw(req.OldObject, oldObj); err != nil {
 			traced.Errorf("Could not decode request old object: %v", err)
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		h.mutateOnUpdate(ctx, oldObj, mutated)
+		h.mutateOnUpdate(oldObj, mutated)
 	default:
 		traced.Infof("ServicePlan mutation wehbook does not support action %q", req.Operation)
 		return admission.Allowed("action not taken")
@@ -82,10 +83,11 @@ func (h *CreateUpdateHandler) InjectDecoder(d admission.Decoder) error {
 	return nil
 }
 
-func (h *CreateUpdateHandler) mutateOnCreate(ctx context.Context, binding *sc.ServicePlan) {
+func (h *CreateUpdateHandler) mutateOnCreate(binding *sc.ServicePlan) {
+	klog.Infof("ServicePlan mutation webhook is creating %s", binding.Name)
 }
 
-func (h *CreateUpdateHandler) mutateOnUpdate(ctx context.Context, oldObj, newObj *sc.ServicePlan) {
+func (h *CreateUpdateHandler) mutateOnUpdate(oldObj, newObj *sc.ServicePlan) {
 	// This feature was copied from Service Catalog registry: https://github.com/drycc-addons/service-catalog/blob/master/pkg/registry/servicecatalog/serviceplan/strategy.go
 	// If you want to track previous changes please check there.
 

@@ -362,13 +362,13 @@ func newClusterServicePlans(classname string, count uint, useDifferentClasses bo
 		},
 	}
 
-	if 0 == count {
+	if count == 0 {
 		return []*sc.ClusterServicePlan{}
 	}
-	if 1 == count {
+	if count == 1 {
 		return []*sc.ClusterServicePlan{sp1}
 	}
-	if 2 == count {
+	if count == 2 {
 		return []*sc.ClusterServicePlan{sp1, sp2}
 	}
 	return []*sc.ClusterServicePlan{}
@@ -420,13 +420,13 @@ func newServicePlans(classname string, namespace string, count uint, useDifferen
 		},
 	}
 
-	if 0 == count {
+	if count == 0 {
 		return []*sc.ServicePlan{}
 	}
-	if 1 == count {
+	if count == 1 {
 		return []*sc.ServicePlan{sp1}
 	}
-	if 2 == count {
+	if count == 2 {
 		return []*sc.ServicePlan{sp1, sp2}
 	}
 	return []*sc.ServicePlan{}

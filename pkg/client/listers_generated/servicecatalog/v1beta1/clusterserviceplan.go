@@ -1,5 +1,5 @@
 /*
-Copyright 2024 The Kubernetes Authors.
+Copyright 2025 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,10 +19,10 @@ limitations under the License.
 package v1beta1
 
 import (
-	v1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/client-go/listers"
-	"k8s.io/client-go/tools/cache"
+	servicecatalogv1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	labels "k8s.io/apimachinery/pkg/labels"
+	listers "k8s.io/client-go/listers"
+	cache "k8s.io/client-go/tools/cache"
 )
 
 // ClusterServicePlanLister helps list ClusterServicePlans.
@@ -30,19 +30,19 @@ import (
 type ClusterServicePlanLister interface {
 	// List lists all ClusterServicePlans in the indexer.
 	// Objects returned here must be treated as read-only.
-	List(selector labels.Selector) (ret []*v1beta1.ClusterServicePlan, err error)
+	List(selector labels.Selector) (ret []*servicecatalogv1beta1.ClusterServicePlan, err error)
 	// Get retrieves the ClusterServicePlan from the index for a given name.
 	// Objects returned here must be treated as read-only.
-	Get(name string) (*v1beta1.ClusterServicePlan, error)
+	Get(name string) (*servicecatalogv1beta1.ClusterServicePlan, error)
 	ClusterServicePlanListerExpansion
 }
 
 // clusterServicePlanLister implements the ClusterServicePlanLister interface.
 type clusterServicePlanLister struct {
-	listers.ResourceIndexer[*v1beta1.ClusterServicePlan]
+	listers.ResourceIndexer[*servicecatalogv1beta1.ClusterServicePlan]
 }
 
 // NewClusterServicePlanLister returns a new ClusterServicePlanLister.
 func NewClusterServicePlanLister(indexer cache.Indexer) ClusterServicePlanLister {
-	return &clusterServicePlanLister{listers.New[*v1beta1.ClusterServicePlan](indexer, v1beta1.Resource("clusterserviceplan"))}
+	return &clusterServicePlanLister{listers.New[*servicecatalogv1beta1.ClusterServicePlan](indexer, servicecatalogv1beta1.Resource("clusterserviceplan"))}
 }

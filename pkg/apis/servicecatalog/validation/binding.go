@@ -71,7 +71,7 @@ func internalValidateServiceBinding(binding *sc.ServiceBinding, create bool) fie
 	allErrs = append(allErrs, apivalidation.ValidateObjectMeta(&binding.ObjectMeta, true, /*namespace*/
 		validateServiceBindingName,
 		field.NewPath("metadata"))...)
-	allErrs = append(allErrs, validateServiceBindingSpec(&binding.Spec, field.NewPath("spec"), create)...)
+	allErrs = append(allErrs, validateServiceBindingSpec(&binding.Spec, field.NewPath("spec"))...)
 	if create {
 		allErrs = append(allErrs, validateServiceBindingCreate(binding)...)
 	} else {
@@ -80,7 +80,7 @@ func internalValidateServiceBinding(binding *sc.ServiceBinding, create bool) fie
 	return allErrs
 }
 
-func validateServiceBindingSpec(spec *sc.ServiceBindingSpec, fldPath *field.Path, create bool) field.ErrorList {
+func validateServiceBindingSpec(spec *sc.ServiceBindingSpec, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	for _, msg := range validateServiceInstanceName(spec.InstanceRef.Name, false /* prefix */) {
@@ -144,11 +144,11 @@ func validateServiceBindingStatus(status *sc.ServiceBindingStatus, fldPath *fiel
 	}
 
 	if status.InProgressProperties != nil {
-		allErrs = append(allErrs, validateServiceBindingPropertiesState(status.InProgressProperties, fldPath.Child("inProgressProperties"), create)...)
+		allErrs = append(allErrs, validateServiceBindingPropertiesState(status.InProgressProperties, fldPath.Child("inProgressProperties"))...)
 	}
 
 	if status.ExternalProperties != nil {
-		allErrs = append(allErrs, validateServiceBindingPropertiesState(status.ExternalProperties, fldPath.Child("externalProperties"), create)...)
+		allErrs = append(allErrs, validateServiceBindingPropertiesState(status.ExternalProperties, fldPath.Child("externalProperties"))...)
 	}
 
 	if create {
@@ -164,7 +164,7 @@ func validateServiceBindingStatus(status *sc.ServiceBindingStatus, fldPath *fiel
 	return allErrs
 }
 
-func validateServiceBindingPropertiesState(propertiesState *sc.ServiceBindingPropertiesState, fldPath *field.Path, create bool) field.ErrorList {
+func validateServiceBindingPropertiesState(propertiesState *sc.ServiceBindingPropertiesState, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 
 	if propertiesState.Parameters == nil {

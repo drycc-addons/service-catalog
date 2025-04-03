@@ -22,7 +22,7 @@ import (
 	"strings"
 	"time"
 
-	"k8s.io/klog/v2"
+	stderrors "errors"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -30,6 +30,7 @@ import (
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/client-go/tools/cache"
+	"k8s.io/klog/v2"
 
 	osb "github.com/drycc-addons/go-open-service-broker-client/v2"
 	"github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
@@ -158,7 +159,7 @@ func (c *controller) clusterServiceBrokerClient(broker *v1beta1.ClusterServiceBr
 // processed and should be resubmitted at a later time.
 func (c *controller) reconcileClusterServiceBroker(broker *v1beta1.ClusterServiceBroker) error {
 	pcb := pretty.NewClusterServiceBrokerContextBuilder(broker)
-	klog.V(4).Infof(pcb.Message("Processing"))
+	klog.V(4).Info(pcb.Message("Processing"))
 
 	// * If the broker's ready condition is true and the RelistBehavior has been
 	// set to Manual, do not reconcile it.
@@ -251,11 +252,14 @@ func (c *controller) reconcileClusterServiceBroker(broker *v1beta1.ClusterServic
 		// reconcile the serviceClasses that were part of the broker's catalog
 		// payload
 		for _, payloadServiceClass := range payloadServiceClasses {
-			existingServiceClass, _ := existingServiceClassMap[payloadServiceClass.Name]
-			delete(existingServiceClassMap, payloadServiceClass.Name)
-			if existingServiceClass == nil {
-				existingServiceClass, _ = existingServiceClassMap[payloadServiceClass.Spec.ExternalID]
-				delete(existingServiceClassMap, payloadServiceClass.Spec.ExternalID)
+			existingServiceClass, exists := existingServiceClassMap[payloadServiceClass.Name]
+			if exists {
+				delete(existingServiceClassMap, payloadServiceClass.Name)
+			} else {
+				existingServiceClass, exists = existingServiceClassMap[payloadServiceClass.Spec.ExternalID]
+				if exists {
+					delete(existingServiceClassMap, payloadServiceClass.Spec.ExternalID)
+				}
 			}
 
 			klog.V(4).Info(pcb.Messagef("Reconciling %s", pretty.ClusterServiceClassName(payloadServiceClass)))
@@ -308,11 +312,14 @@ func (c *controller) reconcileClusterServiceBroker(broker *v1beta1.ClusterServic
 
 		// reconcile the plans that were part of the broker's catalog payload
 		for _, payloadServicePlan := range payloadServicePlans {
-			existingServicePlan, _ := existingServicePlanMap[payloadServicePlan.Name]
-			delete(existingServicePlanMap, payloadServicePlan.Name)
-			if existingServicePlan == nil {
-				existingServicePlan, _ = existingServicePlanMap[payloadServicePlan.Spec.ExternalID]
-				delete(existingServicePlanMap, payloadServicePlan.Spec.ExternalID)
+			existingServicePlan, exists := existingServicePlanMap[payloadServicePlan.Name]
+			if exists {
+				delete(existingServicePlanMap, payloadServicePlan.Name)
+			} else {
+				existingServicePlan, exists = existingServicePlanMap[payloadServicePlan.Spec.ExternalID]
+				if exists {
+					delete(existingServicePlanMap, payloadServicePlan.Spec.ExternalID)
+				}
 			}
 
 			klog.V(4).Infof(
@@ -482,7 +489,7 @@ func (c *controller) reconcileClusterServiceClassFromClusterServiceBrokerCatalog
 					pretty.ClusterServiceClassName(serviceClass), otherServiceClass.Spec.ClusterServiceBrokerName,
 				)
 				klog.Error(pcb.Message(errMsg))
-				return fmt.Errorf(errMsg)
+				return stderrors.New(errMsg)
 			}
 		}
 
@@ -503,7 +510,7 @@ func (c *controller) reconcileClusterServiceClassFromClusterServiceBrokerCatalog
 			pretty.ClusterServiceClassName(serviceClass), existingServiceClass.Name, serviceClass.Name,
 		)
 		klog.Error(pcb.Message(errMsg))
-		return fmt.Errorf(errMsg)
+		return stderrors.New(errMsg)
 	}
 
 	klog.V(5).Info(pcb.Messagef("Found existing %s; updating", pretty.ClusterServiceClassName(serviceClass)))
@@ -570,7 +577,7 @@ func (c *controller) reconcileClusterServicePlanFromClusterServiceBrokerCatalog(
 					pretty.ClusterServicePlanName(servicePlan), otherServicePlan.Spec.ClusterServiceBrokerName,
 				)
 				klog.Error(pcb.Message(errMsg))
-				return fmt.Errorf(errMsg)
+				return stderrors.New(errMsg)
 			}
 		}
 
@@ -592,7 +599,7 @@ func (c *controller) reconcileClusterServicePlanFromClusterServiceBrokerCatalog(
 			pretty.ClusterServicePlanName(servicePlan), existingServicePlan.Spec.ExternalID, servicePlan.Spec.ExternalID,
 		)
 		klog.Error(pcb.Message(errMsg))
-		return fmt.Errorf(errMsg)
+		return stderrors.New(errMsg)
 	}
 
 	klog.V(5).Info(pcb.Messagef("Found existing %s; updating", pretty.ClusterServicePlanName(servicePlan)))

@@ -1,5 +1,5 @@
 /*
-Copyright 2024 The Kubernetes Authors.
+Copyright 2025 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ limitations under the License.
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 	time "time"
 
-	settingsv1alpha1 "github.com/drycc-addons/service-catalog/pkg/apis/settings/v1alpha1"
+	apissettingsv1alpha1 "github.com/drycc-addons/service-catalog/pkg/apis/settings/v1alpha1"
 	clientset "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset"
 	internalinterfaces "github.com/drycc-addons/service-catalog/pkg/client/informers_generated/externalversions/internalinterfaces"
-	v1alpha1 "github.com/drycc-addons/service-catalog/pkg/client/listers_generated/settings/v1alpha1"
+	settingsv1alpha1 "github.com/drycc-addons/service-catalog/pkg/client/listers_generated/settings/v1alpha1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	watch "k8s.io/apimachinery/pkg/watch"
@@ -36,7 +36,7 @@ import (
 // PodPresets.
 type PodPresetInformer interface {
 	Informer() cache.SharedIndexInformer
-	Lister() v1alpha1.PodPresetLister
+	Lister() settingsv1alpha1.PodPresetLister
 }
 
 type podPresetInformer struct {
@@ -71,7 +71,7 @@ func NewFilteredPodPresetInformer(client clientset.Interface, namespace string, 
 				return client.SettingsV1alpha1().PodPresets(namespace).Watch(context.TODO(), options)
 			},
 		},
-		&settingsv1alpha1.PodPreset{},
+		&apissettingsv1alpha1.PodPreset{},
 		resyncPeriod,
 		indexers,
 	)
@@ -82,9 +82,9 @@ func (f *podPresetInformer) defaultInformer(client clientset.Interface, resyncPe
 }
 
 func (f *podPresetInformer) Informer() cache.SharedIndexInformer {
-	return f.factory.InformerFor(&settingsv1alpha1.PodPreset{}, f.defaultInformer)
+	return f.factory.InformerFor(&apissettingsv1alpha1.PodPreset{}, f.defaultInformer)
 }
 
-func (f *podPresetInformer) Lister() v1alpha1.PodPresetLister {
-	return v1alpha1.NewPodPresetLister(f.Informer().GetIndexer())
+func (f *podPresetInformer) Lister() settingsv1alpha1.PodPresetLister {
+	return settingsv1alpha1.NewPodPresetLister(f.Informer().GetIndexer())
 }

@@ -435,10 +435,7 @@ func TestPollServiceBindingNamespacedRefs(t *testing.T) {
 			OperationKey: &operationKey,
 		})
 
-		assertGetBinding(t, actions[1], &osb.GetBindingRequest{
-			InstanceID: testServiceInstanceGUID,
-			BindingID:  testServiceBindingGUID,
-		})
+		assertGetBinding(t, actions[1])
 	}
 
 	cases := []struct {
@@ -653,8 +650,8 @@ func TestPollServiceBindingNamespacedRefs(t *testing.T) {
 			},
 			shouldFinishPolling: true, // should not be requeued in polling queue; will drop back to default rate limiting
 			expectedEvents: []string{
-				corev1.EventTypeWarning + " " + errorInjectingBindResultReason + " " + `Error injecting bind results: Secret "test-ns/test-binding" is not owned by ServiceBinding, controllerRef: nil`,
-				corev1.EventTypeWarning + " " + errorInjectingBindResultReason + " " + `Error injecting bind results: Secret "test-ns/test-binding" is not owned by ServiceBinding, controllerRef: nil`,
+				corev1.EventTypeWarning + " " + errorInjectingBindResultReason + " " + `Error injecting bind results: secret "test-ns/test-binding" is not owned by ServiceBinding, controllerRef: nil`,
+				corev1.EventTypeWarning + " " + errorInjectingBindResultReason + " " + `Error injecting bind results: secret "test-ns/test-binding" is not owned by ServiceBinding, controllerRef: nil`,
 				corev1.EventTypeWarning + " " + errorServiceBindingOrphanMitigation + " " + "Starting orphan mitigation",
 			},
 		},
@@ -826,7 +823,6 @@ func TestPollServiceBindingNamespacedRefs(t *testing.T) {
 				assertServiceBindingAsyncUnbindRetryDurationExceeded(
 					t,
 					updatedBinding,
-					v1beta1.ServiceBindingOperationUnbind,
 					errorAsyncOpTimeoutReason,
 					errorReconciliationRetryTimeoutReason,
 					originalBinding,
@@ -855,7 +851,6 @@ func TestPollServiceBindingNamespacedRefs(t *testing.T) {
 				assertServiceBindingAsyncUnbindRetryDurationExceeded(
 					t,
 					updatedBinding,
-					v1beta1.ServiceBindingOperationUnbind,
 					errorAsyncOpTimeoutReason,
 					errorReconciliationRetryTimeoutReason,
 					originalBinding,
@@ -1130,7 +1125,7 @@ func TestPollServiceBindingNamespacedRefs(t *testing.T) {
 
 			for idx, expectedEvent := range tc.expectedEvents {
 				if e, a := expectedEvent, events[idx]; e != a {
-					t.Fatalf("Received unexpected event #%v, expected %v got %v", idx, e, a)
+					t.Fatalf("received unexpected event #%v, expected %v got %v", idx, e, a)
 				}
 			}
 		})
@@ -1222,6 +1217,6 @@ func TestReconcileServiceBindingAsynchronousUnbindNamespacedRefs(t *testing.T) {
 
 	expectedEvent := corev1.EventTypeNormal + " " + asyncUnbindingReason + " " + asyncUnbindingMessage
 	if e, a := expectedEvent, events[0]; e != a {
-		t.Fatalf("Received unexpected event, expected %v got %v", e, a)
+		t.Fatalf("received unexpected event, expected %v got %v", e, a)
 	}
 }

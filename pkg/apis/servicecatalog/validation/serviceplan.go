@@ -84,11 +84,11 @@ func validateCommonServicePlanSpec(spec sc.CommonServicePlanSpec, fldPath *field
 
 	allErrs := field.ErrorList{}
 
-	if "" == spec.ExternalID {
+	if spec.ExternalID == "" {
 		allErrs = append(allErrs, field.Required(fldPath.Child("externalID"), "externalID is required"))
 	}
 
-	if "" == spec.Description {
+	if spec.Description == "" {
 		allErrs = append(allErrs, field.Required(fldPath.Child("description"), "description is required"))
 	}
 
@@ -107,11 +107,11 @@ func validateCommonServicePlanSpec(spec sc.CommonServicePlanSpec, fldPath *field
 func validateClusterServicePlanSpec(spec *sc.ClusterServicePlanSpec, fldPath *field.Path) field.ErrorList {
 	allErrs := validateCommonServicePlanSpec(spec.CommonServicePlanSpec, fldPath)
 
-	if "" == spec.ClusterServiceBrokerName {
+	if spec.ClusterServiceBrokerName == "" {
 		allErrs = append(allErrs, field.Required(fldPath.Child("clusterServiceBrokerName"), "clusterServiceBrokerName is required"))
 	}
 
-	if "" == spec.ClusterServiceClassRef.Name {
+	if spec.ClusterServiceClassRef.Name == "" {
 		allErrs = append(allErrs, field.Required(fldPath.Child("clusterServiceClassRef"), "an owning serviceclass is required"))
 	}
 
@@ -125,11 +125,11 @@ func validateClusterServicePlanSpec(spec *sc.ClusterServicePlanSpec, fldPath *fi
 func validateServicePlanSpec(spec *sc.ServicePlanSpec, fldPath *field.Path) field.ErrorList {
 	allErrs := validateCommonServicePlanSpec(spec.CommonServicePlanSpec, fldPath)
 
-	if "" == spec.ServiceBrokerName {
+	if spec.ServiceBrokerName == "" {
 		allErrs = append(allErrs, field.Required(fldPath.Child("serviceBrokerName"), "serviceBrokerName is required"))
 	}
 
-	if "" == spec.ServiceClassRef.Name {
+	if spec.ServiceClassRef.Name == "" {
 		allErrs = append(allErrs, field.Required(fldPath.Child("serviceClassRef"), "an owning serviceclass is required"))
 	}
 

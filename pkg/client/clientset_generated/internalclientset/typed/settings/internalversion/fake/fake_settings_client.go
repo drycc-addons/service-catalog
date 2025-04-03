@@ -1,5 +1,5 @@
 /*
-Copyright 2024 The Kubernetes Authors.
+Copyright 2025 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ type FakeSettings struct {
 }
 
 func (c *FakeSettings) PodPresets(namespace string) internalversion.PodPresetInterface {
-	return &FakePodPresets{c, namespace}
+	return newFakePodPresets(c, namespace)
 }
 
 // RESTClient returns a RESTClient that is used to communicate

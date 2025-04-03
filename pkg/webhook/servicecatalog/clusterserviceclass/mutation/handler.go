@@ -26,6 +26,7 @@ import (
 	webhookutil "github.com/drycc-addons/service-catalog/pkg/webhookutil"
 
 	admissionTypes "k8s.io/api/admission/v1"
+	"k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
@@ -53,14 +54,14 @@ func (h *CreateUpdateHandler) Handle(ctx context.Context, req admission.Request)
 	mutated := cb.DeepCopy()
 	switch req.Operation {
 	case admissionTypes.Create:
-		h.mutateOnCreate(ctx, mutated)
+		h.mutateOnCreate(mutated)
 	case admissionTypes.Update:
 		oldObj := &sc.ClusterServiceClass{}
 		if err := h.decoder.DecodeRaw(req.OldObject, oldObj); err != nil {
 			traced.Errorf("Could not decode request old object: %v", err)
 			return admission.Errored(http.StatusBadRequest, err)
 		}
-		h.mutateOnUpdate(ctx, oldObj, mutated)
+		h.mutateOnUpdate(oldObj, mutated)
 	default:
 		traced.Infof("ClusterServiceClass mutation wehbook does not support action %q", req.Operation)
 		return admission.Allowed("action not taken")
@@ -82,10 +83,11 @@ func (h *CreateUpdateHandler) InjectDecoder(d admission.Decoder) error {
 	return nil
 }
 
-func (h *CreateUpdateHandler) mutateOnCreate(ctx context.Context, csc *sc.ClusterServiceClass) {
+func (h *CreateUpdateHandler) mutateOnCreate(csc *sc.ClusterServiceClass) {
+	klog.Infof("ClusterServiceClass mutation webhook received request for %s", csc.Name)
 }
 
-func (h *CreateUpdateHandler) mutateOnUpdate(ctx context.Context, oldClusterServiceClass, newClusterServiceClass *sc.ClusterServiceClass) {
+func (h *CreateUpdateHandler) mutateOnUpdate(oldClusterServiceClass, newClusterServiceClass *sc.ClusterServiceClass) {
 	newClusterServiceClass.Spec.ClusterServiceBrokerName = oldClusterServiceClass.Spec.ClusterServiceBrokerName
 }
 
