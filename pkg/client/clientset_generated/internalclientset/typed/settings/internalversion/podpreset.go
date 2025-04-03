@@ -1,5 +1,5 @@
 /*
-Copyright 2024 The Kubernetes Authors.
+Copyright 2025 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ limitations under the License.
 package internalversion
 
 import (
-	"context"
+	context "context"
 
 	settings "github.com/drycc-addons/service-catalog/pkg/apis/settings"
 	scheme "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/internalclientset/scheme"
@@ -62,6 +62,7 @@ func newPodPresets(c *SettingsClient, namespace string) *podPresets {
 			scheme.ParameterCodec,
 			namespace,
 			func() *settings.PodPreset { return &settings.PodPreset{} },
-			func() *settings.PodPresetList { return &settings.PodPresetList{} }),
+			func() *settings.PodPresetList { return &settings.PodPresetList{} },
+		),
 	}
 }

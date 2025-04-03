@@ -1,5 +1,5 @@
 /*
-Copyright 2024 The Kubernetes Authors.
+Copyright 2025 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ limitations under the License.
 package internalversion
 
 import (
-	"context"
+	context "context"
 	time "time"
 
 	settings "github.com/drycc-addons/service-catalog/pkg/apis/settings"
 	internalclientset "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/internalclientset"
 	internalinterfaces "github.com/drycc-addons/service-catalog/pkg/client/informers_generated/internalversion/internalinterfaces"
-	internalversion "github.com/drycc-addons/service-catalog/pkg/client/listers_generated/settings/internalversion"
+	settingsinternalversion "github.com/drycc-addons/service-catalog/pkg/client/listers_generated/settings/internalversion"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	watch "k8s.io/apimachinery/pkg/watch"
@@ -36,7 +36,7 @@ import (
 // PodPresets.
 type PodPresetInformer interface {
 	Informer() cache.SharedIndexInformer
-	Lister() internalversion.PodPresetLister
+	Lister() settingsinternalversion.PodPresetLister
 }
 
 type podPresetInformer struct {
@@ -85,6 +85,6 @@ func (f *podPresetInformer) Informer() cache.SharedIndexInformer {
 	return f.factory.InformerFor(&settings.PodPreset{}, f.defaultInformer)
 }
 
-func (f *podPresetInformer) Lister() internalversion.PodPresetLister {
-	return internalversion.NewPodPresetLister(f.Informer().GetIndexer())
+func (f *podPresetInformer) Lister() settingsinternalversion.PodPresetLister {
+	return settingsinternalversion.NewPodPresetLister(f.Informer().GetIndexer())
 }

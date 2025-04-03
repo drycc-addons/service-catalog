@@ -1,5 +1,5 @@
 /*
-Copyright 2024 The Kubernetes Authors.
+Copyright 2025 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ limitations under the License.
 package v1beta1
 
 import (
-	"context"
+	context "context"
 
-	v1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	servicecatalogv1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	scheme "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -37,33 +37,38 @@ type ClusterServiceBrokersGetter interface {
 
 // ClusterServiceBrokerInterface has methods to work with ClusterServiceBroker resources.
 type ClusterServiceBrokerInterface interface {
-	Create(ctx context.Context, clusterServiceBroker *v1beta1.ClusterServiceBroker, opts v1.CreateOptions) (*v1beta1.ClusterServiceBroker, error)
-	Update(ctx context.Context, clusterServiceBroker *v1beta1.ClusterServiceBroker, opts v1.UpdateOptions) (*v1beta1.ClusterServiceBroker, error)
+	Create(ctx context.Context, clusterServiceBroker *servicecatalogv1beta1.ClusterServiceBroker, opts v1.CreateOptions) (*servicecatalogv1beta1.ClusterServiceBroker, error)
+	Update(ctx context.Context, clusterServiceBroker *servicecatalogv1beta1.ClusterServiceBroker, opts v1.UpdateOptions) (*servicecatalogv1beta1.ClusterServiceBroker, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, clusterServiceBroker *v1beta1.ClusterServiceBroker, opts v1.UpdateOptions) (*v1beta1.ClusterServiceBroker, error)
+	UpdateStatus(ctx context.Context, clusterServiceBroker *servicecatalogv1beta1.ClusterServiceBroker, opts v1.UpdateOptions) (*servicecatalogv1beta1.ClusterServiceBroker, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1beta1.ClusterServiceBroker, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1beta1.ClusterServiceBrokerList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*servicecatalogv1beta1.ClusterServiceBroker, error)
+	List(ctx context.Context, opts v1.ListOptions) (*servicecatalogv1beta1.ClusterServiceBrokerList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1beta1.ClusterServiceBroker, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *servicecatalogv1beta1.ClusterServiceBroker, err error)
 	ClusterServiceBrokerExpansion
 }
 
 // clusterServiceBrokers implements ClusterServiceBrokerInterface
 type clusterServiceBrokers struct {
-	*gentype.ClientWithList[*v1beta1.ClusterServiceBroker, *v1beta1.ClusterServiceBrokerList]
+	*gentype.ClientWithList[*servicecatalogv1beta1.ClusterServiceBroker, *servicecatalogv1beta1.ClusterServiceBrokerList]
 }
 
 // newClusterServiceBrokers returns a ClusterServiceBrokers
 func newClusterServiceBrokers(c *ServicecatalogV1beta1Client) *clusterServiceBrokers {
 	return &clusterServiceBrokers{
-		gentype.NewClientWithList[*v1beta1.ClusterServiceBroker, *v1beta1.ClusterServiceBrokerList](
+		gentype.NewClientWithList[*servicecatalogv1beta1.ClusterServiceBroker, *servicecatalogv1beta1.ClusterServiceBrokerList](
 			"clusterservicebrokers",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			"",
-			func() *v1beta1.ClusterServiceBroker { return &v1beta1.ClusterServiceBroker{} },
-			func() *v1beta1.ClusterServiceBrokerList { return &v1beta1.ClusterServiceBrokerList{} }),
+			func() *servicecatalogv1beta1.ClusterServiceBroker {
+				return &servicecatalogv1beta1.ClusterServiceBroker{}
+			},
+			func() *servicecatalogv1beta1.ClusterServiceBrokerList {
+				return &servicecatalogv1beta1.ClusterServiceBrokerList{}
+			},
+		),
 	}
 }

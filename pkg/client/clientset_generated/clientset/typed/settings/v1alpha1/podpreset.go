@@ -1,5 +1,5 @@
 /*
-Copyright 2024 The Kubernetes Authors.
+Copyright 2025 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ limitations under the License.
 package v1alpha1
 
 import (
-	"context"
+	context "context"
 
-	v1alpha1 "github.com/drycc-addons/service-catalog/pkg/apis/settings/v1alpha1"
+	settingsv1alpha1 "github.com/drycc-addons/service-catalog/pkg/apis/settings/v1alpha1"
 	scheme "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -37,31 +37,32 @@ type PodPresetsGetter interface {
 
 // PodPresetInterface has methods to work with PodPreset resources.
 type PodPresetInterface interface {
-	Create(ctx context.Context, podPreset *v1alpha1.PodPreset, opts v1.CreateOptions) (*v1alpha1.PodPreset, error)
-	Update(ctx context.Context, podPreset *v1alpha1.PodPreset, opts v1.UpdateOptions) (*v1alpha1.PodPreset, error)
+	Create(ctx context.Context, podPreset *settingsv1alpha1.PodPreset, opts v1.CreateOptions) (*settingsv1alpha1.PodPreset, error)
+	Update(ctx context.Context, podPreset *settingsv1alpha1.PodPreset, opts v1.UpdateOptions) (*settingsv1alpha1.PodPreset, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1alpha1.PodPreset, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1alpha1.PodPresetList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*settingsv1alpha1.PodPreset, error)
+	List(ctx context.Context, opts v1.ListOptions) (*settingsv1alpha1.PodPresetList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1alpha1.PodPreset, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *settingsv1alpha1.PodPreset, err error)
 	PodPresetExpansion
 }
 
 // podPresets implements PodPresetInterface
 type podPresets struct {
-	*gentype.ClientWithList[*v1alpha1.PodPreset, *v1alpha1.PodPresetList]
+	*gentype.ClientWithList[*settingsv1alpha1.PodPreset, *settingsv1alpha1.PodPresetList]
 }
 
 // newPodPresets returns a PodPresets
 func newPodPresets(c *SettingsV1alpha1Client, namespace string) *podPresets {
 	return &podPresets{
-		gentype.NewClientWithList[*v1alpha1.PodPreset, *v1alpha1.PodPresetList](
+		gentype.NewClientWithList[*settingsv1alpha1.PodPreset, *settingsv1alpha1.PodPresetList](
 			"podpresets",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1alpha1.PodPreset { return &v1alpha1.PodPreset{} },
-			func() *v1alpha1.PodPresetList { return &v1alpha1.PodPresetList{} }),
+			func() *settingsv1alpha1.PodPreset { return &settingsv1alpha1.PodPreset{} },
+			func() *settingsv1alpha1.PodPresetList { return &settingsv1alpha1.PodPresetList{} },
+		),
 	}
 }

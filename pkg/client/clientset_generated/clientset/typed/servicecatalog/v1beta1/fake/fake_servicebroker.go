@@ -1,5 +1,5 @@
 /*
-Copyright 2024 The Kubernetes Authors.
+Copyright 2025 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,129 +19,34 @@ limitations under the License.
 package fake
 
 import (
-	"context"
-
 	v1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	labels "k8s.io/apimachinery/pkg/labels"
-	types "k8s.io/apimachinery/pkg/types"
-	watch "k8s.io/apimachinery/pkg/watch"
-	testing "k8s.io/client-go/testing"
+	servicecatalogv1beta1 "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset/typed/servicecatalog/v1beta1"
+	gentype "k8s.io/client-go/gentype"
 )
 
-// FakeServiceBrokers implements ServiceBrokerInterface
-type FakeServiceBrokers struct {
+// fakeServiceBrokers implements ServiceBrokerInterface
+type fakeServiceBrokers struct {
+	*gentype.FakeClientWithList[*v1beta1.ServiceBroker, *v1beta1.ServiceBrokerList]
 	Fake *FakeServicecatalogV1beta1
-	ns   string
 }
 
-var servicebrokersResource = v1beta1.SchemeGroupVersion.WithResource("servicebrokers")
-
-var servicebrokersKind = v1beta1.SchemeGroupVersion.WithKind("ServiceBroker")
-
-// Get takes name of the serviceBroker, and returns the corresponding serviceBroker object, and an error if there is any.
-func (c *FakeServiceBrokers) Get(ctx context.Context, name string, options v1.GetOptions) (result *v1beta1.ServiceBroker, err error) {
-	emptyResult := &v1beta1.ServiceBroker{}
-	obj, err := c.Fake.
-		Invokes(testing.NewGetActionWithOptions(servicebrokersResource, c.ns, name, options), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
+func newFakeServiceBrokers(fake *FakeServicecatalogV1beta1, namespace string) servicecatalogv1beta1.ServiceBrokerInterface {
+	return &fakeServiceBrokers{
+		gentype.NewFakeClientWithList[*v1beta1.ServiceBroker, *v1beta1.ServiceBrokerList](
+			fake.Fake,
+			namespace,
+			v1beta1.SchemeGroupVersion.WithResource("servicebrokers"),
+			v1beta1.SchemeGroupVersion.WithKind("ServiceBroker"),
+			func() *v1beta1.ServiceBroker { return &v1beta1.ServiceBroker{} },
+			func() *v1beta1.ServiceBrokerList { return &v1beta1.ServiceBrokerList{} },
+			func(dst, src *v1beta1.ServiceBrokerList) { dst.ListMeta = src.ListMeta },
+			func(list *v1beta1.ServiceBrokerList) []*v1beta1.ServiceBroker {
+				return gentype.ToPointerSlice(list.Items)
+			},
+			func(list *v1beta1.ServiceBrokerList, items []*v1beta1.ServiceBroker) {
+				list.Items = gentype.FromPointerSlice(items)
+			},
+		),
+		fake,
 	}
-	return obj.(*v1beta1.ServiceBroker), err
-}
-
-// List takes label and field selectors, and returns the list of ServiceBrokers that match those selectors.
-func (c *FakeServiceBrokers) List(ctx context.Context, opts v1.ListOptions) (result *v1beta1.ServiceBrokerList, err error) {
-	emptyResult := &v1beta1.ServiceBrokerList{}
-	obj, err := c.Fake.
-		Invokes(testing.NewListActionWithOptions(servicebrokersResource, servicebrokersKind, c.ns, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-
-	label, _, _ := testing.ExtractFromListOptions(opts)
-	if label == nil {
-		label = labels.Everything()
-	}
-	list := &v1beta1.ServiceBrokerList{ListMeta: obj.(*v1beta1.ServiceBrokerList).ListMeta}
-	for _, item := range obj.(*v1beta1.ServiceBrokerList).Items {
-		if label.Matches(labels.Set(item.Labels)) {
-			list.Items = append(list.Items, item)
-		}
-	}
-	return list, err
-}
-
-// Watch returns a watch.Interface that watches the requested serviceBrokers.
-func (c *FakeServiceBrokers) Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error) {
-	return c.Fake.
-		InvokesWatch(testing.NewWatchActionWithOptions(servicebrokersResource, c.ns, opts))
-
-}
-
-// Create takes the representation of a serviceBroker and creates it.  Returns the server's representation of the serviceBroker, and an error, if there is any.
-func (c *FakeServiceBrokers) Create(ctx context.Context, serviceBroker *v1beta1.ServiceBroker, opts v1.CreateOptions) (result *v1beta1.ServiceBroker, err error) {
-	emptyResult := &v1beta1.ServiceBroker{}
-	obj, err := c.Fake.
-		Invokes(testing.NewCreateActionWithOptions(servicebrokersResource, c.ns, serviceBroker, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1beta1.ServiceBroker), err
-}
-
-// Update takes the representation of a serviceBroker and updates it. Returns the server's representation of the serviceBroker, and an error, if there is any.
-func (c *FakeServiceBrokers) Update(ctx context.Context, serviceBroker *v1beta1.ServiceBroker, opts v1.UpdateOptions) (result *v1beta1.ServiceBroker, err error) {
-	emptyResult := &v1beta1.ServiceBroker{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateActionWithOptions(servicebrokersResource, c.ns, serviceBroker, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1beta1.ServiceBroker), err
-}
-
-// UpdateStatus was generated because the type contains a Status member.
-// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeServiceBrokers) UpdateStatus(ctx context.Context, serviceBroker *v1beta1.ServiceBroker, opts v1.UpdateOptions) (result *v1beta1.ServiceBroker, err error) {
-	emptyResult := &v1beta1.ServiceBroker{}
-	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceActionWithOptions(servicebrokersResource, "status", c.ns, serviceBroker, opts), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1beta1.ServiceBroker), err
-}
-
-// Delete takes name of the serviceBroker and deletes it. Returns an error if one occurs.
-func (c *FakeServiceBrokers) Delete(ctx context.Context, name string, opts v1.DeleteOptions) error {
-	_, err := c.Fake.
-		Invokes(testing.NewDeleteActionWithOptions(servicebrokersResource, c.ns, name, opts), &v1beta1.ServiceBroker{})
-
-	return err
-}
-
-// DeleteCollection deletes a collection of objects.
-func (c *FakeServiceBrokers) DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error {
-	action := testing.NewDeleteCollectionActionWithOptions(servicebrokersResource, c.ns, opts, listOpts)
-
-	_, err := c.Fake.Invokes(action, &v1beta1.ServiceBrokerList{})
-	return err
-}
-
-// Patch applies the patch and returns the patched serviceBroker.
-func (c *FakeServiceBrokers) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1beta1.ServiceBroker, err error) {
-	emptyResult := &v1beta1.ServiceBroker{}
-	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceActionWithOptions(servicebrokersResource, c.ns, name, pt, data, opts, subresources...), emptyResult)
-
-	if obj == nil {
-		return emptyResult, err
-	}
-	return obj.(*v1beta1.ServiceBroker), err
 }

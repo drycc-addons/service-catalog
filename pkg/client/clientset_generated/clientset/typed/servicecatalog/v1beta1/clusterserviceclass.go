@@ -1,5 +1,5 @@
 /*
-Copyright 2024 The Kubernetes Authors.
+Copyright 2025 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ limitations under the License.
 package v1beta1
 
 import (
-	"context"
+	context "context"
 
-	v1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	servicecatalogv1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	scheme "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -37,33 +37,36 @@ type ClusterServiceClassesGetter interface {
 
 // ClusterServiceClassInterface has methods to work with ClusterServiceClass resources.
 type ClusterServiceClassInterface interface {
-	Create(ctx context.Context, clusterServiceClass *v1beta1.ClusterServiceClass, opts v1.CreateOptions) (*v1beta1.ClusterServiceClass, error)
-	Update(ctx context.Context, clusterServiceClass *v1beta1.ClusterServiceClass, opts v1.UpdateOptions) (*v1beta1.ClusterServiceClass, error)
+	Create(ctx context.Context, clusterServiceClass *servicecatalogv1beta1.ClusterServiceClass, opts v1.CreateOptions) (*servicecatalogv1beta1.ClusterServiceClass, error)
+	Update(ctx context.Context, clusterServiceClass *servicecatalogv1beta1.ClusterServiceClass, opts v1.UpdateOptions) (*servicecatalogv1beta1.ClusterServiceClass, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, clusterServiceClass *v1beta1.ClusterServiceClass, opts v1.UpdateOptions) (*v1beta1.ClusterServiceClass, error)
+	UpdateStatus(ctx context.Context, clusterServiceClass *servicecatalogv1beta1.ClusterServiceClass, opts v1.UpdateOptions) (*servicecatalogv1beta1.ClusterServiceClass, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1beta1.ClusterServiceClass, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1beta1.ClusterServiceClassList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*servicecatalogv1beta1.ClusterServiceClass, error)
+	List(ctx context.Context, opts v1.ListOptions) (*servicecatalogv1beta1.ClusterServiceClassList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1beta1.ClusterServiceClass, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *servicecatalogv1beta1.ClusterServiceClass, err error)
 	ClusterServiceClassExpansion
 }
 
 // clusterServiceClasses implements ClusterServiceClassInterface
 type clusterServiceClasses struct {
-	*gentype.ClientWithList[*v1beta1.ClusterServiceClass, *v1beta1.ClusterServiceClassList]
+	*gentype.ClientWithList[*servicecatalogv1beta1.ClusterServiceClass, *servicecatalogv1beta1.ClusterServiceClassList]
 }
 
 // newClusterServiceClasses returns a ClusterServiceClasses
 func newClusterServiceClasses(c *ServicecatalogV1beta1Client) *clusterServiceClasses {
 	return &clusterServiceClasses{
-		gentype.NewClientWithList[*v1beta1.ClusterServiceClass, *v1beta1.ClusterServiceClassList](
+		gentype.NewClientWithList[*servicecatalogv1beta1.ClusterServiceClass, *servicecatalogv1beta1.ClusterServiceClassList](
 			"clusterserviceclasses",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			"",
-			func() *v1beta1.ClusterServiceClass { return &v1beta1.ClusterServiceClass{} },
-			func() *v1beta1.ClusterServiceClassList { return &v1beta1.ClusterServiceClassList{} }),
+			func() *servicecatalogv1beta1.ClusterServiceClass { return &servicecatalogv1beta1.ClusterServiceClass{} },
+			func() *servicecatalogv1beta1.ClusterServiceClassList {
+				return &servicecatalogv1beta1.ClusterServiceClassList{}
+			},
+		),
 	}
 }

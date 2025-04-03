@@ -1,5 +1,5 @@
 /*
-Copyright 2024 The Kubernetes Authors.
+Copyright 2025 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ limitations under the License.
 package v1beta1
 
 import (
-	"context"
+	context "context"
 
-	v1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	servicecatalogv1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	scheme "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset/scheme"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -37,33 +37,34 @@ type ServiceBindingsGetter interface {
 
 // ServiceBindingInterface has methods to work with ServiceBinding resources.
 type ServiceBindingInterface interface {
-	Create(ctx context.Context, serviceBinding *v1beta1.ServiceBinding, opts v1.CreateOptions) (*v1beta1.ServiceBinding, error)
-	Update(ctx context.Context, serviceBinding *v1beta1.ServiceBinding, opts v1.UpdateOptions) (*v1beta1.ServiceBinding, error)
+	Create(ctx context.Context, serviceBinding *servicecatalogv1beta1.ServiceBinding, opts v1.CreateOptions) (*servicecatalogv1beta1.ServiceBinding, error)
+	Update(ctx context.Context, serviceBinding *servicecatalogv1beta1.ServiceBinding, opts v1.UpdateOptions) (*servicecatalogv1beta1.ServiceBinding, error)
 	// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-	UpdateStatus(ctx context.Context, serviceBinding *v1beta1.ServiceBinding, opts v1.UpdateOptions) (*v1beta1.ServiceBinding, error)
+	UpdateStatus(ctx context.Context, serviceBinding *servicecatalogv1beta1.ServiceBinding, opts v1.UpdateOptions) (*servicecatalogv1beta1.ServiceBinding, error)
 	Delete(ctx context.Context, name string, opts v1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, opts v1.DeleteOptions, listOpts v1.ListOptions) error
-	Get(ctx context.Context, name string, opts v1.GetOptions) (*v1beta1.ServiceBinding, error)
-	List(ctx context.Context, opts v1.ListOptions) (*v1beta1.ServiceBindingList, error)
+	Get(ctx context.Context, name string, opts v1.GetOptions) (*servicecatalogv1beta1.ServiceBinding, error)
+	List(ctx context.Context, opts v1.ListOptions) (*servicecatalogv1beta1.ServiceBindingList, error)
 	Watch(ctx context.Context, opts v1.ListOptions) (watch.Interface, error)
-	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *v1beta1.ServiceBinding, err error)
+	Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts v1.PatchOptions, subresources ...string) (result *servicecatalogv1beta1.ServiceBinding, err error)
 	ServiceBindingExpansion
 }
 
 // serviceBindings implements ServiceBindingInterface
 type serviceBindings struct {
-	*gentype.ClientWithList[*v1beta1.ServiceBinding, *v1beta1.ServiceBindingList]
+	*gentype.ClientWithList[*servicecatalogv1beta1.ServiceBinding, *servicecatalogv1beta1.ServiceBindingList]
 }
 
 // newServiceBindings returns a ServiceBindings
 func newServiceBindings(c *ServicecatalogV1beta1Client, namespace string) *serviceBindings {
 	return &serviceBindings{
-		gentype.NewClientWithList[*v1beta1.ServiceBinding, *v1beta1.ServiceBindingList](
+		gentype.NewClientWithList[*servicecatalogv1beta1.ServiceBinding, *servicecatalogv1beta1.ServiceBindingList](
 			"servicebindings",
 			c.RESTClient(),
 			scheme.ParameterCodec,
 			namespace,
-			func() *v1beta1.ServiceBinding { return &v1beta1.ServiceBinding{} },
-			func() *v1beta1.ServiceBindingList { return &v1beta1.ServiceBindingList{} }),
+			func() *servicecatalogv1beta1.ServiceBinding { return &servicecatalogv1beta1.ServiceBinding{} },
+			func() *servicecatalogv1beta1.ServiceBindingList { return &servicecatalogv1beta1.ServiceBindingList{} },
+		),
 	}
 }

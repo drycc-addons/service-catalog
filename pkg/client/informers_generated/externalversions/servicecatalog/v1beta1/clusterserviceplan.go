@@ -1,5 +1,5 @@
 /*
-Copyright 2024 The Kubernetes Authors.
+Copyright 2025 The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ limitations under the License.
 package v1beta1
 
 import (
-	"context"
+	context "context"
 	time "time"
 
-	servicecatalogv1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
+	apisservicecatalogv1beta1 "github.com/drycc-addons/service-catalog/pkg/apis/servicecatalog/v1beta1"
 	clientset "github.com/drycc-addons/service-catalog/pkg/client/clientset_generated/clientset"
 	internalinterfaces "github.com/drycc-addons/service-catalog/pkg/client/informers_generated/externalversions/internalinterfaces"
-	v1beta1 "github.com/drycc-addons/service-catalog/pkg/client/listers_generated/servicecatalog/v1beta1"
+	servicecatalogv1beta1 "github.com/drycc-addons/service-catalog/pkg/client/listers_generated/servicecatalog/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	watch "k8s.io/apimachinery/pkg/watch"
@@ -36,7 +36,7 @@ import (
 // ClusterServicePlans.
 type ClusterServicePlanInformer interface {
 	Informer() cache.SharedIndexInformer
-	Lister() v1beta1.ClusterServicePlanLister
+	Lister() servicecatalogv1beta1.ClusterServicePlanLister
 }
 
 type clusterServicePlanInformer struct {
@@ -70,7 +70,7 @@ func NewFilteredClusterServicePlanInformer(client clientset.Interface, resyncPer
 				return client.ServicecatalogV1beta1().ClusterServicePlans().Watch(context.TODO(), options)
 			},
 		},
-		&servicecatalogv1beta1.ClusterServicePlan{},
+		&apisservicecatalogv1beta1.ClusterServicePlan{},
 		resyncPeriod,
 		indexers,
 	)
@@ -81,9 +81,9 @@ func (f *clusterServicePlanInformer) defaultInformer(client clientset.Interface,
 }
 
 func (f *clusterServicePlanInformer) Informer() cache.SharedIndexInformer {
-	return f.factory.InformerFor(&servicecatalogv1beta1.ClusterServicePlan{}, f.defaultInformer)
+	return f.factory.InformerFor(&apisservicecatalogv1beta1.ClusterServicePlan{}, f.defaultInformer)
 }
 
-func (f *clusterServicePlanInformer) Lister() v1beta1.ClusterServicePlanLister {
-	return v1beta1.NewClusterServicePlanLister(f.Informer().GetIndexer())
+func (f *clusterServicePlanInformer) Lister() servicecatalogv1beta1.ClusterServicePlanLister {
+	return servicecatalogv1beta1.NewClusterServicePlanLister(f.Informer().GetIndexer())
 }
