@@ -272,7 +272,7 @@ var _ = Describe("Describe Command", func() {
 			Expect(err.Error()).To(ContainSubstring(errMsg))
 		})
 		It("prompts the user for more input when it gets a MultipleClassesFound error", func() {
-			errToReturn := fmt.Errorf(servicecatalog.MultipleClassesFoundError + " for '" + className + "'")
+			errToReturn := fmt.Errorf("%s for '%s'", servicecatalog.MultipleClassesFoundError, className)
 			outputBuffer := &bytes.Buffer{}
 
 			fakeApp, _ := svcat.NewApp(nil, nil, namespace)
@@ -300,7 +300,7 @@ var _ = Describe("Describe Command", func() {
 			fakeApp, _ := svcat.NewApp(nil, nil, namespace)
 			fakeSDK := new(servicecatalogfakes.FakeSvcatClient)
 			fakeSDK.RetrieveClassByNameReturns(classToReturn, nil)
-			fakeSDK.RetrievePlansReturns(nil, fmt.Errorf(errMsg))
+			fakeSDK.RetrievePlansReturns(nil, fmt.Errorf("%s", errMsg))
 			fakeApp.SvcatClient = fakeSDK
 			cxt := svcattest.NewContext(outputBuffer, fakeApp)
 			cmd := DescribeCmd{

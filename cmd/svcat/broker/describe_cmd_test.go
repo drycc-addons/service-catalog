@@ -196,7 +196,7 @@ var _ = Describe("Describe Command", func() {
 		})
 		It("prompts the user for more input when it gets a MultipleBrokersFound error", func() {
 			outputBuffer := &bytes.Buffer{}
-			errToReturn := fmt.Errorf(servicecatalog.MultipleBrokersFoundError + " for '" + brokerName + "'")
+			errToReturn := fmt.Errorf("%s for '%s'", servicecatalog.MultipleBrokersFoundError, brokerName)
 
 			fakeApp, _ := svcat.NewApp(nil, nil, namespace)
 			fakeSDK := new(servicecatalogfakes.FakeSvcatClient)

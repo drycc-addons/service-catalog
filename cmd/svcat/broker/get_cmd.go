@@ -102,7 +102,7 @@ func (c *GetCmd) get() error {
 	broker, err := c.App.RetrieveBrokerByID(c.Name, scopeOpts)
 	if err != nil {
 		if strings.Contains(err.Error(), servicecatalog.MultipleBrokersFoundError) {
-			return fmt.Errorf(err.Error() + ", please specify a scope with --scope")
+			return fmt.Errorf("%s, please specify a scope with --scope", err.Error())
 		}
 		return err
 	}
