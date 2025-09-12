@@ -4,7 +4,7 @@
 
 module github.com/drycc-addons/service-catalog
 
-go 1.24
+go 1.25
 
 require (
 	github.com/drycc-addons/go-open-service-broker-client/v2 v2.0.0-20240319023702-6c9b6bb332f9
